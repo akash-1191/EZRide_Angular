@@ -3,6 +3,8 @@ import { MainComponentComponent } from './Component/main-component/main-componen
 import { UserDashboardComponent } from './Component/user-dashboard/user-dashboard.component';
 import { OwnerDashboardComponent } from './Component/owner-dashboard/owner-dashboard.component';
 import { AdminDashboardComponent } from './Component/admin-dashboard/admin-dashboard.component';
+import { DashboardComponent } from './Component/user-dashboard/dashboard/dashboard.component';
+import { ProfileComponent } from './Component/user-dashboard/profile/profile.component';
 
 export const routes: Routes = [
 
@@ -52,6 +54,9 @@ export const routes: Routes = [
           {
             path: 'user-dashboard',
             component: UserDashboardComponent,
+            children:[
+              {path:'',component:DashboardComponent}
+            ]
           },
 
           {

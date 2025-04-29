@@ -33,7 +33,6 @@ export class LoginComponent {
   get Email(): FormControl { return this.LoginForm.get('Email') as FormControl; }
   get Password(): FormControl { return this.LoginForm.get('Password') as FormControl; }
 
-
   Login() {
     const loginobj = {
       "email": this.LoginForm.value.Email,

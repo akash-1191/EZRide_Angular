@@ -60,17 +60,37 @@ export class SignUpComponent {
     };
 
 
-    this.services.postdat(obj).subscribe(res => {
-      console.log("User signed up successfully!", res);
-      alert(res.message);
-      this.router.navigate(['/login']);
-    }, (error) => {
-      if (error.status === 400) {
-        this.emailError=error.error.message;
-      } else {
-        alert("⚠ Server is not running! Please try again later.");
+    // this.services.postdat(obj).subscribe(res => {
+    //   console.log("User signed up successfully!", res.value);
+    
+    //   this.router.navigate(['/login']);
+    // }, (error) => {
+    //   if (error.status === 400) {
+    //     this.emailError=error.error.message;
+    //   } else {
+    //     alert("⚠ Server is not running! Please try again later.");
+    //   }
+    // });
+    this.services.postdat(obj).subscribe({
+      next: (res) => {
+        // console.log("User signed up successfully!", res);
+        this.router.navigate(['/login']);
+      },
+      error: (error) => {
+        console.error("Signup error:", error);
+    
+        if (error.status === 400 || error.status === 409 || error.status === 422) {
+          this.emailError = error.error.message || "Something went wrong.";
+        } 
+        else if (error.status === 0) {
+          alert("⚠ Server is not running or unreachable! Please try again later.");
+        } 
+        else {
+          alert("⚠ An unexpected error occurred. Please try again later.");
+        }
       }
     });
+    
   }
   
 
