@@ -2,175 +2,177 @@
 
   <img src="../../../assets/image/reg.jpg" alt="Background" class="absolute inset-0  w-full h-full object-cover  z-0" />
 
-  <div class="absolute inset-0 bg-black opacity-[0.4] z-10" ></div>
+  <div class="absolute inset-0 bg-black opacity-[0.4] z-10"></div>
 
-    <form [formGroup]="SignupForm"
-      class="relative z-20 w-full max-w-3xl mx-auto bg-white/10  backdrop-blur-lg p-8 rounded-lg shadow-2xl my-10 mb-24 transition-all duration-300 hover:shadow-[0_0_30px_rgba(255,255,255,0.3)]">
-      <h1 class="text-2xl font-bold mb-6 text-center  text-white ">Registration Form</h1>
-      <div class="mb-6 py-2 flex justify-items-center   text-white   font-bold">
-        <label class="mr-4">
-          <input type="radio" value="Owner_Vehicle" name="Role" formControlName="Role"> Owner_Vehicle
-        </label>
-        <label>
-          <input type="radio" value="Customer" name="Role" formControlName="Role"> Customer
-        </label>
-        <span class="text-red-500" *ngIf="Role.errors?.['required'] && Role.touched">Please Select Your Role</span>
-      </div>
+  <form [formGroup]="SignupForm"
+    class="relative z-20 w-full max-w-3xl mx-auto bg-white/10  backdrop-blur-lg p-8 rounded-lg shadow-2xl my-10 mb-24 transition-all duration-300 hover:shadow-[0_0_30px_rgba(255,255,255,0.3)]">
+    <h1 class="text-2xl font-bold mb-6 text-center  text-white ">Registration Form</h1>
+    <div class="mb-6 py-2 flex justify-items-center   text-white   font-bold">
+      <label class="mr-4">
+        <input type="radio" value="Owner_Vehicle" name="Role" formControlName="Role"> Owner_Vehicle
+      </label>
+      <label>
+        <input type="radio" value="Customer" name="Role" formControlName="Role"> Customer
+      </label>
+      <span class="text-red-500" *ngIf="Role.errors?.['required'] && Role.touched">Please Select Your Role</span>
+    </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-        <div>
-          <label class="block   text-white   text-sm font-bold mb-2" for="fname">First Name</label>
-          <input class="w-full px-3 py-2 border text-slate-200 focus:border-white border-gray-300 rounded-md focus:outline-none "
-            type="text" id="fname" name="fname" placeholder="Enter First Name" formControlName="FristName">
-          <span class="text-red-500"
-            *ngIf="FristName.errors?.['required'] && (FristName.touched || FristName.dirty)">Please Enter
-            FristName</span>
-          <span class="text-red-500"
-            *ngIf="FristName.errors?.['pattern'] && (FristName.touched || FristName.dirty)">Invalid Name</span>
-
-        </div>
-
-        <div>
-          <label class="block   text-white   text-sm font-bold mb-2" for="mname">Middle Name</label>
-          <input class="w-full px-3 py-2 border text-slate-200 border-gray-300 rounded-md focus:outline-none "
-            type="text" id="mname" name="mname" placeholder="Middle Name" formControlName="MiddleName">
-          <span class="text-red-500"
-            *ngIf="MiddleName.errors?.['pattern'] && (MiddleName.touched || MiddleName.dirty)">Invalid Name</span>
-        </div>
-
-        <div>
-          <label class="block   text-white   text-sm font-bold mb-2" for="lname">Last Name</label>
-          <input class="w-full px-3 py-2 border text-slate-200 border-gray-300 rounded-md focus:outline-none "
-            type="text" id="lname" name="lname" placeholder="Last Name" formControlName="LastName">
-          <span class="text-red-500"
-            *ngIf="LastName.errors?.['required'] && (LastName.touched || LastName.dirty)">Please Enter LastName</span>
-          <span class="text-red-500"
-            *ngIf="LastName.errors?.['pattern'] && (LastName.touched || LastName.dirty)">Invalid Name</span>
-
-        </div>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-        <div>
-          <label class="block   text-white   text-sm font-bold mb-2" for="age">Age</label>
-          <input class="w-full px-3 py-2 border text-slate-200 border-gray-300 rounded-md focus:outline-none "
-            type="text" id="age" name="age" placeholder="Enter Your Age" formControlName="Age">
-          <span class="text-red-500" *ngIf="Age.errors?.['required'] && (Age.touched || Age.dirty)">Please Enter Your
-            Age</span>
-          <span class="text-red-500" *ngIf="Age.errors?.['pattern'] && (Age.touched || Age.dirty)">Enter Only
-            Digit</span>
-
-        </div>
-
-        <div>
-          <label class="block   text-white text-sm font-bold mb-2" for="gender">Gender</label>
-          <select class="w-full px-3 py-2 border text-slate-200 border-gray-300 rounded-md bg-transparent placeholder-white focus:outline-none focus:ring-2 focus:ring-white/80 "
-            id="gender" name="gender" formControlName="Gender">
-            <option selected disabled class="text-white bg-gray-700">Select your Gender</option>
-            <option value="Male" class="text-white bg-gray-700">Male</option>
-            <option value="Female" class="text-white bg-gray-700">Female</option>
-            <option value="Other" class="text-white bg-gray-700">Other</option>
-          </select>
-          <span class="text-red-500" *ngIf="Gender.errors?.['required'] && (Gender.touched || Gender.dirty)">Please
-            Select Your Gender</span>
-
-        </div>
-
-        <div>
-          <label class="block   text-white   text-sm font-bold mb-2" for="phone">Phone No</label>
-          <input type="text"
-            class="w-full px-3 py-2 border text-slate-200 border-gray-300 rounded-md focus:outline-none "
-            id="phone" name="phone" placeholder="Enter Phone" formControlName="Phone_No">
-          <span class="text-red-500"
-            *ngIf="Phone_No.errors?.['required'] && (Phone_No.touched || Phone_No.dirty)">Please Enter
-            Phone_Number</span>
-          <span class="text-red-500" *ngIf="Phone_No.errors?.['pattern'] && (Phone_No.touched || Phone_No.dirty)">Enter
-            only Digit</span>
-          <span class="text-red-500"
-            *ngIf="Phone_No.errors?.['minlength'] && (Phone_No.touched || Phone_No.dirty)">Mobile Number Is Short</span>
-          <span class="text-red-500"
-            *ngIf="Phone_No.errors?.['maxlength'] && (Phone_No.touched || Phone_No.dirty)">maximum 10 Digit</span>
-
-        </div>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-        <div>
-          <label class="block text-white   text-sm font-bold mb-2" for="state">State</label>
-          <input class="w-full px-3 py-2 border text-slate-200 border-gray-300 rounded-md focus:outline-none "
-            id="state" name="state" placeholder="Select State" formControlName="State">
-          <span class="text-red-500" *ngIf="State.errors?.['required'] && (State.touched || State.dirty)">Please Select
-            Your State</span>
-
-        </div>
-        <div>
-          <label class="block   text-white   text-sm font-bold mb-2" for="city">City</label>
-          <input class="w-full px-3 py-2 border text-slate-200 border-gray-300 rounded-md focus:outline-none "
-            type="text" id="city" name="city" placeholder="City" formControlName="city">
-          <span class="text-red-500" *ngIf="city.errors?.['required'] && (city.touched || city.dirty)">Please Select
-            Your City</span>
-        </div>
-
-        <div>
-          <label class="block   text-white   text-sm font-bold mb-2" for="email">Email</label>
-          <input class="w-full px-3 py-2 border text-slate-200 border-gray-300 rounded-md focus:outline-none "
-            type="email" id="email" name="email" required placeholder="Enter Email" formControlName="Email">
-          <span class="text-red-500" *ngIf="Email.errors?.['required'] && (Email.touched || Email.dirty)">Please Enter
-            Email</span>
-          <span class="text-red-500" *ngIf="Email.errors?.['email'] && (Email.touched || Email.dirty)">Please Enter
-            Email</span>
-          <span class="text-red-500" *ngIf="emailError">{{emailError}}</span>
-
-        </div>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-        <div>
-          <label class="block   text-white   text-sm font-bold mb-2" for="image">Profile Picture</label>
-          <input class="w-full px-3 py-2 border text-slate-200 border-gray-300 rounded-md focus:outline-none "
-            type="file" id="image" name="image" formControlName="Profile_Picture">
-          <span class="text-red-500" *ngIf="Profile_Picture.errors?.['required'] && Profile_Picture.touched">Please
-            Upload Profile Picture</span>
-        </div>
-
-        <div>
-          <label class="block   text-white   text-sm font-bold mb-2" for="address">Address</label>
-          <textarea
-            class="w-full px-3 py-2 border text-slate-200 border-gray-300 rounded-md focus:outline-none "
-            id="address" name="address" placeholder="Enter Address" formControlName="Address"></textarea>
-          <span class="text-red-500" *ngIf="Address.errors?.['required'] && Address.touched">Please Enter Address</span>
-        </div>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-        <div class="mb-4">
-          <label class="block   text-white   text-sm font-bold mb-2" for="password">Password</label>
-          <input class="w-full px-3 py-2 border text-slate-200 border-gray-300 rounded-md focus:outline-none "
-            type="password" id="Pass" name="Pass" placeholder="********" formControlName="Pass">
-          <span class="text-red-500" *ngIf="Pass.errors?.['required'] && (Pass.touched || Pass.dirty)">Please Enter
-            Password</span>
-          <span class="text-red-500" *ngIf="Pass.errors?.['pattern'] && (Pass.dirty || Pass.touched)">Strong Password
-            Enter like:</span>
-
-        </div>
-
-        <div class="mb-4">
-          <label class="block text-white text-sm font-bold mb-2" for="confirm-password">Confirm Password</label>
-          <input class="w-full px-3 py-2 border text-slate-200 border-gray-300 rounded-md focus:outline-none "
-            type="password" id="Cpass" name="Cpass" placeholder="********" formControlName="Cpass">
-          <span class="text-red-500" *ngIf="Cpass.invalid && Cpass.touched">Please Enter Conferm Password</span>
-          <span class="text-red-500"
-            *ngIf="Cpass.touched && Pass.value !== Cpass.value && Cpass.dirty">{{Matchpassword}}</span>
-        </div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+      <div>
+        <label class="block   text-white   text-sm font-bold mb-2" for="fname">First Name</label>
+        <input
+          class="w-full px-3 py-2 border text-slate-200 focus:border-white border-gray-300 rounded-md focus:outline-none "
+          type="text" id="fname" name="fname" placeholder="Enter First Name" formControlName="FristName">
+        <span class="text-red-500"
+          *ngIf="FristName.errors?.['required'] && (FristName.touched || FristName.dirty)">Please Enter
+          FristName</span>
+        <span class="text-red-500"
+          *ngIf="FristName.errors?.['pattern'] && (FristName.touched || FristName.dirty)">Invalid Name</span>
 
       </div>
-      <button [disabled]="SignupForm.invalid"
-        [ngClass]="SignupForm.invalid ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#1e2a3a] hover:bg-[#2b3e52]'"
-        class="w-full bg-gray-400 text-white text-sm font-bold py-2 px-4 rounded-md transition duration-300"
-        type="button" (click)="Signup()" name="sign">Register</button>
-      <div class="flex justify-end text-white  mt-4">
-        <p class="cursor-pointer " (click)="LoginPage()">Already have an account? <span class="underline font-semibold"> Login Here</span></p>
+
+      <div>
+        <label class="block   text-white   text-sm font-bold mb-2" for="mname">Middle Name</label>
+        <input class="w-full px-3 py-2 border text-slate-200 border-gray-300 rounded-md focus:outline-none " type="text"
+          id="mname" name="mname" placeholder="Middle Name" formControlName="MiddleName">
+        <span class="text-red-500"
+          *ngIf="MiddleName.errors?.['pattern'] && (MiddleName.touched || MiddleName.dirty)">Invalid Name</span>
       </div>
-    </form>
- 
+
+      <div>
+        <label class="block   text-white   text-sm font-bold mb-2" for="lname">Last Name</label>
+        <input class="w-full px-3 py-2 border text-slate-200 border-gray-300 rounded-md focus:outline-none " type="text"
+          id="lname" name="lname" placeholder="Last Name" formControlName="LastName">
+        <span class="text-red-500" *ngIf="LastName.errors?.['required'] && (LastName.touched || LastName.dirty)">Please
+          Enter LastName</span>
+        <span class="text-red-500" *ngIf="LastName.errors?.['pattern'] && (LastName.touched || LastName.dirty)">Invalid
+          Name</span>
+
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+      <div>
+        <label class="block   text-white   text-sm font-bold mb-2" for="age">Age</label>
+        <input class="w-full px-3 py-2 border text-slate-200 border-gray-300 rounded-md focus:outline-none " type="text"
+          id="age" name="age" placeholder="Enter Your Age" formControlName="Age">
+        <span class="text-red-500" *ngIf="Age.errors?.['required'] && (Age.touched || Age.dirty)">Please Enter Your
+          Age</span>
+        <span class="text-red-500" *ngIf="Age.errors?.['pattern'] && (Age.touched || Age.dirty)">Enter Only
+          Digit</span>
+
+      </div>
+
+      <div>
+        <label class="block   text-white text-sm font-bold mb-2" for="gender">Gender</label>
+        <select
+          class="w-full px-3 py-2 border text-slate-200 border-gray-300 rounded-md bg-transparent placeholder-white focus:outline-none focus:ring-2 focus:ring-white/80 "
+          id="gender" name="gender" formControlName="Gender">
+          <option selected disabled class="text-white bg-gray-700">Select your Gender</option>
+          <option value="Male" class="text-white bg-gray-700">Male</option>
+          <option value="Female" class="text-white bg-gray-700">Female</option>
+          <option value="Other" class="text-white bg-gray-700">Other</option>
+        </select>
+        <span class="text-red-500" *ngIf="Gender.errors?.['required'] && (Gender.touched || Gender.dirty)">Please
+          Select Your Gender</span>
+
+      </div>
+
+      <div>
+        <label class="block   text-white   text-sm font-bold mb-2" for="phone">Phone No</label>
+        <input type="text" class="w-full px-3 py-2 border text-slate-200 border-gray-300 rounded-md focus:outline-none "
+          id="phone" name="phone" placeholder="Enter Phone" formControlName="Phone_No">
+        <span class="text-red-500" *ngIf="Phone_No.errors?.['required'] && (Phone_No.touched || Phone_No.dirty)">Please
+          Enter
+          Phone_Number</span>
+        <span class="text-red-500" *ngIf="Phone_No.errors?.['pattern'] && (Phone_No.touched || Phone_No.dirty)">Enter
+          only Digit</span>
+        <span class="text-red-500" *ngIf="Phone_No.errors?.['minlength'] && (Phone_No.touched || Phone_No.dirty)">Mobile
+          Number Is Short</span>
+        <span class="text-red-500"
+          *ngIf="Phone_No.errors?.['maxlength'] && (Phone_No.touched || Phone_No.dirty)">maximum 10 Digit</span>
+
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+      <div>
+        <label class="block text-white   text-sm font-bold mb-2" for="state">State</label>
+        <input class="w-full px-3 py-2 border text-slate-200 border-gray-300 rounded-md focus:outline-none " id="state"
+          name="state" placeholder="Select State" formControlName="State">
+        <span class="text-red-500" *ngIf="State.errors?.['required'] && (State.touched || State.dirty)">Please Select
+          Your State</span>
+
+      </div>
+      <div>
+        <label class="block   text-white   text-sm font-bold mb-2" for="city">City</label>
+        <input class="w-full px-3 py-2 border text-slate-200 border-gray-300 rounded-md focus:outline-none " type="text"
+          id="city" name="city" placeholder="City" formControlName="city">
+        <span class="text-red-500" *ngIf="city.errors?.['required'] && (city.touched || city.dirty)">Please Select
+          Your City</span>
+      </div>
+
+      <div>
+        <label class="block   text-white   text-sm font-bold mb-2" for="email">Email</label>
+        <input class="w-full px-3 py-2 border text-slate-200 border-gray-300 rounded-md focus:outline-none "
+          type="email" id="email" name="email" required placeholder="Enter Email" formControlName="Email">
+        <span class="text-red-500" *ngIf="Email.errors?.['required'] && (Email.touched || Email.dirty)">Please Enter
+          Email</span>
+        <span class="text-red-500" *ngIf="Email.errors?.['email'] && (Email.touched || Email.dirty)">Please Enter
+          Email</span>
+        <span class="text-red-500" *ngIf="emailError">{{emailError}}</span>
+
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+      <div>
+        <label class="block   text-white   text-sm font-bold mb-2" for="image">Profile Picture</label>
+        <input class="w-full px-3 py-2 border text-slate-200 border-gray-300 rounded-md focus:outline-none " type="file"
+          id="image" name="image" formControlName="Profile_Picture">
+        <span class="text-red-500" *ngIf="Profile_Picture.errors?.['required'] && Profile_Picture.touched">Please
+          Upload Profile Picture</span>
+      </div>
+
+      <div>
+        <label class="block   text-white   text-sm font-bold mb-2" for="address">Address</label>
+        <textarea class="w-full px-3 py-2 border text-slate-200 border-gray-300 rounded-md focus:outline-none "
+          id="address" name="address" placeholder="Enter Address" formControlName="Address"></textarea>
+        <span class="text-red-500" *ngIf="Address.errors?.['required'] && Address.touched">Please Enter Address</span>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+      <div class="mb-4">
+        <label class="block   text-white   text-sm font-bold mb-2" for="password">Password</label>
+        <input class="w-full px-3 py-2 border text-slate-200 border-gray-300 rounded-md focus:outline-none "
+          type="password" id="Pass" name="Pass" placeholder="********" formControlName="Pass">
+        <span class="text-red-500" *ngIf="Pass.errors?.['required'] && (Pass.touched || Pass.dirty)">Please Enter
+          Password</span>
+        <span class="text-red-500" *ngIf="Pass.errors?.['pattern'] && (Pass.dirty || Pass.touched)">Strong Password
+          Enter like:</span>
+
+      </div>
+
+      <div class="mb-4">
+        <label class="block text-white text-sm font-bold mb-2" for="confirm-password">Confirm Password</label>
+        <input class="w-full px-3 py-2 border text-slate-200 border-gray-300 rounded-md focus:outline-none "
+          type="password" id="Cpass" name="Cpass" placeholder="********" formControlName="Cpass">
+        <span class="text-red-500" *ngIf="Cpass.invalid && Cpass.touched">Please Enter Conferm Password</span>
+        <span class="text-red-500"
+          *ngIf="Cpass.touched && Pass.value !== Cpass.value && Cpass.dirty">{{Matchpassword}}</span>
+      </div>
+    </div>
+
+    <button type="button" [disabled]="SignupForm.invalid"
+      [ngClass]="SignupForm.invalid ? 'bg-gray-400 cursor-not-allowed' : 'bg-gradient-to-r from-[#0f2027] via-[#203a43] to-[#2c5364] hover:brightness-110'"
+      class="w-full py-2 rounded-lg cursor-pointer text-white font-semibold transition-all duration-300"
+      (click)="Signup()" name="sign">Register</button>
+
+    <div class="flex justify-end text-white  mt-4">
+      <p class="cursor-pointer " (click)="LoginPage()">Already have an account? <span class="underline font-semibold">
+          Login Here</span></p>
+    </div>
+  </form>
+
 </section>

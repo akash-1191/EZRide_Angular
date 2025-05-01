@@ -17,13 +17,14 @@ export class SignUpComponent {
 
   private router = inject(Router);
   public emailError: string = '';
-  public Matchpassword:string=''
+  public Matchpassword: string = ''
+
 
   LoginPage() {
     this.router.navigate(['/login']);
   }
 
-  constructor(private services:MyServiceService) {
+  constructor(private services: MyServiceService) {
   }
 
   Signup() {
@@ -33,16 +34,16 @@ export class SignUpComponent {
       return;
     }
 
-    if (this.SignupForm.get('Cpass')?.touched &&  this.SignupForm.value.Pass !== this.SignupForm.value.Cpass) {
+    if (this.SignupForm.get('Cpass')?.touched && this.SignupForm.value.Pass !== this.SignupForm.value.Cpass) {
       this.Matchpassword = "Password and Confirm Password do not match!";
-      return; 
-    }else{
-      this.Matchpassword=''
+      return;
+    } else {
+      this.Matchpassword = ''
     }
 
     this.emailError = '';
-  
-   
+
+
     const obj = {
       firstname: this.SignupForm.value.FristName,
       middlename: this.SignupForm.value.MiddleName,
@@ -60,29 +61,27 @@ export class SignUpComponent {
     };
 
 
-
     this.services.postdat(obj).subscribe({
       next: (res) => {
-        // console.log("User signed up successfully!", res);
         this.router.navigate(['/login']);
       },
       error: (error) => {
         console.error("Signup error:", error);
-    
+
         if (error.status === 400 || error.status === 409 || error.status === 422) {
           this.emailError = error.error.message || "Something went wrong.";
-        } 
+        }
         else if (error.status === 0) {
           alert("⚠ Server is not running or unreachable! Please try again later.");
-        } 
+        }
         else {
           alert("⚠ An unexpected error occurred. Please try again later.");
         }
       }
     });
-    
+
   }
-  
+
 
   SignupForm: FormGroup = new FormGroup({
     Role: new FormControl("", [Validators.required]),
@@ -102,7 +101,7 @@ export class SignUpComponent {
   });
 
 
-  
+
   get Role(): FormControl { return this.SignupForm.get("Role") as FormControl; }
   get FristName(): FormControl { return this.SignupForm.get("FristName") as FormControl; }
   get MiddleName(): FormControl { return this.SignupForm.get("MiddleName") as FormControl; }
@@ -117,6 +116,6 @@ export class SignUpComponent {
   get Address(): FormControl { return this.SignupForm.get("Address") as FormControl; }
   get Pass(): FormControl { return this.SignupForm.get("Pass") as FormControl; }
   get Cpass(): FormControl { return this.SignupForm.get("Cpass") as FormControl; }
-  
+
 }
 

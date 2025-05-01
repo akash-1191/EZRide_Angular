@@ -5,7 +5,7 @@
         <div class="fixed w-full flex items-center justify-between h-14  bg-gray-800 text-white z-10">
             <div class="flex items-center justify-start md:justify-center pl-3 w-14 md:w-64 h-14  ml-10 border-none">
                 <img class="w-10 h-10 md:w-10 md:h-10 mr-2 rounded-md overflow-hidden" src="#" />
-                <span class="hidden md:block">User Dashboard</span>
+                <span class="hidden md:block">Customer Dashboard</span>
             </div>
             <div class="flex justify-between items-center h-14 bg-gray-800 header-right">
 
@@ -32,7 +32,7 @@
                     <li class="px-5 hidden md:block">
 
                     </li>
-                    <a routerLink="" class="cursor-pointer">
+                    <a routerLink="/customer-dashboard/cust_dashboard" class="cursor-pointer">
                         <span
                             class="relative flex flex-row items-center h-11 focus:outline-none hover:bg-gray-600 text-white-600 hover:text-white-800 border-l-4 border-transparent  hover:border-gray-800 pr-6">
                             <div class="ml-3">
@@ -87,7 +87,7 @@
 
         <!--contect all page redirect page -->
         <div class="content h-full ml-14 mt-14 mb-10 md:ml-64">
-            <router-outlet></router-outlet>
+         <router-outlet></router-outlet>
         </div>
     </div>
 </section>
