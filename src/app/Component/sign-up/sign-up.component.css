@@ -1,1 +1,5 @@
-    
+    .Regimage{
+        background-image:url(../.../../../../assets/image/reg.jpg);
+        background-repeat: no-repeat;
+        background-size: cover;
+    }

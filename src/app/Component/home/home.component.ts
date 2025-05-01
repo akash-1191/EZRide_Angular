@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component} from '@angular/core';
 import { HeroSliderComponent } from "../hero-slider/hero-slider.component";
 
 @Component({
@@ -7,20 +7,6 @@ import { HeroSliderComponent } from "../hero-slider/hero-slider.component";
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })
-export class HomeComponent implements OnInit  {
-title="Welcome TO Home Page"
-
-constructor(){}
- 
-
-changeTitle(){
-  this.title="Change Home Page Content";
-}
-
-
-ngOnInit(){
-console.log("ngOnInit Call")
-}
-
+export class HomeComponent  {
 
 }

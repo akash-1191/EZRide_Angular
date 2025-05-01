@@ -56,21 +56,11 @@ export class SignUpComponent {
       city: this.SignupForm.value.city,
       state: this.SignupForm.value.State,
       image: this.SignupForm.value.Profile_Picture,
-      roleId: this.SignupForm.value.Role === "Owner_Vehicle" ? 1 : 2  //handele the changes of the Role
+      roleId: this.SignupForm.value.Role === "Owner_Vehicle" ? 2 : 3  //handele the changes of the Role
     };
 
 
-    // this.services.postdat(obj).subscribe(res => {
-    //   console.log("User signed up successfully!", res.value);
-    
-    //   this.router.navigate(['/login']);
-    // }, (error) => {
-    //   if (error.status === 400) {
-    //     this.emailError=error.error.message;
-    //   } else {
-    //     alert("⚠ Server is not running! Please try again later.");
-    //   }
-    // });
+
     this.services.postdat(obj).subscribe({
       next: (res) => {
         // console.log("User signed up successfully!", res);

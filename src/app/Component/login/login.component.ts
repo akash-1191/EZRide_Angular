@@ -41,14 +41,29 @@ export class LoginComponent {
 
     this.loginservices.LoginpostData(loginobj).subscribe(
       (res: any) => {
-        // alert("Login Success full");
-        this.router.navigate(['/user-dashboard']);
+        const token = res.token;
+        const roleName = res.user.roleName;
+
+        localStorage.setItem("token", token),
+          localStorage.setItem("Role", roleName)
+
+        if (roleName === 'Admin') {
+          this.router.navigate(['/admin-dashboard']);
+        } else if (roleName === 'OwnerVehicle') {
+          this.router.navigate(['/OwnerVehicle-dashboard']);
+        } else if (roleName === 'Customer') {
+          this.router.navigate(['/customer-dashboard']);
+        } else {
+          alert("Somthing went to wrong")
+        }
+        console.log("Role Name:", roleName);
+        console.log("Response: ", res);
       },
       (error: HttpErrorResponse) => {
-        if (error.status === 401) {
-          alert("Incorrect username or password");
+        if (error.status === 401 || error.status === 400) {
+          alert(error.error.message);
         } else if (error.status === 500) {
-          alert("An error occurred. Please try again.");
+          alert(error.error.message || "An error occurred. Please try again.");
         } else {
           alert("⚠ Server is not running! Please try again later.");
         }

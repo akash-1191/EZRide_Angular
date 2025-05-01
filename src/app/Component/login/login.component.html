@@ -1,5 +1,5 @@
 <!-- component -->
-<div class="bg-slate-300 h-screen w-full">
+<!-- <div class="bg-slate-300 h-screen w-full">
     <div class="flex flex-col items-center flex-1 h-full justify-center px-4 sm:px-0">
         <div class="flex rounded-lg shadow-lg w-full sm:w-3/4 lg:w-1/2 bg-white sm:mx-0" style="height: 500px">
             <div class="flex flex-col w-full md:w-1/2 p-4">
@@ -8,21 +8,32 @@
                     <div class="w-full mt-4">
                         <form [formGroup]="LoginForm" (ngSubmit)="Login()" class="form-horizontal w-3/4 mx-auto">
                             <div class="flex flex-col mt-4">
-                                <input id="email" name="email" type="text"  formControlName="Email" class="flex-grow h-8 px-2 border rounded border-grey-400"  placeholder="Email"/>
-                                <span class="text-red-500" *ngIf="Email.errors?.['required'] && (Email.dirty || Email.touched)" >Please Enter Email</span>
-                                <span class="text-red-500" *ngIf="Email.errors?.['email'] && (Email.dirty || Email.touched)" >Please Enter Email</span>
+                                <input id="email" name="email" type="text" formControlName="Email"
+                                    class="flex-grow h-8 px-2 border rounded border-grey-400" placeholder="Email" />
+                                <span class="text-red-500"
+                                    *ngIf="Email.errors?.['required'] && (Email.dirty || Email.touched)">Please Enter
+                                    Email</span>
+                                <span class="text-red-500"
+                                    *ngIf="Email.errors?.['email'] && (Email.dirty || Email.touched)">Please Enter
+                                    Email</span>
 
                             </div>
                             <div class="flex flex-col mt-4">
-                                <input id="password" type="password" formControlName="Password" class="flex-grow h-8 px-2 rounded border border-grey-400" name="password"  placeholder="Password">
-                                <span class="text-red-500" *ngIf="Password.invalid && (Password.dirty || Password.touched)">Please Enter Password</span>
+                                <input id="password" type="password" formControlName="Password"
+                                    class="flex-grow h-8 px-2 rounded border border-grey-400" name="password"
+                                    placeholder="Password">
+                                <span class="text-red-500"
+                                    *ngIf="Password.invalid && (Password.dirty || Password.touched)">Please Enter
+                                    Password</span>
 
                             </div>
                             <div class="flex items-center mt-4">
-                                <input type="checkbox" name="remember" id="remember" class="mr-2"> <label for="remember" class="text-sm text-grey-dark">Remember Me</label>
+                                <input type="checkbox" name="remember" id="remember" class="mr-2"> <label for="remember"
+                                    class="text-sm text-grey-dark">Remember Me</label>
                             </div>
                             <div class="flex flex-col mt-8">
-                                <button type="button" [disabled]="LoginForm.invalid" (click)="Login()" class="bg-blue-400 hover:bg-blue-500 cursor-pointer text-white text-sm font-semibold py-2 px-4 rounded">
+                                <button type="button" [disabled]="LoginForm.invalid" (click)="Login()"
+                                    class="bg-blue-400 hover:bg-blue-500 cursor-pointer text-white text-sm font-semibold py-2 px-4 rounded">
                                     Login
                                 </button>
                             </div>
@@ -38,7 +49,96 @@
                     </div>
                 </div>
             </div>
-            <div class="hidden md:block md:w-1/2 rounded-r-lg" style="background: url('https://images.unsplash.com/photo-1515965885361-f1e0095517ea?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=3300&q=80'); background-size: cover; background-position: center center;"></div>
+            <div class="hidden md:block md:w-1/2 rounded-r-lg"
+                style="background: url(../../../assets/image/car.jpg); background-size: cover; background-position: center center;">
+            </div>
         </div>
     </div>
-</div>
+</div> -->
+
+<!-- <section class="bgimagelogin h-screen flex items-center justify-center">
+    <form [formGroup]="LoginForm" (ngSubmit)="Login()"
+        class="backdrop-blur-md bg-white/20 border border-gray-500/50 backdrop:blur-md p-8 rounded-2xl w-[350px] text-white shadow-xl">
+        <h2 class="text-2xl font-semibold text-center mb-6">EZRide LOGIN</h2>
+
+        <div class="mb-4">
+            <label class="block text-gray-100 text-sm mb-1" for="email">Email</label>
+            <input type="text" id="email" name="email" formControlName="Email"
+                class="w-full px-4 py-2 rounded-md bg-white/20 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-white/40"
+                placeholder="Email" />
+            <span class="text-red-500 text-sm"
+                *ngIf="Email.errors?.['required'] && (Email.dirty || Email.touched)">Please Enter Email</span>
+            <span class="text-red-500 text-sm" *ngIf="Email.errors?.['email'] && (Email.dirty || Email.touched)">Invalid
+                Email</span>
+        </div>
+
+        <div class="mb-4">
+            <label class="block text-gray-100 text-sm mb-1" for="password">Password</label>
+            <input type="password" id="password" formControlName="Password"
+                class="w-full px-4 py-2 rounded-md bg-white/20 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-white/40"
+                placeholder="Password" />
+            <span class="text-red-500 text-sm" *ngIf="Password.invalid && (Password.dirty || Password.touched)">Please
+                Enter Password</span>
+        </div>
+
+
+        <button type="submit" [disabled]="LoginForm.invalid"
+            [ngClass]="LoginForm.invalid ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#1e2a3a] hover:bg-[#2b3e52]'"
+            class="w-full py-2 rounded-md font-semibold transition text-white">
+            Login
+        </button>
+        
+        <p class="mt-4 text-center text-sm text-gray-300  " (click)="SignUpPage()">Don't
+            have account? <span class=" cursor-pointer font-bold text-md">Register</span></p>
+        <p class="mt-2 text-center text-sm text-gray-300  cursor-pointer">Forgot password?</p>
+    </form>
+</section> -->
+
+
+<section class="bgimagelogin h-screen flex items-center justify-center px-4">
+    <form [formGroup]="LoginForm" (ngSubmit)="Login()"
+      class="relative animate-fade-in backdrop-blur-lg bg-white/10 border border-white/20 shadow-2xl rounded-3xl p-8 w-full max-w-sm transition-all duration-300 hover:shadow-[0_0_30px_rgba(255,255,255,0.2)]">
+  
+      <div class="flex justify-center mb-6">
+        <img src="assets/logo.png" alt="Logo" class="w-16 h-16 rounded-full shadow-md" />
+      </div>
+  
+      <h2 class="text-3xl font-bold text-center mb-6 tracking-wide text-white drop-shadow-lg">Welcome Back</h2>
+
+      <div class="mb-5">
+        <input type="text" id="email" name="email" formControlName="Email"
+          class="w-full px-4 py-3 rounded-lg bg-white/20 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white/60"
+          placeholder="Email" />
+        <span class="text-red-500 text-sm"
+          *ngIf="Email.errors?.['required'] && (Email.dirty || Email.touched)">Email is required</span>
+        <span class="text-red-500 text-sm"
+          *ngIf="Email.errors?.['email'] && (Email.dirty || Email.touched)">Invalid email</span>
+      </div>
+
+      <div class="mb-6">
+        <input type="password" id="password" formControlName="Password"
+          class="w-full px-4 py-3 rounded-lg bg-white/20 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white/60"
+          placeholder="Password" />
+        <span class="text-red-500 text-sm"
+          *ngIf="Password.invalid && (Password.dirty || Password.touched)">Password is required</span>
+      </div>
+  
+      <!-- 🔘 Submit Button -->
+      <button type="submit" [disabled]="LoginForm.invalid"
+        [ngClass]="LoginForm.invalid ? 'bg-gray-400 cursor-not-allowed' : 'bg-gradient-to-r from-[#0f2027] via-[#203a43] to-[#2c5364] hover:brightness-110'"
+        class="w-full py-2 rounded-lg text-white font-semibold transition-all duration-300">
+        Sign In
+      </button>
+  
+      <!-- 🔗 Register & Forgot -->
+      <div class="mt-5 text-center text-sm text-white">
+        <p>Don't have an account?
+          <span class="font-semibold underline hover:text-gray-300 transition cursor-pointer" (click)="SignUpPage()">Create one</span>
+        </p>
+        <p class="mt-2">
+          <span class="hover:underline cursor-pointer text-gray-300 hover:text-white transition">Forgot password?</span>
+        </p>
+      </div>
+    </form>
+  </section>
+  

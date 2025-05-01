@@ -1,0 +1,12 @@
+import { Component } from '@angular/core';
+import { RouterLink, RouterOutlet } from '@angular/router';
+
+@Component({
+  selector: 'app-customers-dashboard',
+  imports: [RouterOutlet,RouterLink],
+  templateUrl: './customers-dashboard.component.html',
+  styleUrl: './customers-dashboard.component.css'
+})
+export class CustomersDashboardComponent {
+
+}

@@ -1,10 +1,12 @@
 import { Routes } from '@angular/router';
 import { MainComponentComponent } from './Component/main-component/main-component.component';
-import { UserDashboardComponent } from './Component/user-dashboard/user-dashboard.component';
 import { OwnerDashboardComponent } from './Component/owner-dashboard/owner-dashboard.component';
 import { AdminDashboardComponent } from './Component/admin-dashboard/admin-dashboard.component';
-import { DashboardComponent } from './Component/user-dashboard/dashboard/dashboard.component';
-import { ProfileComponent } from './Component/user-dashboard/profile/profile.component';
+import { DashboardComponent } from './Component/customers-dashboard/dashboard/dashboard.component';
+import { CustomersDashboardComponent } from './Component/customers-dashboard/customers-dashboard.component';
+import { ProfileComponent } from './Component/customers-dashboard/profile/profile.component';
+
+
 
 export const routes: Routes = [
 
@@ -50,13 +52,20 @@ export const routes: Routes = [
         ]
         },
 
+          // {
+          //   path: 'user-dashboard',
+          //   component: UserDashboardComponent,
+          //   children:[
+          //     {path:'',component:DashboardComponent}
+          //   ]
+          // },
 
           {
-            path: 'user-dashboard',
-            component: UserDashboardComponent,
-            children:[
-              {path:'',component:DashboardComponent}
-            ]
+            path: 'customer-dashboard',component:CustomersDashboardComponent,
+           children:[
+             {path:'',component:DashboardComponent},
+            {path:'Profile',component:ProfileComponent},
+           ]
           },
 
           {

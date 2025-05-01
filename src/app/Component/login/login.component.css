@@ -1,0 +1,16 @@
+.bgimagelogin {
+    position: relative;
+    height: 92vh;
+    overflow: hidden;
+  }
+  
+  .bgimagelogin::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: url('../../../assets/image/login.jpg') no-repeat center center/cover;
+    opacity:0.9; 
+    z-index: -1;
+  }
+
+  
