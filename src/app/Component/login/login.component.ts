@@ -1,73 +1,98 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { MyServiceService } from '../../../../my-service.service';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 
-
-
 @Component({
   selector: 'app-login',
+  standalone: true,
   imports: [ReactiveFormsModule, CommonModule],
   templateUrl: './login.component.html',
-  styleUrl: './login.component.css'
+  styleUrls: ['./login.component.css']
 })
-
-export class LoginComponent {
+export class LoginComponent implements OnInit {
 
   private router = inject(Router);
-
-  SignUpPage() {
-    this.router.navigate(['/signup']);
-  }
+  roleError: string | null = null;
 
   constructor(private loginservices: MyServiceService) { }
-
 
   LoginForm: FormGroup = new FormGroup({
     Email: new FormControl("", [Validators.required, Validators.email]),
     Password: new FormControl("", [Validators.required])
   });
 
+  // Getter methods for FormControls
   get Email(): FormControl { return this.LoginForm.get('Email') as FormControl; }
   get Password(): FormControl { return this.LoginForm.get('Password') as FormControl; }
 
-  Login() {
-    const loginobj = {
-      "email": this.LoginForm.value.Email,
-      "password": this.LoginForm.value.Password
-    }
 
+  
+  ngOnInit(): void {
+    const token = localStorage.getItem("token");
+    const role = localStorage.getItem("Role");
+
+    // If token and role exist, automatically redirect the user to their respective dashboard
+    if (token && role) {
+      this.redirectBasedOnRole(role);
+    }
+    
+  }
+
+  SignUpPage() {
+    this.router.navigate(['/signup']);
+  }
+
+  Login(): void  {
+    if (this.LoginForm.invalid) {
+      this.roleError = "Please fill in all required fields.";
+      return;
+    }
+    const loginobj = {
+      email: this.Email.value,
+      password: this.Password.value
+    };
+
+    // Call the login service
     this.loginservices.LoginpostData(loginobj).subscribe(
       (res: any) => {
         const token = res.token;
         const roleName = res.user.roleName;
 
-        localStorage.setItem("token", token),
-          localStorage.setItem("Role", roleName)
+        // Save token and role to localStorage
+        localStorage.setItem("token", token);
+        localStorage.setItem("Role", roleName);
 
-        if (roleName === 'Admin') {
-          this.router.navigate(['/admin-dashboard']);
-        } else if (roleName === 'OwnerVehicle') {
-          this.router.navigate(['/OwnerVehicle-dashboard']);
-        } else if (roleName === 'Customer') {
-          this.router.navigate(['/customer-dashboard']);
-        } else {
-          alert("Somthing went to wrong")
-        }
-        console.log("Role Name:", roleName);
-        console.log("Response: ", res);
+        // Redirect based on the role
+        this.redirectBasedOnRole(roleName);
       },
       (error: HttpErrorResponse) => {
+        // Handle different error responses
         if (error.status === 401 || error.status === 400) {
-          alert(error.error.message);
+          this.roleError = error.error.message;
         } else if (error.status === 500) {
-          alert(error.error.message || "An error occurred. Please try again.");
+          this.roleError = error.error.message || "An error occurred. Please try again.";
         } else {
-          alert("⚠ Server is not running! Please try again later.");
+          this.roleError = "⚠ Server is not running! Please try again later.";
         }
       }
     );
   }
+
+  // Helper method to handle role-based redirection
+  private redirectBasedOnRole(role: string): void {
+    if (role === 'Admin') {
+      this.router.navigate(['/admin-dashboard']);
+    } else if (role === 'OwnerVehicle') {
+      this.router.navigate(['/OwnerVehicle-dashboard']);
+    } else if (role === 'Customer') {
+      this.router.navigate(['/customer-dashboard']);
+    } else {
+      this.roleError = "Something went wrong! Unknown role.";
+    }
+  }
+
+
 }

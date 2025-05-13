@@ -29,10 +29,13 @@
   
       <!-- Submit Button -->
       <button type="submit" [disabled]="LoginForm.invalid"
-        [ngClass]="LoginForm.invalid ? 'bg-gray-400 cursor-not-allowed' : 'bg-gradient-to-r from-[#0f2027] via-[#203a43] to-[#2c5364] hover:brightness-110'"
-        class="w-full py-2 rounded-lg text-white font-semibold transition-all duration-300">
-        Sign In
+        [ngClass]="LoginForm.invalid ? 'bg-gray-400 cursor-not-allowed' : 'bg-gradient-to-r from-[#0f2027] via-[#203a43] to-[#2c5364] hover:brightness-110 cursor-pointer'"
+        class=" w-full py-2 rounded-lg text-white font-semibold transition-all duration-300">
+        Login
       </button>
+      <div>
+      <p *ngIf="roleError" class="flex justify-center text-red-500 text-sm">{{roleError}}</p>
+      </div>
   
       <!-- Register & Forgot -->
       <div class="mt-5 text-center text-sm text-white">

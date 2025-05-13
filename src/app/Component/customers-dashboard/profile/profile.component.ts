@@ -1,47 +1,73 @@
 import { CommonModule } from '@angular/common';
-import { Component, HostListener } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
+import { MyServiceService } from '../../../../../my-service.service';
+import { jwtDecode } from 'jwt-decode';
+
 
 @Component({
   selector: 'app-profile',
+  standalone: true,
   imports: [CommonModule],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.css'
 })
-export class ProfileComponent {
-// Modal state for image upload and profile edit
-isImageUploadModalOpen: boolean = false;
-isEditProfileModalOpen: boolean = false;
+export class ProfileComponent implements OnInit {
 
-// Open Image Upload Modal
-openImageUploadModal(): void {
-  this.isImageUploadModalOpen = true;
-}
+  profiledata: any;
+  isImageUploadModalOpen: boolean = false;
+  isEditProfileModalOpen: boolean = false;
 
-// Close Image Upload Modal
-closeImageUploadModal(): void {
-  this.isImageUploadModalOpen = false;
-}
+  constructor(private services: MyServiceService) { }
 
-// Open Edit Profile Modal
-openEditProfileModal(): void {
-  this.isEditProfileModalOpen = true;
-}
 
-// Close Edit Profile Modal
-closeEditProfileModal(): void {
-  this.isEditProfileModalOpen = false;
-}
-// Listen for the ESC key to close modals
-@HostListener('document:keydown', ['$event'])
-onKeyDown(event: KeyboardEvent): void {
-if (event.key === 'Escape') {
-  this.closeModals();
-}
-}
+  ngOnInit(): void {
+    const token = localStorage.getItem('token')
+    if (token) {
+      const decode: any = jwtDecode(token);
+      const userId = decode.UserId;
+      if (userId) {
+        this.services.UserProfiledata(userId).subscribe({
+          next: (res) => {
+            this.profiledata = res.data
+          },
+          error: (err) => {
+            console.error("Failed to fetch profile", err);
+          }
+        });
+      }
+    }
 
-// Close both modals
-closeModals(): void {
-this.isImageUploadModalOpen = false;
-this.isEditProfileModalOpen = false;
-}
+  }
+
+
+
+  openImageUploadModal(): void {
+    this.isImageUploadModalOpen = true;
+  }
+
+  closeImageUploadModal(): void {
+    this.isImageUploadModalOpen = false;
+  }
+
+  openEditProfileModal(): void {
+    this.isEditProfileModalOpen = true;
+  }
+
+
+  closeEditProfileModal(): void {
+    this.isEditProfileModalOpen = false;
+  }
+
+  @HostListener('document:keydown', ['$event'])
+  onKeyDown(event: KeyboardEvent): void {
+    if (event.key === 'Escape') {
+      this.closeModals();
+    }
+  }
+
+  closeModals(): void {
+    this.isImageUploadModalOpen = false;
+    this.isEditProfileModalOpen = false;
+  }
+
 }

@@ -16,8 +16,9 @@ import { MyServiceService } from '../../../../my-service.service';
 export class SignUpComponent {
 
   private router = inject(Router);
-  public emailError: string = '';
-  public Matchpassword: string = ''
+  public someerror: string = '';
+  public Matchpassword: string = '';
+  selectedFile: File | null = null;
 
 
   LoginPage() {
@@ -25,6 +26,10 @@ export class SignUpComponent {
   }
 
   constructor(private services: MyServiceService) {
+  }
+
+  onFileSelected(event: any) {
+    this.selectedFile = event.target.files[0];
   }
 
   Signup() {
@@ -41,27 +46,29 @@ export class SignUpComponent {
       this.Matchpassword = ''
     }
 
-    this.emailError = '';
+    this.someerror = '';
 
 
-    const obj = {
-      firstname: this.SignupForm.value.FristName,
-      middlename: this.SignupForm.value.MiddleName,
-      lastname: this.SignupForm.value.LastName,
-      email: this.SignupForm.value.Email,
-      phone: this.SignupForm.value.Phone_No,
-      password: this.SignupForm.value.Pass,
-      address: this.SignupForm.value.Address,
-      age: this.SignupForm.value.Age,
-      gender: this.SignupForm.value.Gender,
-      city: this.SignupForm.value.city,
-      state: this.SignupForm.value.State,
-      image: this.SignupForm.value.Profile_Picture,
-      roleId: this.SignupForm.value.Role === "Owner_Vehicle" ? 2 : 3  //handele the changes of the Role
-    };
+    const formData = new FormData();
+    formData.append('FirstName', this.SignupForm.value.FristName);
+    formData.append('MiddleName', this.SignupForm.value.MiddleName);
+    formData.append('LastName', this.SignupForm.value.LastName);
+    formData.append('Email', this.SignupForm.value.Email);
+    formData.append('Phone', this.SignupForm.value.Phone_No);
+    formData.append('Password', this.SignupForm.value.Pass);
+    formData.append('Address', this.SignupForm.value.Address);
+    formData.append('Age', this.SignupForm.value.Age);
+    formData.append('Gender', this.SignupForm.value.Gender);
+    formData.append('City', this.SignupForm.value.city);
+    formData.append('State', this.SignupForm.value.State);
+    formData.append('RoleId', this.SignupForm.value.Role === "Owner_Vehicle" ? '2' : '3');
+
+    if (this.selectedFile) {
+      formData.append('Image', this.selectedFile);
+    }
 
 
-    this.services.postdat(obj).subscribe({
+    this.services.postdat(formData).subscribe({
       next: (res) => {
         this.router.navigate(['/login']);
       },
@@ -69,7 +76,7 @@ export class SignUpComponent {
         console.error("Signup error:", error);
 
         if (error.status === 400 || error.status === 409 || error.status === 422) {
-          this.emailError = error.error.message || "Something went wrong.";
+          this.someerror = error.error.message || "Something went wrong.";
         }
         else if (error.status === 0) {
           alert("⚠ Server is not running or unreachable! Please try again later.");
@@ -78,8 +85,7 @@ export class SignUpComponent {
           alert("⚠ An unexpected error occurred. Please try again later.");
         }
       }
-    });
-
+    });   
   }
 
 
@@ -116,6 +122,5 @@ export class SignUpComponent {
   get Address(): FormControl { return this.SignupForm.get("Address") as FormControl; }
   get Pass(): FormControl { return this.SignupForm.get("Pass") as FormControl; }
   get Cpass(): FormControl { return this.SignupForm.get("Cpass") as FormControl; }
-
 }
 

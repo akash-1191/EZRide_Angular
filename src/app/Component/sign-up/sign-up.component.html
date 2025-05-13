@@ -28,7 +28,6 @@
           FristName</span>
         <span class="text-red-500"
           *ngIf="FristName.errors?.['pattern'] && (FristName.touched || FristName.dirty)">Invalid Name</span>
-
       </div>
 
       <div>
@@ -120,7 +119,7 @@
           Email</span>
         <span class="text-red-500" *ngIf="Email.errors?.['email'] && (Email.touched || Email.dirty)">Please Enter
           Email</span>
-        <span class="text-red-500" *ngIf="emailError">{{emailError}}</span>
+        <!-- <span class="text-red-500" *ngIf="emailError">{{emailError}}</span> -->
 
       </div>
     </div>
@@ -128,7 +127,7 @@
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
       <div>
         <label class="block   text-white   text-sm font-bold mb-2" for="image">Profile Picture</label>
-        <input class="w-full px-3 py-2 border text-slate-200 border-gray-300 rounded-md focus:outline-none " type="file"
+        <input (change)="onFileSelected($event)" class="w-full px-3 py-2 border text-slate-200 border-gray-300 rounded-md focus:outline-none " type="file"
           id="image" name="image" formControlName="Profile_Picture">
         <span class="text-red-500" *ngIf="Profile_Picture.errors?.['required'] && Profile_Picture.touched">Please
           Upload Profile Picture</span>
@@ -151,7 +150,6 @@
           Password</span>
         <span class="text-red-500" *ngIf="Pass.errors?.['pattern'] && (Pass.dirty || Pass.touched)">Strong Password
           Enter like:</span>
-
       </div>
 
       <div class="mb-4">
@@ -163,6 +161,7 @@
           *ngIf="Cpass.touched && Pass.value !== Cpass.value && Cpass.dirty">{{Matchpassword}}</span>
       </div>
     </div>
+    <span class="text-red-500 flex justify-center text-center" *ngIf="someerror">{{someerror}}</span>
 
     <button type="button" [disabled]="SignupForm.invalid"
       [ngClass]="SignupForm.invalid ? 'bg-gray-400 cursor-not-allowed' : 'bg-gradient-to-r from-[#0f2027] via-[#203a43] to-[#2c5364] hover:brightness-110'"

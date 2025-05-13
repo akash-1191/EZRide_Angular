@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { RouterLink, RouterOutlet } from '@angular/router';
+import { Component, inject} from '@angular/core';
+import { Router, RouterLink, RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-customers-dashboard',
@@ -9,4 +9,11 @@ import { RouterLink, RouterOutlet } from '@angular/router';
 })
 export class CustomersDashboardComponent {
 
+private router = inject(Router)
+  
+
+  logout() {
+  localStorage.clear();
+  this.router.navigate(['/login']);
+}
 }

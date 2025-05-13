@@ -4,69 +4,69 @@
     <title>Customer Dashboard</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
+
 <section class="flex items-center justify-center md:p-6 p-2 ">
     <!-- Profile Section -->
     <div class="bg-white rounded-lg shadow-xl w-full">
         <!-- Background Header -->
         <div class="bg-gradient-to-r from-gray-600 to-gray-800 text-white p-6 rounded-t-lg">
             <div class="text-center text-2xl font-bold">
-                <p>User Name</p>
+                <p>{{ profiledata.firstname }} {{ profiledata.middlename }} {{ profiledata.lastname }}</p>
             </div>
         </div>
-        <!-- Profile Info Section -->
+        <!-- Profile Info Section -->   
         <div class="flex justify-center items-center md:p-8 p-0">
             <div class="bg-white shadow-lg rounded-lg p-8 w-full space-y-6">
                 <!-- Header -->
                 <div class="flex flex-col md:flex-row items-start space-x-6 md:space-x-12">
                     <div class="relative group mb-4 md:mb-0">
-                        <img src="#" alt="Profile Picture"
+                        <img [src]="profiledata.image" alt="Profile Picture"
                             class="md:w-52 md:h-52 w-44 h-44 md:rounded-sm rounded-full md: ml-12 border-4 border-gray-600 transition-all duration-300 ease-in-out group-hover:blur-[1px]" />
                         <div
                             class="absolute inset-0 left-10 flex items-center justify-center opacity-0 group-hover:opacity-100 group-hover:bg-none transition-all duration-300">
                             <button type="button" (click)="openImageUploadModal()"
                                 class="bg-gray-500 text-white px-2 py-1 text-2xl rounded-full">
                                 <i class="fa fa-pencil-alt cursor-pointer"></i>
-                            </button>   
+                            </button>
                         </div>
                     </div>
 
                     <div class="text-center mb-6 w-full">
-                        <h1 class="md:text-3xl text-2xl font-extrabold text-gray-800">
-                            User Name
-                        </h1>
-                       <!-- Company Details -->
+                        <!-- <h1 class="md:text-3xl text-2xl font-extrabold text-gray-800">
+                            User Name 
+                        </h1> -->
+                        <!-- Company Details -->
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 text-left mx-4 mt-10">
                             <div class="space-y-2">
-                                <p class="text-gray-800 font-semibold">Full Name:- <span class="text-gray-400">Gouda
-                                        Somnath Upendra</span>
+                                <p class="text-gray-800 font-semibold">Full Name:- <span class="text-gray-600"> {{ profiledata.firstname }} {{ profiledata.middlename }} {{ profiledata.lastname }}</span>
                                 </p>
                             </div>
                             <div class="space-y-2">
-                                <p class="text-gray-800 font-semibold">Age:- <span class="text-gray-400">22</span></p>
+                                <p class="text-gray-800 font-semibold">Age:- <span class="text-gray-600">{{profiledata.age}}</span></p>
                             </div>
                             <div class="space-y-2">
-                                <p class="text-gray-800 font-semibold">Gender:- <span class="text-gray-400">Male</span>
+                                <p class="text-gray-800 font-semibold">Gender:- <span class="text-gray-600">{{profiledata.gender}}</span>
                                 </p>
                             </div>
                             <div class="space-y-2">
                                 <p class="text-gray-800 font-semibold">Phone No:- <span
-                                        class="text-gray-400">6355923492</span></p>
+                                        class="text-gray-600">{{profiledata.phone}}</span></p>
                             </div>
                             <div class="space-y-2">
-                                <p class="text-gray-800 font-semibold">State:- <span class="text-gray-400">Gujrat</span>
+                                <p class="text-gray-800 font-semibold">State:- <span class="text-gray-600">{{profiledata.state}}</span>
                                 </p>
                             </div>
                             <div class="space-y-2">
-                                <p class="text-gray-800 font-semibold">City:- <span class="text-gray-400">Surat</span>
+                                <p class="text-gray-800 font-semibold">City:- <span class="text-gray-600">{{profiledata.city}}</span>
                                 </p>
                             </div>
                             <div class="space-y-2">
                                 <p class="text-gray-800 font-semibold">Email:- <span
-                                        class="text-gray-400">Akash123gmail.com</span></p>
+                                        class="text-gray-600">{{profiledata.email}}</span></p>
                             </div>
                             <div class="space-y-2">
                                 <p class="text-gray-800 font-semibold">Address:- <span
-                                        class="text-gray-400">Pandesara</span></p>
+                                        class="text-gray-600">{{profiledata.address}}</span></p>
                             </div>
                         </div>
                     </div>
@@ -275,4 +275,6 @@
             </div>
         </div>
     </div>
+
+    
 </section>
