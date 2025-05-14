@@ -29,7 +29,7 @@ export class LoginComponent implements OnInit {
   get Password(): FormControl { return this.LoginForm.get('Password') as FormControl; }
 
 
-  
+
   ngOnInit(): void {
     const token = localStorage.getItem("token");
     const role = localStorage.getItem("Role");
@@ -38,14 +38,14 @@ export class LoginComponent implements OnInit {
     if (token && role) {
       this.redirectBasedOnRole(role);
     }
-    
+
   }
 
   SignUpPage() {
     this.router.navigate(['/signup']);
   }
 
-  Login(): void  {
+  Login(): void {
     if (this.LoginForm.invalid) {
       this.roleError = "Please fill in all required fields.";
       return;
@@ -58,8 +58,8 @@ export class LoginComponent implements OnInit {
     // Call the login service
     this.loginservices.LoginpostData(loginobj).subscribe(
       (res: any) => {
-        const token = res.token;
-        const roleName = res.user.roleName;
+        const token = res.data.token;
+        const roleName = res.data.user.roleName;
 
         // Save token and role to localStorage
         localStorage.setItem("token", token);
@@ -67,6 +67,7 @@ export class LoginComponent implements OnInit {
 
         // Redirect based on the role
         this.redirectBasedOnRole(roleName);
+
       },
       (error: HttpErrorResponse) => {
         // Handle different error responses

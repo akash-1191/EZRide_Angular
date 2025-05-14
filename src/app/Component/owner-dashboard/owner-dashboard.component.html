@@ -32,7 +32,7 @@
                     <li class="px-5 hidden md:block">
 
                     </li>
-                    <a routerLink="/customer-dashboard/cust_dashboard" class="cursor-pointer">
+                    <a routerLink="/OwnerVehicle-dashboard/own_dashboard" class="cursor-pointer">
                         <span
                             class="relative flex flex-row items-center h-11 focus:outline-none hover:bg-gray-600 text-white-600 hover:text-white-800 border-l-4 border-transparent  hover:border-gray-800 pr-6">
                             <div class="ml-3">
@@ -48,15 +48,15 @@
                             <div class="ml-3">
 
                             </div>
-                            <button class="ml-2 text-sm tracking-wide truncate">Request</button>
+                            <button class="ml-2 text-sm tracking-wide truncate"></button>
                         </span>
                     </li>
-                    <li  class="cursor-pointer">
+                    <li class="cursor-pointer">
                         <span
                             class="relative flex flex-row items-center h-11 focus:outline-none hover:bg-gray-600 text-white-600 hover:text-white-800 border-l-4 border-transparent  hover:border-gray-800 pr-6">
                             <div class="ml-3">
                             </div>
-                            <button class="ml-2 text-sm tracking-wide truncate">Details</button>
+                            <button class="ml-2 text-sm tracking-wide truncate"></button>
                         </span>
                     </li>
 
@@ -67,11 +67,10 @@
                             <div class="ml-3">
 
                             </div>
-                            <button class="ml-2 text-sm tracking-wide truncate"> History</button>
+                            <button class="ml-2 text-sm tracking-wide truncate"> </button>
                         </span>
                     </li>
-
-                    <a routerLink="/customer-dashboard/Profile" class="cursor-pointer">
+                    <a routerLink="/OwnerVehicle-dashboard/own_Profile" class="cursor-pointer">
                         <span
                             class="relative flex flex-row items-center h-11 focus:outline-none hover:bg-gray-600 text-white-600 hover:text-white-800 border-l-4 border-transparent  hover:border-gray-800 pr-6">
                             <div class="ml-3">
@@ -84,107 +83,10 @@
                 <p class="mb-14 px-5 py-3 hidden md:block text-center text-xs">Copyright BDCS 2024</p>
             </div>
         </div>
-
         <!--contect all page redirect page -->
         <div class="content h-full ml-14 mt-14 mb-10 md:ml-64">
-         <router-outlet></router-outlet>
+            <router-outlet></router-outlet>
+         
         </div>
     </div>
 </section>
-
-
-<section>
-    <div class="min-h-screen flex flex-col flex-auto flex-shrink-0 antialiased ">
-
-        <!-- Header -->
-        <div class="fixed w-full flex items-center justify-between h-14  bg-gray-800 text-white z-10">
-            <div class="flex items-center justify-start md:justify-center pl-3 w-14 md:w-64 h-14  ml-10 border-none">
-                <img class="w-10 h-10 md:w-10 md:h-10 mr-2 rounded-md overflow-hidden" src="#" />
-                <span class="hidden md:block">Admin Dashboard</span>
-            </div>
-            <div class="flex justify-between items-center h-14 bg-gray-800 header-right">
-
-            </div>
-            <ul class="flex items-center">
-                <li>
-                    <div class="block w-px h-6 mx-3 bg-gray-400 "></div>
-                </li>
-                <li>
-                    <a href="#" class="flex items-center mr-4 hover:text-blue-100">
-                        <span class="inline-flex mr-1">
-                            <i class="fa-solid fa-right-from-bracket"></i>
-                        </span>
-                        Logout
-                    </a>
-                </li>
-            </ul>
-        </div>
-        <!-- Sidebar -->
-        <div
-            class="fixed flex flex-col top-14 left-0 w-14 hover:w-64 md:w-64  bg-gray-900 h-full text-white transition-all duration-300 border-none z-10 sidebar">
-            <div class=" flex flex-col justify-between flex-grow">
-                <ul class="flex flex-col py-4 space-y-1">
-                    <li class="px-5 hidden md:block">
-
-                    </li>
-                    <a routerLink="/customer-dashboard/cust_dashboard" class="cursor-pointer">
-                        <span
-                            class="relative flex flex-row items-center h-11 focus:outline-none hover:bg-gray-600 text-white-600 hover:text-white-800 border-l-4 border-transparent  hover:border-gray-800 pr-6">
-                            <div class="ml-3">
-                                <!-- svg -->
-                            </div>
-                            <button class="ml-2 text-sm tracking-wide truncate">Dashboard</button>
-                        </span>
-                    </a>
-                    <li>
-                    <li class="cursor-pointer">
-                        <span
-                            class="relative flex flex-row items-center h-11 focus:outline-none hover:bg-gray-600 text-white-600 hover:text-white-800 border-l-4 border-transparent  hover:border-gray-800 pr-6">
-                            <div class="ml-3">
-
-                            </div>
-                            <button class="ml-2 text-sm tracking-wide truncate">Request</button>
-                        </span>
-                    </li>
-                    <li  class="cursor-pointer">
-                        <span
-                            class="relative flex flex-row items-center h-11 focus:outline-none hover:bg-gray-600 text-white-600 hover:text-white-800 border-l-4 border-transparent  hover:border-gray-800 pr-6">
-                            <div class="ml-3">
-                            </div>
-                            <button class="ml-2 text-sm tracking-wide truncate">Details</button>
-                        </span>
-                    </li>
-
-                    <li class="cursor-pointer">
-                        <span
-                            class="relative flex flex-row items-center h-11 focus:outline-none hover:bg-gray-600 text-white-600 hover:text-white-800 border-l-4 border-transparent  hover:border-gray-800 pr-6">
-
-                            <div class="ml-3">
-
-                            </div>
-                            <button class="ml-2 text-sm tracking-wide truncate"> History</button>
-                        </span>
-                    </li>
-
-                    <a routerLink="/customer-dashboard/Profile" class="cursor-pointer">
-                        <span
-                            class="relative flex flex-row items-center h-11 focus:outline-none hover:bg-gray-600 text-white-600 hover:text-white-800 border-l-4 border-transparent  hover:border-gray-800 pr-6">
-                            <div class="ml-3">
-                                <!-- svg -->
-                            </div>
-                            <button class="ml-2 text-sm tracking-wide truncate">Profile</button>
-                        </span>
-                    </a>
-                </ul>
-                <p class="mb-14 px-5 py-3 hidden md:block text-center text-xs">Copyright BDCS 2024</p>
-            </div>
-        </div>
-
-        <!--contect all page redirect page -->
-        <div class="content h-full ml-14 mt-14 mb-10 md:ml-64">
-         <router-outlet></router-outlet>
-        </div>
-    </div>
-</section>
-
-

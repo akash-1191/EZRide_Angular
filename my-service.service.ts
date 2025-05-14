@@ -23,7 +23,6 @@ export class MyServiceService {
   }
 
   // ProfileApi
-  // ProfileApi
   UserProfiledata(userId: number): Observable<any> {
     const token = localStorage.getItem('token');
     const headers = new HttpHeaders({
@@ -31,7 +30,17 @@ export class MyServiceService {
     });
 
     const url = `http://localhost:7188/api/Profile/${userId}`;
-    return this.http.get<any>(url,{ headers });
+    return this.http.get<any>(url, { headers });
+  }
+// updateprofiledata
+  UpdateUserData(updateData: any): Observable<any> {
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
+    const UpdateProfileApiUrl  = `http://localhost:7188/api/update-profile`;
+    return this.http.put<any>(UpdateProfileApiUrl ,updateData, { headers });
   }
 
 }

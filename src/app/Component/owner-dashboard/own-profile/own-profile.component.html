@@ -5,23 +5,22 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 
-<section *ngIf="profiledata" class="flex items-center justify-center md:p-6 p-2 ">
+<section class="flex items-center justify-center md:p-6 p-2 ">
     <!-- Profile Section -->
     <div class="bg-white rounded-lg shadow-xl w-full">
         <!-- Background Header -->
         <div class="bg-gradient-to-r from-gray-600 to-gray-800 text-white p-6 rounded-t-lg">
             <div class="text-center text-2xl font-bold">
-                <p>{{ profiledata?.firstname }} {{ profiledata?.middlename }} {{ profiledata?.lastname}}</p>
+                <!-- <p>{{ profiledata?.firstname }} {{ profiledata?.middlename }} {{ profiledata?.lastname}}</p> -->
             </div>
         </div>
-
         <!-- Profile Info Section -->
         <div class="flex justify-center items-center md:p-8 p-0">
             <div class="bg-white shadow-lg rounded-lg p-8 w-full space-y-6">
                 <!-- Header -->
                 <div class="flex flex-col md:flex-row items-start space-x-6 md:space-x-12">
                     <div class="relative group mb-4 md:mb-0">
-                        <img [src]="'http://localhost:7188' + profiledata.image" alt="Profile Picture"
+                        <img src="" alt="Profile Picture"
                             class="md:w-52 md:h-52 w-44 h-44 md:rounded-sm rounded-full md: ml-12 border-4 border-gray-600 transition-all duration-300 ease-in-out group-hover:blur-[1px]" />
                         <div
                             class="absolute inset-0 left-18 flex items-center justify-center opacity-0 group-hover:opacity-100 group-hover:bg-none transition-all duration-300">
@@ -38,41 +37,41 @@
                         <!-- Company Details -->
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 text-left mx-4 mt-10">
                             <div class="space-y-2">
-                                <p class="text-gray-800 font-semibold">Full Name:- <span class="text-gray-600"> {{
+                                <!-- <p class="text-gray-800 font-semibold">Full Name:- <span class="text-gray-600"> {{
                                         profiledata.firstname }} {{ profiledata.middlename }} {{ profiledata.lastname
                                         }}</span>
-                                </p>
+                                </p> -->
                             </div>
                             <div class="space-y-2">
-                                <p class="text-gray-800 font-semibold">Age:- <span
-                                        class="text-gray-600">{{profiledata.age}}</span></p>
+                                <!-- <p class="text-gray-800 font-semibold">Age:- <span
+                                        class="text-gray-600">{{profiledata.age}}</span></p> -->
                             </div>
                             <div class="space-y-2">
-                                <p class="text-gray-800 font-semibold">Gender:- <span
+                                <!-- <p class="text-gray-800 font-semibold">Gender:- <span
                                         class="text-gray-600">{{profiledata.gender}}</span>
-                                </p>
+                                </p> -->
                             </div>
                             <div class="space-y-2">
-                                <p class="text-gray-800 font-semibold">Phone No:- <span
-                                        class="text-gray-600">{{profiledata.phone}}</span></p>
+                                <!-- <p class="text-gray-800 font-semibold">Phone No:- <span
+                                        class="text-gray-600">{{profiledata.phone}}</span></p> -->
                             </div>
                             <div class="space-y-2">
-                                <p class="text-gray-800 font-semibold">State:- <span
+                                <!-- <p class="text-gray-800 font-semibold">State:- <span
                                         class="text-gray-600">{{profiledata.state}}</span>
-                                </p>
+                                </p> -->
                             </div>
                             <div class="space-y-2">
-                                <p class="text-gray-800 font-semibold">City:- <span
+                                <!-- <p class="text-gray-800 font-semibold">City:- <span
                                         class="text-gray-600">{{profiledata.city}}</span>
-                                </p>
+                                </p> -->
                             </div>
                             <div class="space-y-2">
-                                <p class="text-gray-800 font-semibold">Email:- <span
-                                        class="text-gray-600">{{profiledata.email}}</span></p>
+                                <!-- <p class="text-gray-800 font-semibold">Email:- <span
+                                        class="text-gray-600">{{profiledata.email}}</span></p> -->
                             </div>
                             <div class="space-y-2">
-                                <p class="text-gray-800 font-semibold">Address:- <span
-                                        class="text-gray-600">{{profiledata.address}}</span></p>
+                                <!-- <p class="text-gray-800 font-semibold">Address:- <span
+                                        class="text-gray-600">{{profiledata.address}}</span></p> -->
                             </div>
                         </div>
                     </div>
@@ -122,9 +121,12 @@
     </div>
 
     <!-- Modal for User Profile Edit -->
+    <!-- <div *ngIf="isEditProfileModalOpen" class="modal fixed inset-0  top-10 bg-opacity-50 z-50 ">
+        <div class="flex  items-center justify-center">
+            <div class="bg-white text-gray-800 rounded-lg w-11/12 md:w-1/2 p-8 shadow-lg relative"> -->
     <div *ngIf="isEditProfileModalOpen" class="fixed inset-0  top-10 bg-opacity-50 z-50 overflow-auto">
         <div class="flex items-start justify-center min-h-screen pt-10 px-4">
-            <div class="bg-white text-gray-800 rounded-lg w-full max-w-2xl p-4 sm:p-6 md:p-8 shadow-lg relative">   
+            <div class="bg-white text-gray-800 rounded-lg w-full max-w-2xl p-4 sm:p-6 md:p-8 shadow-lg relative">
                 <button type="button" (click)="closeEditProfileModal()"
                     class="absolute top-2 right-2 text-gray-600 hover:text-gray-800 text-2xl">
                     <i class="fas fa-times"></i>
@@ -132,8 +134,7 @@
                 <h2 class="text-2xl font-bold mb-6 text-gray-800">Edit User Profile</h2>
 
                 <!-- Form Grid -->
-                <form [formGroup]="updateUserForm" (ngSubmit)="submitProfileUpdate()"
-                    class="w-full max-w-3xl mx-auto bg-white p-8 rounded-md shadow-md relative z-10">
+                <form class="w-full max-w-3xl mx-auto bg-white p-8 rounded-md shadow-md relative z-10">
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
                         <div>
                             <label class="block text-gray-700 text-sm font-bold mb-2" for="fname">First Name</label>
@@ -141,13 +142,13 @@
                                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500"
                                 type="text" id="fname" name="fname" placeholder="Enter First Name"
                                 formControlName="firstname">
-                            <span class="text-red-500"
+                            <!-- <span class="text-red-500"
                                 *ngIf="firstname.errors?.['required'] && (firstname.touched || firstname.dirty)">Please
                                 Enter
                                 firstname</span>
                             <span class="text-red-500"
                                 *ngIf="firstname.errors?.['pattern'] && (firstname.touched || firstname.dirty)">Invalid
-                                Name</span>
+                                Name</span> -->
                         </div>
 
                         <div>
@@ -156,21 +157,21 @@
                                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500"
                                 type="text" id="mname" name="mname" placeholder="Middle Name"
                                 formControlName="MiddleName">
-                            <span class="text-red-500"
+                            <!-- <span class="text-red-500"
                                 *ngIf="MiddleName.errors?.['pattern'] && (MiddleName.touched || MiddleName.dirty)">Invalid
-                                Name</span>
+                                Name</span> -->
                         </div>
                         <div>
                             <label class="block text-gray-700 text-sm font-bold mb-2" for="lname">Last Name</label>
                             <input
                                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500"
                                 type="text" id="lname" name="lname" placeholder="Last Name" formControlName="LastName">
-                            <span class="text-red-500"
+                            <!-- <span class="text-red-500"
                                 *ngIf="LastName.errors?.['required'] && (LastName.touched || LastName.dirty)">Please
                                 Enter LastName</span>
                             <span class="text-red-500"
                                 *ngIf="LastName.errors?.['pattern'] && (LastName.touched || LastName.dirty)">Invalid
-                                Name</span>
+                                Name</span> -->
                         </div>
                     </div>
 
@@ -180,12 +181,12 @@
                             <input
                                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500"
                                 type="text" id="age" name="age" placeholder="Enter Your Age" formControlName="Age">
-                            <span class="text-red-500"
+                            <!-- <span class="text-red-500"
                                 *ngIf="Age.errors?.['required'] && (Age.touched || Age.dirty)">Please Enter Your
                                 Age</span>
                             <span class="text-red-500"
                                 *ngIf="Age.errors?.['pattern'] && (Age.touched || Age.dirty)">Enter Only
-                                Digit</span>
+                                Digit</span> -->
 
                         </div>
 
@@ -199,9 +200,9 @@
                                 <option value="Female">Female</option>
                                 <option value="Other">Other</option>
                             </select>
-                            <span class="text-red-500"
+                            <!-- <span class="text-red-500"
                                 *ngIf="Gender.errors?.['required'] && (Gender.touched || Gender.dirty)">Please
-                                Select Your Gender</span>
+                                Select Your Gender</span> -->
 
                         </div>
 
@@ -210,7 +211,7 @@
                             <input type="text"
                                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500"
                                 id="phone" name="phone" placeholder="Enter Phone" formControlName="phone">
-                            <span class="text-red-500"
+                            <!-- <span class="text-red-500"
                                 *ngIf="phone.errors?.['required'] && (phone.touched || phone.dirty)">Please
                                 Enter
                                 Phone_Number</span>
@@ -222,7 +223,7 @@
                                 Number Is Short</span>
                             <span class="text-red-500"
                                 *ngIf="phone.errors?.['maxlength'] && (phone.touched || phone.dirty)">maximum
-                                10 Digit</span>
+                                10 Digit</span> -->
                         </div>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
@@ -231,9 +232,9 @@
                             <input
                                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500"
                                 id="state" name="state" placeholder="Select State" formControlName="State">
-                            <span class="text-red-500"
+                            <!-- <span class="text-red-500"
                                 *ngIf="State.errors?.['required'] && (State.touched || State.dirty)">Please Select
-                                Your State</span>
+                                Your State</span> -->
 
                         </div>
                         <div>
@@ -241,9 +242,9 @@
                             <input
                                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500"
                                 type="text" id="city" name="city" placeholder="City" formControlName="city">
-                            <span class="text-red-500"
+                            <!-- <span class="text-red-500"
                                 *ngIf="city.errors?.['required'] && (city.touched || city.dirty)">Please Select
-                                Your City</span>
+                                Your City</span> -->
                         </div>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-1 gap-6 mb-6">
@@ -253,8 +254,8 @@
                                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500"
                                 id="address" name="address" placeholder="Enter Address"
                                 formControlName="Address"></textarea>
-                            <span class="text-red-500" *ngIf="Address.errors?.['required'] && Address.touched">Please
-                                Enter Address</span>
+                            <!-- <span class="text-red-500" *ngIf="Address.errors?.['required'] && Address.touched">Please
+                                Enter Address</span> -->
                         </div>
                     </div>
                     <button
@@ -264,6 +265,9 @@
             </div>
         </div>
     </div>
+
+
+
 
 
 </section>

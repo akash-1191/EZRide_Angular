@@ -9,6 +9,7 @@ import { OwnDashboardComponent } from './Component/owner-dashboard/own-dashboard
 import { AdmiDashboardComponent } from './Component/admin-dashboard/admi-dashboard/admi-dashboard.component';
 import { authGuard } from './auth.guard';
 import { UnauthorizedComponent } from './Component/unauthorized/unauthorized.component';
+import { OwnProfileComponent } from './Component/owner-dashboard/own-profile/own-profile.component';
 
 
 export const routes: Routes = [
@@ -48,7 +49,7 @@ export const routes: Routes = [
 
   {
     path: 'customer-dashboard', component: CustomersDashboardComponent,
-    canActivate: [authGuard],// it's allow when user is login 
+    canActivate: [authGuard],
     data: { expectedRole: 'Customer' },
     children: [
       { path: 'cust_dashboard', component: DashboardComponent },
@@ -57,11 +58,12 @@ export const routes: Routes = [
   },
 
   {
-    path: 'OwnerVehicle-dashboard', component: OwnerDashboardComponent,
-    canActivate: [authGuard],//addd for the check login or not
+    path: 'OwnerVehicle-dashboard',component:OwnerDashboardComponent,
+    canActivate: [authGuard],
     data: { expectedRole: 'OwnerVehicle' },
     children: [
-      { path: "own_dashboard", component: OwnDashboardComponent }
+      { path: "own_dashboard", component: OwnDashboardComponent },
+      { path: "own_Profile", component: OwnProfileComponent }
     ]
   },
 
