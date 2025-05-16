@@ -43,4 +43,19 @@ export class MyServiceService {
     return this.http.put<any>(UpdateProfileApiUrl ,updateData, { headers });
   }
 
+
+  // UpdateProfile Image of the user
+
+  updateUserImage(formData: FormData): Observable<any> {
+     const token = localStorage.getItem('token');
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+    const UadateProfileImage=`http://localhost:7188/api/update-profile-image`
+  return this.http.put<any>(UadateProfileImage, formData,{headers});
+}
+
+  
+
+
 }

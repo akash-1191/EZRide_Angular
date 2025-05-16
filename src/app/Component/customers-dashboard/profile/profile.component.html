@@ -80,6 +80,7 @@
                 </div>
 
                 <!-- Modal for File Upload -->
+                <!-- Modal for File Upload -->
                 <div *ngIf="isImageUploadModalOpen"
                     class="modal fixed inset-0 z-50 flex justify-center items-center transition-all duration-300 ease-in-out">
                     <div
@@ -94,18 +95,19 @@
                             <div>
                                 <label for="uploadedFile" class="block text-gray-700 font-medium mb-2">Select
                                     Image</label>
-                                <input type="file" id="uploadedFile" required="true"
+                                <input type="file" id="uploadedFile" accept="image/*" (change)="onImageSelected($event)"
                                     class="w-full border-2 border-gray-300 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500 transition-all duration-200" />
                             </div>
                             <div class="flex justify-center items-center mt-6">
-                                <button type="button"
-                                    class="bg-gray-600 text-white py-3 px-6 rounded-lg hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-all duration-300">
+                                <button type="button" (click)="submitImageUpload()"
+                                    class="cursor-pointer bg-gray-600 text-white py-3 px-6 rounded-lg hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-all duration-300">
                                     Upload Image
                                 </button>
                             </div>
                         </form>
                     </div>
                 </div>
+
             </div>
         </div>
         <!-- Edit Profile Section -->
@@ -124,9 +126,9 @@
     <!-- Modal for User Profile Edit -->
     <div *ngIf="isEditProfileModalOpen" class="fixed inset-0  top-10 bg-opacity-50 z-50 overflow-auto">
         <div class="flex items-start justify-center min-h-screen pt-10 px-4">
-            <div class="bg-white text-gray-800 rounded-lg w-full max-w-2xl p-4 sm:p-6 md:p-8 shadow-lg relative">   
+            <div class="bg-white text-gray-800 rounded-lg w-full max-w-2xl p-4 sm:p-6 md:p-8 shadow-lg relative">
                 <button type="button" (click)="closeEditProfileModal()"
-                    class="absolute top-2 right-2 text-gray-600 hover:text-gray-800 text-2xl">
+                    class="cursor-pointer absolute top-2 right-2 text-gray-600 hover:text-gray-800 text-2xl">
                     <i class="fas fa-times"></i>
                 </button>
                 <h2 class="text-2xl font-bold mb-6 text-gray-800">Edit User Profile</h2>
@@ -155,21 +157,21 @@
                             <input
                                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500"
                                 type="text" id="mname" name="mname" placeholder="Middle Name"
-                                formControlName="MiddleName">
+                                formControlName="middleName">
                             <span class="text-red-500"
-                                *ngIf="MiddleName.errors?.['pattern'] && (MiddleName.touched || MiddleName.dirty)">Invalid
+                                *ngIf="middleName.errors?.['pattern'] && (middleName.touched || middleName.dirty)">Invalid
                                 Name</span>
                         </div>
                         <div>
                             <label class="block text-gray-700 text-sm font-bold mb-2" for="lname">Last Name</label>
                             <input
                                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500"
-                                type="text" id="lname" name="lname" placeholder="Last Name" formControlName="LastName">
+                                type="text" id="lname" name="lname" placeholder="Last Name" formControlName="lastName">
                             <span class="text-red-500"
-                                *ngIf="LastName.errors?.['required'] && (LastName.touched || LastName.dirty)">Please
-                                Enter LastName</span>
+                                *ngIf="lastName.errors?.['required'] && (lastName.touched || lastName.dirty)">Please
+                                Enter lastName</span>
                             <span class="text-red-500"
-                                *ngIf="LastName.errors?.['pattern'] && (LastName.touched || LastName.dirty)">Invalid
+                                *ngIf="lastName.errors?.['pattern'] && (lastName.touched || lastName.dirty)">Invalid
                                 Name</span>
                         </div>
                     </div>
@@ -179,12 +181,12 @@
                             <label class="block text-gray-700 text-sm font-bold mb-2" for="age">Age</label>
                             <input
                                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500"
-                                type="text" id="age" name="age" placeholder="Enter Your Age" formControlName="Age">
+                                type="text" id="age" name="age" placeholder="Enter Your Age" formControlName="age">
                             <span class="text-red-500"
-                                *ngIf="Age.errors?.['required'] && (Age.touched || Age.dirty)">Please Enter Your
+                                *ngIf="age.errors?.['required'] && (age.touched || age.dirty)">Please Enter Your
                                 Age</span>
                             <span class="text-red-500"
-                                *ngIf="Age.errors?.['pattern'] && (Age.touched || Age.dirty)">Enter Only
+                                *ngIf="age.errors?.['pattern'] && (age.touched || age.dirty)">Enter Only
                                 Digit</span>
 
                         </div>
@@ -193,14 +195,14 @@
                             <label class="block text-gray-700 text-sm font-bold mb-2" for="gender">Gender</label>
                             <select
                                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500"
-                                id="gender" name="gender" formControlName="Gender">
+                                id="gender" name="gender" formControlName="gender">
                                 <option selected disabled>Select your Gender</option>
                                 <option value="Male">Male</option>
                                 <option value="Female">Female</option>
                                 <option value="Other">Other</option>
                             </select>
                             <span class="text-red-500"
-                                *ngIf="Gender.errors?.['required'] && (Gender.touched || Gender.dirty)">Please
+                                *ngIf="gender.errors?.['required'] && (gender.touched || gender.dirty)">Please
                                 Select Your Gender</span>
 
                         </div>
@@ -213,7 +215,7 @@
                             <span class="text-red-500"
                                 *ngIf="phone.errors?.['required'] && (phone.touched || phone.dirty)">Please
                                 Enter
-                                Phone_Number</span>
+                                phone_Number</span>
                             <span class="text-red-500"
                                 *ngIf="phone.errors?.['pattern'] && (phone.touched || phone.dirty)">Enter
                                 only Digit</span>
@@ -230,9 +232,9 @@
                             <label class="block text-gray-700 text-sm font-bold mb-2" for="state">State</label>
                             <input
                                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500"
-                                id="state" name="state" placeholder="Select State" formControlName="State">
+                                id="state" name="state" placeholder="Select State" formControlName="state">
                             <span class="text-red-500"
-                                *ngIf="State.errors?.['required'] && (State.touched || State.dirty)">Please Select
+                                *ngIf="state.errors?.['required'] && (state.touched || state.dirty)">Please Select
                                 Your State</span>
 
                         </div>
@@ -252,8 +254,8 @@
                             <textarea
                                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500"
                                 id="address" name="address" placeholder="Enter Address"
-                                formControlName="Address"></textarea>
-                            <span class="text-red-500" *ngIf="Address.errors?.['required'] && Address.touched">Please
+                                formControlName="address"></textarea>
+                            <span class="text-red-500" *ngIf="address.errors?.['required'] && address.touched">Please
                                 Enter Address</span>
                         </div>
                     </div>

@@ -46,13 +46,12 @@ export const routes: Routes = [
     ]
   },
 
-
   {
     path: 'customer-dashboard', component: CustomersDashboardComponent,
     canActivate: [authGuard],
     data: { expectedRole: 'Customer' },
     children: [
-      { path: 'cust_dashboard', component: DashboardComponent },
+      { path: '', component: DashboardComponent },
       { path: 'Profile', component: ProfileComponent },
     ]
   },
@@ -62,7 +61,7 @@ export const routes: Routes = [
     canActivate: [authGuard],
     data: { expectedRole: 'OwnerVehicle' },
     children: [
-      { path: "own_dashboard", component: OwnDashboardComponent },
+      { path: "", component: OwnDashboardComponent },
       { path: "own_Profile", component: OwnProfileComponent }
     ]
   },

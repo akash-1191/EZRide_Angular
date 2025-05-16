@@ -16,6 +16,7 @@ export class LoginComponent implements OnInit {
 
   private router = inject(Router);
   roleError: string | null = null;
+  isLoading: boolean = false;
 
   constructor(private loginservices: MyServiceService) { }
 
@@ -50,6 +51,9 @@ export class LoginComponent implements OnInit {
       this.roleError = "Please fill in all required fields.";
       return;
     }
+    this.isLoading = true; 
+    this.roleError = null;
+
     const loginobj = {
       email: this.Email.value,
       password: this.Password.value
@@ -65,8 +69,8 @@ export class LoginComponent implements OnInit {
         localStorage.setItem("token", token);
         localStorage.setItem("Role", roleName);
 
-        // Redirect based on the role
-        this.redirectBasedOnRole(roleName);
+        this.isLoading = false;
+      this.redirectBasedOnRole(roleName);
 
       },
       (error: HttpErrorResponse) => {

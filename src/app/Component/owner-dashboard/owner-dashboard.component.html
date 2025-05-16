@@ -1,21 +1,19 @@
 <section>
-    <div class="min-h-screen flex flex-col flex-auto flex-shrink-0 antialiased ">
+    <div class="min-h-screen flex flex-col flex-auto flex-shrink-0 antialiased">
 
         <!-- Header -->
-        <div class="fixed w-full flex items-center justify-between h-14  bg-gray-800 text-white z-10">
-            <div class="flex items-center justify-start md:justify-center pl-3 w-14 md:w-64 h-14  ml-10 border-none">
+        <div class="fixed w-full flex items-center justify-between h-14 bg-gray-800 text-white z-10">
+            <div class="flex items-center justify-start md:justify-center pl-3 w-14 md:w-64 h-14 ml-10 border-none">
                 <img class="w-10 h-10 md:w-10 md:h-10 mr-2 rounded-md overflow-hidden" src="#" />
-                <span class="hidden md:block">Owner_vehicle Dashboard</span>
+                <span class="hidden md:block">Vehicle_Owner Dashboard</span>
             </div>
-            <div class="flex justify-between items-center h-14 bg-gray-800 header-right">
-
-            </div>
+            <div class="flex justify-between items-center h-14 bg-gray-800 header-right"></div>
             <ul class="flex items-center">
                 <li>
                     <div class="block w-px h-6 mx-3 bg-gray-400 "></div>
                 </li>
                 <li>
-                    <p (click)="logout()" class="cursor-pointer flex items-center mr-4 hover:text-blue-100">
+                    <p (click)="logout()" class="flex cursor-pointer items-center mr-4 hover:text-blue-100">
                         <span class="inline-flex mr-1">
                             <i class="fa-solid fa-right-from-bracket"></i>
                         </span>
@@ -24,69 +22,96 @@
                 </li>
             </ul>
         </div>
+
         <!-- Sidebar -->
         <div
-            class="fixed flex flex-col top-14 left-0 w-14 hover:w-64 md:w-64  bg-gray-900 h-full text-white transition-all duration-300 border-none z-10 sidebar">
-            <div class=" flex flex-col justify-between flex-grow">
+            class="fixed flex flex-col top-14 left-0 w-14 hover:w-64 md:w-64 bg-gray-900 h-full text-white transition-all duration-300 border-none z-10 sidebar">
+            <div class="flex flex-col justify-between flex-grow">
                 <ul class="flex flex-col py-4 space-y-1">
-                    <li class="px-5 hidden md:block">
 
-                    </li>
-                    <a routerLink="/OwnerVehicle-dashboard/own_dashboard" class="cursor-pointer">
-                        <span
-                            class="relative flex flex-row items-center h-11 focus:outline-none hover:bg-gray-600 text-white-600 hover:text-white-800 border-l-4 border-transparent  hover:border-gray-800 pr-6">
-                            <div class="ml-3">
-                                <!-- svg -->
-                            </div>
-                            <button class="ml-2 text-sm tracking-wide truncate">Dashboard</button>
+                    <!-- Dashboard Home -->
+                    <a routerLink="/OwnerVehicle-dashboard" class="cursor-pointer">
+                        <span class="relative flex flex-row items-center h-11 hover:bg-gray-600 hover:text-indigo-300 
+        border-l-4 border-transparent hover:border-indigo-500 pr-6 px-4">
+                            <i class="fa-solid fa-gauge w-5 text-sm"></i>
+                            <button class="ml-3 text-sm tracking-wide truncate">Dashboard</button>
                         </span>
                     </a>
-                    <li>
-                    <li class="cursor-pointer">
-                        <span
-                            class="relative flex flex-row items-center h-11 focus:outline-none hover:bg-gray-600 text-white-600 hover:text-white-800 border-l-4 border-transparent  hover:border-gray-800 pr-6">
-                            <div class="ml-3">
 
-                            </div>
-                            <button class="ml-2 text-sm tracking-wide truncate"></button>
+                    <!-- My Vehicles -->
+                    <a routerLink="/OwnerVehicle-dashboard/my-vehicles" class="cursor-pointer">
+                        <span class="relative flex flex-row items-center h-11 hover:bg-gray-600 hover:text-indigo-300 
+        border-l-4 border-transparent hover:border-indigo-500 pr-6 px-4">
+                            <i class="fa-solid fa-car-side w-5 text-sm"></i>
+                            <button class="ml-3 text-sm tracking-wide truncate">My Vehicles</button>
                         </span>
-                    </li>
-                    <li class="cursor-pointer">
-                        <span
-                            class="relative flex flex-row items-center h-11 focus:outline-none hover:bg-gray-600 text-white-600 hover:text-white-800 border-l-4 border-transparent  hover:border-gray-800 pr-6">
-                            <div class="ml-3">
-                            </div>
-                            <button class="ml-2 text-sm tracking-wide truncate"></button>
+                    </a>
+
+                    <!-- Add New Vehicle -->
+                    <a routerLink="/OwnerVehicle-dashboard/add-vehicle" class="cursor-pointer">
+                        <span class="relative flex flex-row items-center h-11 hover:bg-gray-600 hover:text-indigo-300 
+        border-l-4 border-transparent hover:border-indigo-500 pr-6 px-4">
+                            <i class="fa-solid fa-circle-plus w-5 text-sm"></i>
+                            <button class="ml-3 text-sm tracking-wide truncate">Add New Vehicle</button>
                         </span>
-                    </li>
+                    </a>
 
-                    <li class="cursor-pointer">
-                        <span
-                            class="relative flex flex-row items-center h-11 focus:outline-none hover:bg-gray-600 text-white-600 hover:text-white-800 border-l-4 border-transparent  hover:border-gray-800 pr-6">
-
-                            <div class="ml-3">
-
-                            </div>
-                            <button class="ml-2 text-sm tracking-wide truncate"> </button>
+                    <!-- Booking Requests -->
+                    <a routerLink="/OwnerVehicle-dashboard/booking-requests" class="cursor-pointer">
+                        <span class="relative flex flex-row items-center h-11 hover:bg-gray-600 hover:text-indigo-300 
+        border-l-4 border-transparent hover:border-indigo-500 pr-6 px-4">
+                            <i class="fa-solid fa-calendar-check w-5 text-sm"></i>
+                            <button class="ml-3 text-sm tracking-wide truncate">Booking Requests</button>
                         </span>
-                    </li>
+                    </a>
+
+                    <!-- Payments -->
+                    <a routerLink="/OwnerVehicle-dashboard/payments" class="cursor-pointer">
+                        <span class="relative flex flex-row items-center h-11 hover:bg-gray-600 hover:text-indigo-300 
+        border-l-4 border-transparent hover:border-indigo-500 pr-6 px-4">
+                            <i class="fa-solid fa-wallet w-5 text-sm"></i>
+                            <button class="ml-3 text-sm tracking-wide truncate">Payments</button>
+                        </span>
+                    </a>
+
+                    <!-- Feedback & Ratings -->
+                    <a routerLink="/OwnerVehicle-dashboard/feedback" class="cursor-pointer">
+                        <span class="relative flex flex-row items-center h-11 hover:bg-gray-600 hover:text-indigo-300 
+        border-l-4 border-transparent hover:border-indigo-500 pr-6 px-4">
+                            <i class="fa-solid fa-star w-5 text-sm"></i>
+                            <button class="ml-3 text-sm tracking-wide truncate">Feedback & Ratings</button>
+                        </span>
+                    </a>
+
+                    <!-- Profile & Verification -->
                     <a routerLink="/OwnerVehicle-dashboard/own_Profile" class="cursor-pointer">
-                        <span
-                            class="relative flex flex-row items-center h-11 focus:outline-none hover:bg-gray-600 text-white-600 hover:text-white-800 border-l-4 border-transparent  hover:border-gray-800 pr-6">
-                            <div class="ml-3">
-                                <!-- svg -->
-                            </div>
-                            <button class="ml-2 text-sm tracking-wide truncate">Profile</button>
+                        <span class="relative flex flex-row items-center h-11 hover:bg-gray-600 hover:text-indigo-300 
+        border-l-4 border-transparent hover:border-indigo-500 pr-6 px-4">
+                            <i class="fa-solid fa-user-check w-5 text-sm"></i>
+                            <button class="ml-3 text-sm tracking-wide truncate">Profile & Verification</button>
+                        </span>
+                    </a>
+
+                    <!-- Support -->
+                    <a routerLink="/OwnerVehicle-dashboard/support-chat" class="cursor-pointer">
+                        <span class="relative flex flex-row items-center h-11 hover:bg-gray-600 hover:text-indigo-300 
+        border-l-4 border-transparent hover:border-indigo-500 pr-6 px-4">
+                            <i class="fa-solid fa-headset w-5 text-sm"></i>
+                            <button class="ml-3 text-sm tracking-wide truncate">Support</button>
                         </span>
                     </a>
                 </ul>
-                <p class="mb-14 px-5 py-3 hidden md:block text-center text-xs">Copyright BDCS 2024</p>
+
+
+                <p class="mb-14 px-5 py-3 hidden md:block text-center text-xs text-slate-400">
+                    Copyright BDCS 2024
+                </p>
             </div>
         </div>
-        <!--contect all page redirect page -->
-        <div class="content h-full ml-14 mt-14 mb-10 md:ml-64">
+
+        <!-- Page Content -->
+        <div class="content h-full ml-14 mt-14 mb-10 md:ml-64 p-4">
             <router-outlet></router-outlet>
-         
         </div>
     </div>
 </section>
