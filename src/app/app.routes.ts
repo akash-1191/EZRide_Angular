@@ -10,6 +10,8 @@ import { AdmiDashboardComponent } from './Component/admin-dashboard/admi-dashboa
 import { authGuard } from './auth.guard';
 import { UnauthorizedComponent } from './Component/unauthorized/unauthorized.component';
 import { OwnProfileComponent } from './Component/owner-dashboard/own-profile/own-profile.component';
+import { AAddvehicleComponent } from './Component/admin-dashboard/a-addvehicle/a-addvehicle.component';
+import { ManagevehicleComponent } from './Component/admin-dashboard/managevehicle/managevehicle.component';
 
 
 export const routes: Routes = [
@@ -71,7 +73,9 @@ export const routes: Routes = [
     canActivate: [authGuard],
     data: { expectedRole: 'Admin' },
     children: [
-      { path: "", component: AdmiDashboardComponent }
+      { path: "", component: AdmiDashboardComponent },
+      {path:"a_addvehicle",component:AAddvehicleComponent},
+      {path:"manageVehicle",component:ManagevehicleComponent}
     ]
   },
 ];

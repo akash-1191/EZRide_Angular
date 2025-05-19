@@ -48,10 +48,11 @@ export class LoginComponent implements OnInit {
 
   Login(): void {
     if (this.LoginForm.invalid) {
+      this.isLoading = false;
       this.roleError = "Please fill in all required fields.";
       return;
     }
-    this.isLoading = true; 
+    this.isLoading = true;
     this.roleError = null;
 
     const loginobj = {
@@ -70,17 +71,20 @@ export class LoginComponent implements OnInit {
         localStorage.setItem("Role", roleName);
 
         this.isLoading = false;
-      this.redirectBasedOnRole(roleName);
+        this.redirectBasedOnRole(roleName);
 
       },
       (error: HttpErrorResponse) => {
         // Handle different error responses
         if (error.status === 401 || error.status === 400) {
           this.roleError = error.error.message;
+          this.isLoading = false;
         } else if (error.status === 500) {
           this.roleError = error.error.message || "An error occurred. Please try again.";
+          this.isLoading = false;
         } else {
           this.roleError = "⚠ Server is not running! Please try again later.";
+          this.isLoading = false;
         }
       }
     );
