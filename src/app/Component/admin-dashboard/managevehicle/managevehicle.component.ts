@@ -21,12 +21,20 @@ export class ManagevehicleComponent implements OnInit {
   Successmessage: string = '';
   errormessage: string = '';
   currentYear: number = new Date().getFullYear();
+  // selected: string[] = [];
+  selectedImageModalOpen: boolean = false;
+  noImagesFound: boolean = false;
+  selectedImages: { imageUrl: string, vehicleImageId: number }[] = [];
+  uploadedImages: any[] = [];
+  errormessageinsertimage: any;
 
 
   constructor(private service: MyServiceService) { }
 
   ngOnInit(): void {
+
     this.getAllVehicles();
+    this.fetchFirstImageForEachVehicle();
     this.vehicleForm.get('vehicleType')?.valueChanges.subscribe(value => {
       this.vehicleTypes = value;
 
@@ -42,15 +50,17 @@ export class ManagevehicleComponent implements OnInit {
   }
 
 
+  // display the vehicle data
   getAllVehicles() {
     this.service.getAllVehicles().subscribe({
       next: (res) => {
         this.allVehicles = res;
         this.bikeVehicles = this.allVehicles.filter(v => v.vehicletype === 'Bike');
         this.carVehicles = this.allVehicles.filter(v => v.vehicletype === 'Car');
+        this.fetchFirstImageForEachVehicle();
       },
       error: (err) => {
-        console.error("Error fetching vehicles", err);
+
       }
     });
   }
@@ -104,22 +114,6 @@ export class ManagevehicleComponent implements OnInit {
     fuelTankCapacity: new FormControl('', [Validators.required, Validators.min(0)])
   });
 
-  //  Form Control Getters
-  get vehicleType(): FormControl { return this.vehicleForm.get('vehicleType') as FormControl; }
-  get registrationNo(): FormControl { return this.vehicleForm.get('registrationNo') as FormControl; }
-  get availability(): FormControl { return this.vehicleForm.get('availability') as FormControl; }
-  get fuelType(): FormControl { return this.vehicleForm.get('fuelType') as FormControl; }
-  get mileage(): FormControl { return this.vehicleForm.get('mileage') as FormControl; }
-  get color(): FormControl { return this.vehicleForm.get('color') as FormControl; }
-  get yearOfManufacture(): FormControl { return this.vehicleForm.get('yearOfManufacture') as FormControl; }
-  get insuranceStatus(): FormControl { return this.vehicleForm.get('insuranceStatus') as FormControl; }
-  get rcStatus(): FormControl { return this.vehicleForm.get('rcStatus') as FormControl; }
-  get carName(): FormControl { return this.vehicleForm.get('carName') as FormControl; }
-  get seatingCapacity(): FormControl { return this.vehicleForm.get('seatingCapacity') as FormControl; }
-  get acAvailability(): FormControl { return this.vehicleForm.get('acAvailability') as FormControl; }
-  get bikeName(): FormControl { return this.vehicleForm.get('bikeName') as FormControl; }
-  get engineCapacity(): FormControl { return this.vehicleForm.get('engineCapacity') as FormControl; }
-  get fuelTankCapacity(): FormControl { return this.vehicleForm.get('fuelTankCapacity') as FormControl; }
 
 
   updateSelectedVehicle() {
@@ -152,7 +146,7 @@ export class ManagevehicleComponent implements OnInit {
     } else if (updatedData.vehicleType === 'Car') {
       updatedData.bikeName = null;
     }
-
+    //updaet data of the vehicle
     this.service.updateVehicle(updatedData).subscribe({
       next: (res) => {
         this.Successmessage = "Vehicle updated successfully!";
@@ -160,7 +154,7 @@ export class ManagevehicleComponent implements OnInit {
         this.closeModal();
       },
       error: (err) => {
-        console.error("Update failed:", err);
+
         this.errormessage = err?.error?.message || 'Something went wrong!';
       }
     });
@@ -197,21 +191,38 @@ export class ManagevehicleComponent implements OnInit {
       });
     }
   }
-
+  // delete data of the vehicle
   deleteVehicle(vehicleId: number) {
     if (confirm('Are you sure you want to delete this vehicle?')) {
       this.service.deleteVehicle(vehicleId).subscribe({
         next: (res) => {
           this.Successmessage = 'Vehicle deleted successfully!';
-          this.getAllVehicles(); 
+          this.getAllVehicles();
         },
         error: (err) => {
-          console.error('Error deleting vehicle', err);
+
           this.errormessage = err?.error?.message || 'Failed to delete vehicle.';
         }
       });
     }
   }
+
+  //  Form Control Getters
+  get vehicleType(): FormControl { return this.vehicleForm.get('vehicleType') as FormControl; }
+  get registrationNo(): FormControl { return this.vehicleForm.get('registrationNo') as FormControl; }
+  get availability(): FormControl { return this.vehicleForm.get('availability') as FormControl; }
+  get fuelType(): FormControl { return this.vehicleForm.get('fuelType') as FormControl; }
+  get mileage(): FormControl { return this.vehicleForm.get('mileage') as FormControl; }
+  get color(): FormControl { return this.vehicleForm.get('color') as FormControl; }
+  get yearOfManufacture(): FormControl { return this.vehicleForm.get('yearOfManufacture') as FormControl; }
+  get insuranceStatus(): FormControl { return this.vehicleForm.get('insuranceStatus') as FormControl; }
+  get rcStatus(): FormControl { return this.vehicleForm.get('rcStatus') as FormControl; }
+  get carName(): FormControl { return this.vehicleForm.get('carName') as FormControl; }
+  get seatingCapacity(): FormControl { return this.vehicleForm.get('seatingCapacity') as FormControl; }
+  get acAvailability(): FormControl { return this.vehicleForm.get('acAvailability') as FormControl; }
+  get bikeName(): FormControl { return this.vehicleForm.get('bikeName') as FormControl; }
+  get engineCapacity(): FormControl { return this.vehicleForm.get('engineCapacity') as FormControl; }
+  get fuelTankCapacity(): FormControl { return this.vehicleForm.get('fuelTankCapacity') as FormControl; }
 
   closeModal() {
     this.isModalOpen = false;
@@ -221,6 +232,144 @@ export class ManagevehicleComponent implements OnInit {
   onKeyDown(event: KeyboardEvent): void {
     if (event.key === 'Escape') {
       this.closeModal();
+      this.closeImageModal();
     }
+  }
+
+  // featch image asho show the image in the table row
+  vehicleImages: { [key: number]: string } = {};
+  fetchFirstImageForEachVehicle(): void {
+    this.allVehicles.forEach((vehicle: any) => {
+      this.service.getVehicleImages(vehicle.vehicleId).subscribe(
+        (images: any[]) => {
+          if (images.length > 0) {
+            // Assuming imagePath is relative, you need to prefix with base URL
+            this.vehicleImages[vehicle.vehicleId] = 'http://localhost:7188/' + images[0].imagePath;
+
+          }
+        },
+        // error => console.error(`Error fetching images for vehicle ID ${vehicle.id}:`, error)
+      );
+    });
+  }
+
+  // select image in the modal
+  onImageSelected(event: any): void {
+    const file = event.target.files[0];
+    const vehicleId = this.selectedVehicle;
+
+    if (!file || !vehicleId) return;
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.uploadedImages.push({
+        imageUrl: reader.result as string,
+        vehicleImageId: 0
+      });
+    };
+    reader.readAsDataURL(file);
+
+    // Upload API Call (insert image)
+    this.service.uploadVehicleImage(vehicleId, file).subscribe({
+      next: (res) => {
+        this.refreshModalImages(vehicleId);
+      },
+      error: (err) => {
+        this.errormessageinsertimage = 'Image upload failed.';
+      }
+    });
+  }
+
+  //refress modal 
+  refreshModalImages(vehicleId: number): void {
+    const baseUrl = "http://localhost:7188/";
+
+    this.service.getVehicleImages(vehicleId).subscribe(
+      (response) => {
+        if (response && response.length > 0) {
+          this.selectedImages = response.map((img: any) => ({
+
+            imageUrl: baseUrl + img.imagePath,
+            vehicleImageId: img.vehicleImageId
+
+          }));
+          console.log('selectedVehicle in onImageSelected _otherfuncetiuonj:', this.selectedVehicle);
+          this.noImagesFound = false;
+        } else {
+          this.selectedImages = [];
+          this.noImagesFound = true;
+        }
+      },
+      (error) => {
+        this.selectedImages = [];
+        this.noImagesFound = true;
+      }
+    );
+  }
+
+
+
+
+
+
+
+
+  //delete image in the modal
+  deleteVehicleImage(vehicleImageId: number) {
+    if (confirm('Are you sure you want to delete this image?')) {
+      this.service.deleteVehicleImage(vehicleImageId).subscribe({
+        next: (res) => {
+          this.Successmessage = 'Vehicle deleted successfully!';
+          this.selectedImages = this.selectedImages.filter(img => {
+            if (typeof img === 'string') return true;
+            return img.vehicleImageId !== vehicleImageId;
+          });
+        },
+        error: (err) => {
+
+          this.errormessage = err?.error?.message || 'Failed to delete vehicle.';
+        }
+      });
+    }
+  }
+
+  // upload image in the perticulr vehicleid 
+
+  openImageModal(vehicleId: number) {
+    const baseUrl = "http://localhost:7188/";
+
+    this.selectedVehicle = vehicleId;
+
+    this.service.getVehicleImages(vehicleId).subscribe(
+      (response) => {
+        if (response && response.length > 0) {
+          // Image ka pura path banao
+          this.selectedImages = response.map((img: any) => ({
+            imageUrl: baseUrl + img.imagePath,
+            vehicleImageId: img.vehicleImageId
+          }));
+
+          this.noImagesFound = false;
+        } else {
+          this.selectedImages = [];
+          this.noImagesFound = true;
+        }
+        this.selectedImageModalOpen = true;
+        this.selectedVehicle = vehicleId;
+      },
+      (error) => {
+
+        this.selectedImages = [];
+        this.noImagesFound = true;
+        this.selectedImageModalOpen = true;
+      }
+    );
+  }
+
+  closeImageModal() {
+    this.selectedImageModalOpen = false;
+    this.selectedImages = [];
+    this.noImagesFound = false;
+    this.ngOnInit();
   }
 }

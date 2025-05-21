@@ -1,5 +1,60 @@
 <div class="container mx-auto p-4 space-y-10">
+
+
+  <div *ngIf="selectedImageModalOpen"
+    class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 bg-opacity-60">
+    <div class="relative bg-white rounded-lg shadow-lg max-w-3xl w-full p-6 space-y-4">
+
+      <button (click)="closeImageModal()"
+        class="absolute top-2 right-3 text-gray-700 rounded-full p-2 hover:text-gray-900">
+        <i class="fas fa-times text-lg hover:text-xl"></i>
+      </button>
+
+
+      <div *ngIf="!noImagesFound">
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+          <ng-container *ngIf="selectedImages.length < 3">
+            <div
+              class="relative p-2 flex items-center justify-center h-40 w-full border-2 border-dashed border-green-400 rounded shadow text-green-600 cursor-pointer hover:bg-green-50 transition"
+              (click)="fileInput.click()">
+              <i class="fas fa-plus text-4xl"></i>
+              <input type="file" #fileInput (change)="onImageSelected($event)" hidden />
+            </div>
+          </ng-container>
+
+          <ng-container *ngFor="let img of selectedImages">
+            <div class="relative w-44 h-52 group overflow-hidden rounded shadow border ">
+              <img [src]="img.imageUrl" alt="Preview"
+                class="w-full h-full  object-cover transition-transform duration-300 group-hover:scale-105" />
+              <button (click)="deleteVehicleImage(typeof img === 'string' ? 0 : img.vehicleImageId)"
+                class="absolute top-0 right-0 bg-black bg-opacity-60 text-white rounded-sm p-1 hover:text-red-400 transition">
+                <i class="fas fa-times text-md "></i>
+              </button>
+            </div>
+          </ng-container>
+        </div>
+
+        <p *ngIf="errormessageinsertimage" class="text-red-600 text-sm mt-2">{{ errormessageinsertimage }}</p>
+      </div>
+
+      <div *ngIf="noImagesFound" class="text-center text-gray-600 text-lg font-medium py-10">
+        <i class="fas fa-image-slash text-4xl text-red-400 mb-4"></i><br />
+        <div *ngIf="selectedImages.length < 3"
+          class="mt-4 mx-auto w-40 h-40 border-2 border-dashed border-green-400 rounded shadow flex items-center justify-center text-green-600 cursor-pointer hover:bg-green-50"
+          (click)="fileInput.click()">
+          <i class="fas fa-plus text-4xl"></i>
+          <input type="file" #fileInput (change)="onImageSelected($event)" hidden />
+        </div>
+        <p class="text-sm mt-2 text-gray-500">Upload Image</p>
+        <p *ngIf="errormessageinsertimage" class="text-red-600 text-sm mt-2">{{ errormessageinsertimage }}</p>
+      </div>
+    </div>
+  </div>
+
+
+
   <!-- Bike Vehicles Table -->
+
   <div class="bg-white shadow-md rounded-lg overflow-x-auto">
     <h2 class="text-xl font-semibold text-gray-800 px-4 py-3 border-b">
       <i class="fas fa-motorcycle text-red-600 text-xl"></i> Bike Vehicles
@@ -18,19 +73,40 @@
       </thead>
       <tbody>
         <tr *ngFor="let bike of bikeVehicles" class="border-t">
-          <td class="px-4 py-3">{{ bike.bikeName }}</td>
+          <td class="px-4 py-3 flex items-center gap-2">
+            <div class="relative group w-10 h-8">
+
+              <!-- Image if available -->
+              <img *ngIf="vehicleImages[bike.vehicleId]; else noImgBike" [src]="vehicleImages[bike.vehicleId]"
+                class="w-full h-full object-cover rounded" />
+              <!-- If image is NOT available -->
+              <ng-template #noImgBike>
+                <div class="w-full h-full bg-gray-100 flex items-center justify-center rounded border">
+                  <i class="fas fa-plus text-blue-500 text-sm"></i>
+                </div>
+              </ng-template>
+
+              <!-- Eye icon overlay -->
+              <button (click)="openImageModal(bike.vehicleId)" title="AddImage"
+                class="absolute inset-0 flex items-center justify-center bg-black/50 bg-opacity-40 opacity-0 group-hover:opacity-100 hover:cursor-pointer transition-opacity">
+                <i class="fas fa-eye text-white text-sm"></i>
+              </button>
+            </div>
+            {{ bike.bikeName }}
+          </td>
           <td class="px-4 py-3">{{ bike.registrationNo }}</td>
           <td class="px-4 py-3">{{ bike.mileage }} km/l</td>
           <td class="px-4 py-3">{{ bike.fuelType }}</td>
           <td class="px-4 py-3">{{ bike.yearOfManufacture }}</td>
           <td class="px-4 py-3">{{ bike.color }}</td>
-          <td class="px-4 py-3 text-center space-x-2">
-            <button title="Edit" (click)="openModal(bike)"><i
-                class="fas fa-edit text-green-500 text-lg cursor-pointer"></i></button>
-            <button title="Delete" (click)="deleteVehicle(bike.vehicleId)"><i
-                class="fas fa-trash text-red-600 text-lg cursor-pointer"></i></button>
-            <button title="AddImage">
-              <i class="fas fa-plus text-blue-600 text-lg cursor-pointer"></i></button>
+          <td class="px-4 md:px-2 py-3 text-center space-x-2">
+            <button title="Edit" (click)="openModal(bike)">
+              <i class="fas fa-edit text-green-500 text-lg cursor-pointer"></i>
+            </button>
+            <button title="Delete" (click)="deleteVehicle(bike.vehicleId)">
+              <i class="fas fa-trash text-red-600 text-lg cursor-pointer"></i>
+            </button>
+            
           </td>
         </tr>
       </tbody>
@@ -47,6 +123,7 @@
         <tr>
           <th class="px-4 py-3">Car Name</th>
           <th class="px-4 py-3">Registration No</th>
+          <th class="px-4 py-3">Mileage</th>
           <th class="px-4 py-3">Seating</th>
           <th class="px-4 py-3">AC</th>
           <th class="px-4 py-3">Fuel</th>
@@ -56,19 +133,38 @@
       </thead>
       <tbody>
         <tr *ngFor="let car of carVehicles" class="border-t">
-          <td class="px-4 py-3">{{ car.carName }}</td>
+          <td class="px-4 py-3 flex items-center gap-2">
+            <div class="relative group w-10 h-8">
+              <!-- Image if available -->
+              <img *ngIf="vehicleImages[car.vehicleId]; else noImgCar" [src]="vehicleImages[car.vehicleId]"
+                class="w-full h-full object-cover rounded" />
+
+              <!-- If image is NOT available -->
+              <ng-template #noImgCar>
+                <div class="w-full h-full bg-gray-100 flex items-center justify-center rounded border">
+                  <i class="fas fa-plus text-blue-500 text-sm"></i>
+                </div>
+              </ng-template>
+
+              <!-- Eye icon overlay -->
+              <button (click)="openImageModal(car.vehicleId)" title="AddImage"
+                class="absolute inset-0 flex items-center justify-center bg-black/50 bg-opacity-40 opacity-0 group-hover:opacity-100 hover:cursor-pointer transition-opacity">
+                <i class="fas fa-eye text-white text-sm"></i>
+              </button>
+            </div>
+            {{ car.carName }}
+          </td>
           <td class="px-4 py-3">{{ car.registrationNo }}</td>
+          <td class="px-4 py-3">{{ car.mileage}} km/l</td>
           <td class="px-4 py-3">{{ car.seatingCapacity }}</td>
           <td class="px-4 py-3">{{ car.acAvailability || 'No' }}</td>
           <td class="px-4 py-3">{{ car.fuelType }}</td>
           <td class="px-4 py-3">{{ car.yearOfManufacture }}</td>
-          <td class="px-4 py-3 text-center space-x-2">
+          <td class="px-4 md:px-2 py-3 text-center space-x-2">
             <button title="Edit" (click)="openModal(car)"><i
                 class="fas fa-edit text-green-500 text-lg cursor-pointer"></i></button>
             <button title="Delete" (click)="deleteVehicle(car.vehicleId)"><i
                 class="fas fa-trash text-red-600 text-lg cursor-pointer"></i></button>
-            <button title="AddImage">
-              <i class="fas fa-plus text-blue-600 text-lg cursor-pointer"></i></button>
           </td>
         </tr>
       </tbody>

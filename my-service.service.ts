@@ -100,4 +100,55 @@ export class MyServiceService {
     const url = `http://localhost:7188/api/deleteVehicle/${vehicleId}`;
     return this.http.delete<any>(url, { headers });
   }
+
+
+  // Add Image for Vehicle
+  uploadVehicleImage(vehicleId: number, imageFile: File): Observable<any> {
+    const formData = new FormData();
+    formData.append('VehicleId', vehicleId.toString());
+    formData.append('ImageFile', imageFile);
+
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+
+    const url = `http://localhost:7188/api/uploadVehicleImage`;
+    return this.http.post<any>(url, formData, { headers });
+  }
+
+
+  // Get All Images by Vehicle ID
+  getVehicleImages(vehicleId: number): Observable<any> {
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+
+    const url = `http://localhost:7188/api/getImagesByVehicle/${vehicleId}`;
+    return this.http.get<any>(url, { headers });
+  }
+
+  // Update Vehicle Image
+  // updateVehicleImage(vehicleImageId: number, formData: FormData): Observable<any> {
+  //   const token = localStorage.getItem('token');
+  //   const headers = new HttpHeaders({
+  //     'Authorization': `Bearer ${token}`
+  //   });
+
+  //   const url = `http://localhost:7188/api/updateVehicleImage/${vehicleImageId}`;
+  //   return this.http.put<any>(url, formData, { headers });
+  // }
+
+
+  // Delete Vehicle Image
+  deleteVehicleImage(vehicleImageId: number): Observable<any> {
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+
+    const url = `http://localhost:7188/api/deleteVehicleImage/${vehicleImageId}`;
+    return this.http.delete<any>(url, { headers });
+  }
 }
