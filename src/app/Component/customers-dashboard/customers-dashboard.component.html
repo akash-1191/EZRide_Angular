@@ -4,8 +4,8 @@
         <!-- Header -->
         <div class="fixed w-full flex items-center justify-between h-14 bg-gray-800 text-white z-10">
             <div class="flex items-center justify-start md:justify-center pl-3 w-14 md:w-64 h-14 ml-10 border-none">
-                <img class="w-10 h-10 md:w-10 md:h-10 mr-2 rounded-md overflow-hidden" src="#" />
-                <span class="hidden md:block">Customer Dashboard</span>
+                <!-- <img class="w-10 h-10 md:w-10 md:h-10 mr-2 rounded-md overflow-hidden" src="#" /> -->
+                <p class="hidden md:block mr-14 text-xl">Customer Dashboard</p>
             </div>
             <div class="flex justify-between items-center h-14 bg-gray-800 header-right"></div>
             <ul class="flex items-center">
@@ -31,7 +31,7 @@
                 <ul class="flex flex-col py-4 space-y-1">
 
                     <!-- Dashboard Home -->
-                    <a routerLink="/UserDashboard" class="cursor-pointer">
+                    <a routerLink="/customer-dashboard" class="cursor-pointer">
                         <span class=" relative flex flex-row items-center h-11 hover:bg-gray-600 hover:text-indigo-300 
         border-l-4 border-transparent hover:border-indigo-500 pr-6 px-4">
                             <i class="fa-solid fa-gauge w-5 text-sm "></i>
@@ -40,7 +40,7 @@
                     </a>
 
                     <!-- Booking Trip -->
-                    <a routerLink="/UserDashboard/booking-trip" class="cursor-pointer">
+                    <a routerLink="/customer-dashboard/vehicleavaliblebooking" class="cursor-pointer">
                         <span class="relative flex flex-row items-center h-11 hover:bg-gray-600 hover:text-indigo-300 
         border-l-4 border-transparent hover:border-indigo-500 pr-6 px-4">
                             <i class="fa-solid fa-car w-5 text-sm"></i>
@@ -49,7 +49,7 @@
                     </a>
 
                     <!-- My Bookings -->
-                    <a routerLink="/UserDashboard/my-bookings" class="cursor-pointer">
+                    <a routerLink="/customer-dashboard/my-bookings" class="cursor-pointer">
                         <span class="relative flex flex-row items-center h-11 hover:bg-gray-600 hover:text-indigo-300 
         border-l-4 border-transparent hover:border-indigo-500 pr-6 px-4">
                             <i class="fa-solid fa-calendar-check w-5 text-sm"></i>
@@ -58,7 +58,7 @@
                     </a>
 
                     <!-- Payments -->
-                    <a routerLink="/UserDashboard/payments" class="cursor-pointer">
+                    <a routerLink="/customer-dashboard/payments" class="cursor-pointer">
                         <span class="relative flex flex-row items-center h-11 hover:bg-gray-600 hover:text-indigo-300 
         border-l-4 border-transparent hover:border-indigo-500 pr-6 px-4">
                             <i class="fa-solid fa-wallet w-5 text-sm"></i>
@@ -67,7 +67,7 @@
                     </a>
 
                     <!-- Trip History -->
-                    <a routerLink="/UserDashboard/trip-history" class="cursor-pointer">
+                    <a routerLink="/customer-dashboard/trip-history" class="cursor-pointer">
                         <span class="relative flex flex-row items-center h-11 hover:bg-gray-600 hover:text-indigo-300 
         border-l-4 border-transparent hover:border-indigo-500 pr-6 px-4">
                             <i class="fa-solid fa-clock-rotate-left w-5 text-sm"></i>
@@ -76,7 +76,7 @@
                     </a>
 
                     <!-- Return Vehicle -->
-                    <a routerLink="/UserDashboard/return-vehicle" class="cursor-pointer">
+                    <a routerLink="/customer-dashboard/return-vehicle" class="cursor-pointer">
                         <span class="relative flex flex-row items-center h-11 hover:bg-gray-600 hover:text-indigo-300 
         border-l-4 border-transparent hover:border-indigo-500 pr-6 px-4">
                             <i class="fa-solid fa-rotate-left w-5 text-sm"></i>
@@ -85,7 +85,7 @@
                     </a>
 
                     <!-- Security Refund -->
-                    <a routerLink="/UserDashboard/security-refund" class="cursor-pointer">
+                    <a routerLink="/customer-dashboard/security-refund" class="cursor-pointer">
                         <span class="relative flex flex-row items-center h-11 hover:bg-gray-600 hover:text-indigo-300 
         border-l-4 border-transparent hover:border-indigo-500 pr-6 px-4">
                             <i class="fa-solid fa-sack-dollar w-5 text-sm"></i>
@@ -93,8 +93,7 @@
                         </span>
                     </a>
 
-                    <!-- Profile -->
-                    <a routerLink="/UserDashboard/profile" class="cursor-pointer">
+                    <a routerLink="/customer-dashboard/customerProfile" class="cursor-pointer">
                         <span class="relative flex flex-row items-center h-11 hover:bg-gray-600 hover:text-indigo-300 
         border-l-4 border-transparent hover:border-indigo-500 pr-6 px-4">
                             <i class="fa-solid fa-user w-5 text-sm"></i>
@@ -103,7 +102,7 @@
                     </a>
 
                     <!-- Feedback -->
-                    <a routerLink="/UserDashboard/feedback" class="cursor-pointer">
+                    <a routerLink="/customer-dashboard/feedback" class="cursor-pointer">
                         <span class="relative flex flex-row items-center h-11 hover:bg-gray-600 hover:text-indigo-300 
         border-l-4 border-transparent hover:border-indigo-500 pr-6 px-4">
                             <i class="fa-solid fa-comment-dots w-5 text-sm"></i>

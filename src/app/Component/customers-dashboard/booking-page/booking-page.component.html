@@ -1,0 +1,275 @@
+<body class="bg-white text-[#1f1f1f]">
+    <div class="max-w-6xl mx-auto p-4">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+            <!-- Left: Image & Thumbnails -->
+            <div class="lg:col-span-1 mt-10">
+                <!-- FRAME container -->
+                <div class="relative w-full h-64 sm:h-72 md:h-80 lg:h-72 rounded-xl overflow-hidden">
+                    <img [src]="selectedImage ? selectedImage : (vehicleDetails?.imagePaths?.length ? 'http://localhost:7188/' + vehicleDetails.imagePaths[0] : '')"
+                        class="absolute inset-0 w-full h-full object-cover 
+             transition-transform duration-500 ease-in-out hover:scale-110" />
+                </div>
+
+                <!-- Thumbnails -->
+                <div class="flex flex-wrap gap-4 mt-4">
+                    <img *ngFor="let img of vehicleDetails?.imagePaths" [src]=" `http://localhost:7188/`+img"
+                        (click)="changeImage(img)" class="w-20 h-14 sm:w-24 sm:h-16 object-cover rounded-lg shadow-md cursor-pointer 
+             hover:scale-105 transition-transform duration-300" />
+                </div>
+            </div>
+
+            <!-- Middle: Car Info -->
+            <div class="lg:col-span-1 space-y-4 mt-10">
+                <h1 class="text-2xl font-bold">{{ vehicleDetails?.carType }} {{ vehicleDetails?.yearOfManufacture }}
+                </h1>
+                <p class="text-sm text-gray-600">
+                    The BMW M2 is the high-performance version of the 2 Series 2-door coupé. The first generation of the
+                    M2 is the F87 coupé and is powered by turbocharged.
+                </p>
+
+                <h2 class="font-semibold text-lg mt-4">Specifications</h2>
+                <div class="divide-y divide-gray-200 text-sm">
+                    <div class="grid grid-cols-2 py-2 px-5">
+                        <div class="text-gray-600 text-left">Vehicle Type</div>
+                        <div class="font-semibold text-blue-900 text-center">{{ vehicleDetails?.type }}</div>
+                    </div>
+                    <div *ngIf="vehicleDetails?.type === 'Car'" class="grid grid-cols-2 py-2 px-5">
+                        <div class="text-gray-600 text-left">Vehicle Type</div>
+                        <div class="font-semibold text-blue-900 text-center">{{ vehicleDetails?.type || '-' }}</div>
+                    </div>
+
+                    <div *ngIf="vehicleDetails?.type === 'Car'" class="grid grid-cols-2 py-2 px-5">
+                        <div class="text-gray-600 text-left">Car Name</div>
+                        <div class="font-semibold text-blue-900 text-center">{{ vehicleDetails?.carType || '-' }}</div>
+                    </div>
+
+                    <div *ngIf="vehicleDetails?.type === 'Bike'" class="grid grid-cols-2 py-2 px-5">
+                        <div class="text-gray-600 text-left">Car Name</div>
+                        <div class="font-semibold text-blue-900 text-center">{{ vehicleDetails?.bikeType || '-' }}</div>
+                    </div>
+
+                    <div class="grid grid-cols-2 py-2 px-5">
+                        <div class="text-gray-600 text-left">Registration No</div>
+                        <div class="font-semibold text-blue-900 text-center">{{ vehicleDetails?.registrationNo }}</div>
+                    </div>
+
+                    <div class="grid grid-cols-2 py-2 px-5">
+                        <div class="text-gray-600 text-left">Fuel Type</div>
+                        <div class="font-semibold text-blue-900 text-center">{{ vehicleDetails?.fuelType }}</div>
+                    </div>
+
+                    <div class="grid grid-cols-2 py-2 px-5">
+                        <div class="text-gray-600 text-left">Seating Capacity</div>
+                        <div class="font-semibold text-blue-900 text-center">{{ vehicleDetails?.seatingCapacity|| 2 }}
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 py-2 px-5">
+                        <div class="text-gray-600 text-left">Mileage</div>
+                        <div class="font-semibold text-blue-900 text-center">{{ vehicleDetails?.mileage }} km/l</div>
+                    </div>
+
+                    <div class="grid grid-cols-2 py-2 px-5">
+                        <div class="text-gray-600 text-left">Body Color</div>
+                        <div class="font-semibold text-blue-900 text-center">{{ vehicleDetails?.color }}</div>
+                    </div>
+
+                    <div class="grid grid-cols-2 py-2 px-5">
+                        <div class="text-gray-600 text-left">Year of Manufacture</div>
+                        <div class="font-semibold text-blue-900 text-center">{{vehicleDetails?.yearOfManufacture}}</div>
+                    </div>
+
+                    <div class="grid grid-cols-2 py-2 px-5">
+                        <div class="text-gray-600 text-left">Insurance Status</div>
+                        <div class="font-semibold text-blue-900 text-center">{{ vehicleDetails?.insuranceStatus }}</div>
+                    </div>
+
+                    <div class="grid grid-cols-2 py-2 px-5">
+                        <div class="text-gray-600 text-left">RC Status</div>
+                        <div class="font-semibold text-blue-900 text-center">{{ vehicleDetails?.rcStatus }}</div>
+                    </div>
+
+                    <div *ngIf="vehicleDetails?.type === 'Car'" class="grid grid-cols-2 py-2 px-5">
+                        <div class="text-gray-600 text-left">AC Availability</div>
+                        <div class="font-semibold text-blue-900 text-center">{{ vehicleDetails?.acAvailability }}</div>
+                    </div>
+
+                    <div class="grid grid-cols-2 py-2 px-5">
+                        <div class="text-gray-600 text-left">Fuel Tank Capacity</div>
+                        <div class="font-semibold text-blue-900 text-center">{{ vehicleDetails?.fuelTankCapacity }} L
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 py-2 px-5">
+                        <div class="text-gray-600 text-left">Engine Capacity</div>
+                        <div class="font-semibold text-blue-900 text-center">{{ vehicleDetails?.engineCapacity }} CC
+                        </div>
+                    </div>
+                </div>
+                <div *ngIf="vehicleDetails?.type === 'Car'">
+                    <h2 class="font-semibold text-lg mt-4">Features</h2>
+                    <ul class="list-disc list-inside text-sm space-y-1">
+                        <li>Bluetooth</li>
+                        <li>Multimedia Player</li>
+                        <li>Central Lock</li>
+                        <li>Sunroof</li>
+                    </ul>
+                </div>
+
+            </div>
+
+
+            <!-- Right: Booking Form & Share -->
+            <div class="lg:col-span-1 space-y-4 mt-10">
+                <div class="bg-gray-200 rounded-xl p-4 text-center">
+                    <p class="text-sm text-gray-600">
+                        {{
+                        vehicleDetails?.pricePerHour > 0 ? 'Hourly Rate' :
+                        vehicleDetails?.pricePerDay > 0 ? 'Daily Rate' :
+                        vehicleDetails?.pricePerKm > 0 ? 'Per KM Rate' : 'Rate'
+                        }}
+                    </p>
+                    <p class="text-4xl font-bold text-blue-700">
+                        ₹{{
+                        vehicleDetails?.pricePerHour > 0 ? vehicleDetails?.pricePerHour :
+                        vehicleDetails?.pricePerDay > 0 ? vehicleDetails?.pricePerDay :
+                        vehicleDetails?.pricePerKm > 0 ? vehicleDetails?.pricePerKm : 0
+                        }}
+                    </p>
+                </div>
+                <form [formGroup]="bookingForm" (ngSubmit)="Booking()">
+                    <div class="bg-gray-200 p-6 rounded-xl shadow-md space-y-4">
+                        <h3 class="font-semibold text-lg">Booking this car</h3>
+
+                        <!-- Security Amount -->
+                        <div *ngIf="vehicleDetails?.type === 'Car'">
+
+                            <label class="text-sm font-medium text-gray-700">Security Amount</label>
+                            <input type="text" value="₹500" disabled
+                                class="w-full bg-gray-100 border rounded-lg p-2 text-sm cursor-not-allowed" />
+                        </div>
+                        <div *ngIf="vehicleDetails?.type === 'Bike'">
+
+                            <label class="text-sm font-medium text-gray-700">Security Amount</label>
+                            <input type="text" value="₹200" disabled
+                                class="w-full bg-gray-100 border rounded-lg p-2 text-sm cursor-not-allowed" />
+                        </div>
+
+                        <!-- Pickup Date & Time -->
+                        <label class="text-sm font-medium text-gray-700">Pickup Date & Time</label>
+                        <div class="flex flex-col sm:flex-row gap-2">
+                            <input type="date" class="w-full sm:w-1/2 border rounded-lg p-2 text-sm"
+                                formControlName="pickupDate" [min]="todayDate" />
+                            <input type="time" class="w-full sm:w-1/2 border rounded-lg p-2 text-sm"
+                                formControlName="pickupTime"
+                                [min]="bookingForm.get('pickupDate')?.value === todayDate ? currentTime : null" />
+                        </div>
+                        <div class="flex flex-col sm:flex-row gap-2">
+                            <div *ngIf="bookingForm.get('pickupDate')?.touched && bookingForm.get('pickupDate')?.invalid"
+                                class="text-red-500 text-sm">
+                                Pickup Date is required<br>
+                            </div>
+                            <div *ngIf="bookingForm.get('pickupTime')?.touched && bookingForm.get('pickupTime')?.invalid"
+                                class="text-red-500 text-sm">
+                                Pickup Time is required<br>
+                            </div>
+                        </div>
+
+                        <!-- Dropoff Date & Time -->
+                        <label class="text-sm font-medium text-gray-700">Dropoff Date & Time </label>
+                        <div class="flex flex-col sm:flex-row gap-2">
+                            <input type="date" class="w-full sm:w-1/2 border rounded-lg p-2 text-sm"
+                                formControlName="dropoffDate" [min]="todayDate" />
+                            <input type="time" class="w-full sm:w-1/2 border rounded-lg p-2 text-sm"
+                                formControlName="dropoffTime"
+                                [min]="bookingForm.get('pickupDate')?.value === todayDate ? currentTime : null" />
+                        </div>
+                        <div class="flex flex-col sm:flex-row gap-2">
+                            <div *ngIf="bookingForm.get('dropoffDate')?.touched && bookingForm.get('dropoffDate')?.invalid"
+                                class="text-red-500 text-sm">
+                                Dropoff Date is required
+                            </div>
+                            <div *ngIf="bookingForm.get('dropoffTime')?.touched && bookingForm.get('dropoffTime')?.invalid"
+                                class="text-red-500 text-sm">
+                                Dropoff Time is required
+                            </div>
+                        </div>
+                        <!-- Submit Button -->
+                        <button type="submit" (click)="openModal()" [disabled]="bookingForm.invalid" class="w-full text-white py-2 rounded-lg font-semibold
+         bg-gray-500 hover:bg-gray-700
+         disabled:bg-gray-400 disabled:cursor-not-allowed disabled:hover:bg-gray-400">
+                            Book Now
+                        </button>
+                    </div>
+                </form>
+
+                <div class="bg-gray-200 p-4 rounded-xl shadow-sm">
+                    <p class="font-semibold text-sm mb-2">Connect</p>
+                    <div class="flex flex-wrap gap-3">
+                        <a href="#" class="bg-blue-500 text-white p-2 rounded-md"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="bg-red-600 text-white p-2 rounded-md"><i class="fab fa-reddit"></i></a>
+                        <a href="#" class="bg-orange-600 text-white p-2 rounded-md"><i
+                                class="fab fa-stumbleupon"></i></a>
+                        <a href="#" class="bg-blue-700 text-white p-2 rounded-md"><i class="fab fa-linkedin"></i></a>
+                        <a href="#" class="bg-pink-600 text-white p-2 rounded-md"><i class="fab fa-pinterest"></i></a>
+                        <a href="#" class="bg-green-600 text-white p-2 rounded-md"><i class="fas fa-envelope"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Modal -->
+        <div *ngIf="showModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+            <div class="bg-white rounded-xl shadow-lg w-full max-w-2xl p-6 relative">
+
+                <!-- Close Button -->
+                <button (click)="closeModal()"
+                    class="absolute top-3 right-3 text-gray-700 hover:text-red-600 text-xl font-bold">&times;</button>
+
+                <!-- Tabs -->
+                <div class="flex mb-4 border-b">
+                    <button (click)="activeTab = 'en'"
+                        [ngClass]="{'border-b-2 border-blue-600 font-semibold': activeTab === 'en'}"
+                        class="px-4 py-2 focus:outline-none">
+                        English
+                    </button>
+                    <button (click)="activeTab = 'hi'"
+                        [ngClass]="{'border-b-2 border-blue-600 font-semibold': activeTab === 'hi'}"
+                        class="px-4 py-2 focus:outline-none">
+                        हिन्दी
+                    </button>
+                </div>
+
+                <!-- English Tab -->
+                <div *ngIf="activeTab === 'en'" class="space-y-2 text-sm text-gray-700">
+                    <ul class="space-y-2">
+                        <li class="flex items-start space-x-2"
+                            *ngFor="let control of englishTerms.controls; let i = index">
+                            <input type="checkbox" class="mt-1" [checked]="control.value"
+                                (change)="onCheckboxChange(i, 'en', $event)" />
+                            <span>{{ englishTexts[i] }}</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Hindi Tab -->
+                <div *ngIf="activeTab === 'hi'" class="space-y-2 text-sm text-gray-700">
+                    <ul class="space-y-2">
+                        <li class="flex items-start space-x-2"
+                            *ngFor="let control of hindiTerms.controls; let i = index">
+                            <input type="checkbox" class="mt-1" [checked]="control.value"
+                                (change)="onCheckboxChange(i, 'hi', $event)" />
+                            <span>{{ hindiTexts[i] }}</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="button" [disabled]="!allChecked()" (click)="onSubmit()"
+                    class="mt-4 bg-gray-600 hover:bg-gray-800 text-white font-semibold px-6 py-2 rounded disabled:opacity-50">
+                    Submit
+                </button>
+            </div>
+        </div>
+    </div>
+</body>

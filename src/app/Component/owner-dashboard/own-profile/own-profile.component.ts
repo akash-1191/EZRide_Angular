@@ -58,6 +58,12 @@ export class OwnProfileComponent {
     });
   }
 
+
+   onImageError(event: Event): void {
+    const target = event.target as HTMLImageElement;
+    target.src = '../../../assets/image/DummyFprofile.png';
+  }
+  
   submitProfileUpdate(): void {
     if (this.updateUserForm.invalid) {
       this.updateUserForm.markAllAsTouched();

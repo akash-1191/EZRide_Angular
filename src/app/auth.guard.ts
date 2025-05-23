@@ -15,6 +15,7 @@ export const authGuard: CanActivateFn = (route: ActivatedRouteSnapshot, state) =
   if (token && role === expectedRole) {
 
     return true;
+    
   } else {
     router.navigate(['/login']);
     return false;

@@ -27,12 +27,20 @@ export class ManagevehicleComponent implements OnInit {
   selectedImages: { imageUrl: string, vehicleImageId: number }[] = [];
   uploadedImages: any[] = [];
   errormessageinsertimage: any;
+  showDeleteModal: boolean = false;
+  imageToDeleteId: number | null = null;
+  showVehicleDeleteModal: boolean = false;
+  vehicleToDeleteId: number | null = null;
+  isPriceModalOpen = false;
+  selectedVehicleId: number | null = null;
+  pricesList: any[] = [];
+  pricesMap: { [vehicleId: number]: any } = {};
 
 
   constructor(private service: MyServiceService) { }
 
   ngOnInit(): void {
-
+    this.loadPrices();
     this.getAllVehicles();
     this.fetchFirstImageForEachVehicle();
     this.vehicleForm.get('vehicleType')?.valueChanges.subscribe(value => {
@@ -58,6 +66,7 @@ export class ManagevehicleComponent implements OnInit {
         this.bikeVehicles = this.allVehicles.filter(v => v.vehicletype === 'Bike');
         this.carVehicles = this.allVehicles.filter(v => v.vehicletype === 'Car');
         this.fetchFirstImageForEachVehicle();
+        this.loadPrices();
       },
       error: (err) => {
 
@@ -191,20 +200,33 @@ export class ManagevehicleComponent implements OnInit {
       });
     }
   }
+
+
   // delete data of the vehicle
   deleteVehicle(vehicleId: number) {
-    if (confirm('Are you sure you want to delete this vehicle?')) {
-      this.service.deleteVehicle(vehicleId).subscribe({
+    this.vehicleToDeleteId = vehicleId;
+    this.showVehicleDeleteModal = true;
+  }
+
+  confirmVehicleDelete() {
+    if (this.vehicleToDeleteId !== null) {
+      this.service.deleteVehicle(this.vehicleToDeleteId).subscribe({
         next: (res) => {
           this.Successmessage = 'Vehicle deleted successfully!';
-          this.getAllVehicles();
+          this.getAllVehicles(); // refresh vehicle list
+          this.closeVehicleModal();
         },
         error: (err) => {
-
           this.errormessage = err?.error?.message || 'Failed to delete vehicle.';
+          this.closeVehicleModal();
         }
       });
     }
+  }
+
+  closeVehicleModal() {
+    this.showVehicleDeleteModal = false;
+    this.vehicleToDeleteId = null;
   }
 
   //  Form Control Getters
@@ -228,11 +250,15 @@ export class ManagevehicleComponent implements OnInit {
     this.isModalOpen = false;
     this.vehicleForm.reset();
   }
+
   @HostListener('document:keydown', ['$event'])
   onKeyDown(event: KeyboardEvent): void {
     if (event.key === 'Escape') {
       this.closeModal();
       this.closeImageModal();
+      this.closeVehicleModal();
+      this.closeDeleteModalImage();
+      this.closesetpricemodal();
     }
   }
 
@@ -308,30 +334,40 @@ export class ManagevehicleComponent implements OnInit {
   }
 
 
-
-
-
-
-
-
-  //delete image in the modal
+  // delete the image data
   deleteVehicleImage(vehicleImageId: number) {
-    if (confirm('Are you sure you want to delete this image?')) {
-      this.service.deleteVehicleImage(vehicleImageId).subscribe({
+    this.imageToDeleteId = vehicleImageId;
+    this.showDeleteModal = true;
+  }
+
+  confirmDelete() {
+    if (this.imageToDeleteId !== null) {
+      this.service.deleteVehicleImage(this.imageToDeleteId).subscribe({
         next: (res) => {
           this.Successmessage = 'Vehicle deleted successfully!';
           this.selectedImages = this.selectedImages.filter(img => {
             if (typeof img === 'string') return true;
-            return img.vehicleImageId !== vehicleImageId;
+            return img.vehicleImageId !== this.imageToDeleteId;
           });
+          this.closeDeleteModalImage();
         },
         error: (err) => {
-
           this.errormessage = err?.error?.message || 'Failed to delete vehicle.';
+          this.closeDeleteModalImage();
         }
       });
     }
   }
+  // close the modal to delete of the image
+  closeDeleteModalImage() {
+    this.showDeleteModal = false;
+    this.imageToDeleteId = null;
+  }
+  // canceldeleto image 
+  cancelDelete() {
+    this.closeDeleteModalImage();
+  }
+
 
   // upload image in the perticulr vehicleid 
 
@@ -372,4 +408,75 @@ export class ManagevehicleComponent implements OnInit {
     this.noImagesFound = false;
     this.ngOnInit();
   }
+
+  // Reactive form declaration for price form
+  priceForm: FormGroup = new FormGroup({
+    priceType: new FormControl('', Validators.required),
+    priceAmount: new FormControl('', [Validators.required, Validators.min(1)])
+  });
+
+  // Getters for easy access and validation checks in template 
+  get priceType(): FormControl { return this.priceForm.get('priceType') as FormControl; }
+  get priceAmount(): FormControl { return this.priceForm.get('priceAmount') as FormControl; }
+
+
+  // set price open modal
+  setpriceopenmodal(vehicleId: number) {
+    this.selectedVehicleId = vehicleId;
+    this.priceForm.reset();
+    this.isPriceModalOpen = true;
+  }
+
+  closesetpricemodal() {
+    this.isPriceModalOpen = false;
+    this.loadPrices();
+    this.Successmessage = '';
+    this.errormessage = '';
+  }
+
+  submitPrice() {
+    if (this.priceForm.invalid) {
+      this.priceForm.markAllAsTouched();
+      return;
+    }
+    if (!this.selectedVehicleId) {
+      this.errormessage = 'Vehicle ID not found!';
+      return;
+    }
+    const data = {
+      vehicleId: this.selectedVehicleId,
+      priceType: this.priceType.value,
+      price: this.priceAmount.value
+    };
+
+    this.service.insertOrUpdatePricing(data).subscribe({
+      next: (res) => {
+        this.Successmessage = 'Price set successfully!';
+      },
+      error: (err) => {
+        this.errormessage = 'Error setting price!';
+        console.error(err);
+      }
+    });
+  }
+  // get price data 
+  loadPrices() {
+    this.pricesMap = {};
+    this.allVehicles.forEach((vehicle: any) => {
+      this.service.getPricingByVehicleId(vehicle.vehicleId).subscribe({
+        next: (res) => {
+          if (res && res.isSuccess && res.data) {
+            this.pricesMap[vehicle.vehicleId] = res.data;
+          } else {
+            this.pricesMap[vehicle.vehicleId] = null;
+          }
+        },
+        error: (err) => {
+          console.error(`Error loading price for vehicleId ${vehicle.vehicleId}`, err);
+        }
+      });
+    });
+  }
+
+
 }

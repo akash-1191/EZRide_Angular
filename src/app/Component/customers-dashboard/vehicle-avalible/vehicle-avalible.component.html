@@ -1,0 +1,169 @@
+<!-- <section class="bg-gray-100 min-h-screen">
+
+
+    <div class="p-4 sm:p-6 md:p-8 lg:p-10">
+        <section class="animate-fade-in-up max-w-7xl mx-auto">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center">
+
+                <div
+                    class="bg-white w-full max-w-xs rounded-xl shadow-lg p-5 transition-all duration-500 hover:scale-105 glow-hover">
+                    <h2 class="text-xl font-bold mt-1 text-gray-800 mb-3">MARUTI ALTO</h2>
+                    <img src="../../../../assets/image/car1.jpg" alt="Maruti Alto"
+                        class="w-full h-44 object-cover rounded-md mb-4 transition duration-500 hover:scale-105" />
+                    <div class="flex justify-between text-black text-sm font-semibold my-3 flex-wrap gap-y-2">
+                        <div class="flex items-center gap-1"><i class="ri-caravan-line text-xl text-gray-600"></i> 4
+                        </div>
+                        <div class="flex items-center gap-1"><i class="fas fa-user text-gray-600"></i> 5</div>
+                        <div class="flex items-center gap-1"><i class="fas fa-gas-pump text-gray-600"></i> Petrol</div>
+                        <div class="flex items-center gap-1"><i class="fas fa-cogs text-gray-600"></i> Manual</div>
+                    </div>
+                    <button (click)="bookingpage()"
+                        class="w-full bg-gradient-to-r cursor-pointer from-red-500 to-red-700 text-white py-2 mt-4 rounded-md font-semibold hover:from-red-600 hover:to-red-800 transition-transform duration-300 transform hover:scale-105">
+                        View Now
+                    </button>
+                </div>
+            </div>
+        </section>
+    </div>
+</section> -->
+<header
+    class="sticky top-14 z-50  bg-white shadow-sm rounded-xl mx-auto max-w-7xl px-6 py-4 mb-8 flex flex-wrap justify-center items-center gap-4 sm:gap-6 md:gap-8 transition-all duration-300">
+    <button (click)="filterVehicles('all')" [class.bg-gradient-to-r]="selectedTab === 'all'"
+        [class.from-gray-500]="selectedTab === 'all'" [class.to-gray-700]="selectedTab === 'all'"
+        [class.text-white]="selectedTab === 'all'"
+        class="text-gray-700 font-semibold py-2 px-5 rounded-full border border-gray-300 hover:shadow-md hover:text-white hover:bg-gradient-to-r from-gray-100 to-gyar-600 transition-all duration-300 ease-in-out cursor-pointer">
+        All Vehicles
+    </button>
+    <button (click)="filterVehicles('bike')" [class.bg-gradient-to-r]="selectedTab === 'bike'"
+        [class.from-gray-500]="selectedTab === 'bike'" [class.to-gray-700]="selectedTab === 'bike'"
+        [class.text-white]="selectedTab === 'bike'"
+        class="text-gray-700 font-semibold py-2 px-5 rounded-full border border-gray-300 hover:shadow-md hover:text-white hover:bg-gradient-to-r from-gray-400 to-gray-600 transition-all duration-300 ease-in-out cursor-pointer">
+        Bike
+    </button>
+    <button (click)="filterVehicles('car')" [class.bg-gradient-to-r]="selectedTab === 'car'"
+        [class.from-gray-500]="selectedTab === 'car'" [class.to-gray-700]="selectedTab === 'car'"
+        [class.text-white]="selectedTab === 'car'"
+        class="text-gray-700 font-semibold py-2 px-5 rounded-full border border-gray-300 hover:shadow-md hover:text-white hover:bg-gradient-to-r from-gray-400 to-gray-600 transition-all duration-300 ease-in-out cursor-pointer">
+        Car
+    </button>
+</header>
+
+
+<section class="bg-gray-100 min-h-screen">
+    <div class="p-4 sm:p-6 md:p-8 lg:p-10">
+        <div class="animate-fade-in-up max-w-7xl mx-auto">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center">
+
+                <!-- Show filtered vehicles -->
+                <ng-container *ngIf="selectedTab === 'all'">
+                    <ng-container *ngFor="let vehicle of filteredVehicles">
+                        <div
+                            class="bg-white w-full max-w-xs rounded-xl shadow-lg p-5 transition-all duration-500 hover:scale-105 glow-hover">
+                            <h2 class="text-xl font-bold mt-1 text-gray-800 mb-3">{{ vehicle.modelName }}</h2>
+                            <img [src]="vehicle.imagePaths?.length ? 'http://localhost:7188/' + vehicle.imagePaths[0] : 'assets/image/car1.jpg'"
+                                alt="{{ vehicle.modelName }}"
+                                class="w-full h-44 object-cover rounded-md mb-4 transition duration-500 hover:scale-105" />
+
+                            <!-- CAR SPECIFICATIONS -->
+                            <div *ngIf="vehicle.type?.toLowerCase() === 'car'"
+                                class="flex justify-between text-black text-sm font-semibold my-3 flex-wrap gap-y-2 gap-x-2">
+                                <div class="flex items-center gap-1">
+                                    <i class="ri-caravan-line text-xl text-gray-600"></i> {{ vehicle.doorCount || 4 }}
+                                </div>
+                                <div class="flex items-center gap-1">
+                                    <i class="fas fa-user text-gray-600"></i> {{ vehicle.seatCount || 5 }}
+                                </div>
+                                <div class="flex items-center gap-1">
+                                    <i class="fas fa-gas-pump text-gray-600"></i> {{ vehicle.fuelType }}
+                                </div>
+                                <div class="flex items-center gap-1">
+                                    <i class="fas fa-cogs text-gray-600"></i> {{ vehicle.transmission || 'Manual' }}
+                                </div>
+                            </div>
+
+                            <!-- BIKE SPECIFICATIONS -->
+                            <div *ngIf="vehicle.type?.toLowerCase() === 'bike'"
+                                class="flex justify-between text-black text-sm font-semibold my-3 flex-wrap gap-y-2 gap-x-2">
+                                <div class="flex items-center gap-1">
+                                    <i class="fas fa-road text-xl text-gray-600"></i> {{ vehicle.mileage || 'N/A' }}
+                                    km/l
+                                </div>
+                                <div class="flex items-center gap-1">
+                                    <i class="fas fa-user text-gray-600"></i> {{ vehicle.seatCount || 2 }}
+                                </div>
+                                <div class="flex items-center gap-1">
+                                    <i class="fas fa-gas-pump text-gray-600"></i> {{ vehicle.fuelType }}
+                                </div>
+                            </div>
+
+                            <button (click)="goToBookingPage(vehicle.vehicleId)"
+                                class="w-full bg-gradient-to-r cursor-pointer from-red-500 to-red-700 text-white py-2 mt-4 rounded-md font-semibold hover:from-red-600 hover:to-red-800 transition-transform duration-300 transform hover:scale-105">
+                                View Now
+                            </button>
+                        </div>
+                    </ng-container>
+                </ng-container>
+
+
+                <!-- CARS ONLY -->
+                <ng-container *ngIf="selectedTab === 'car'">
+                    <ng-container *ngFor="let carvehicle of showdatacar">
+                        <div
+                            class="bg-white w-full max-w-xs rounded-xl shadow-lg p-5 transition-all duration-500 hover:scale-105 glow-hover">
+                            <h2 class="text-xl font-bold mt-1 text-gray-800 mb-3">{{ carvehicle.modelName }}</h2>
+                            <img [src]="carvehicle.imagePaths?.length ? 'http://localhost:7188/' + carvehicle.imagePaths[0] : 'assets/image/car1.jpg'"
+                                alt="{{ carvehicle.modelName }}"
+                                class="w-full h-44 object-cover rounded-md mb-4 transition duration-500 hover:scale-105" />
+                            <div class="flex justify-between text-black text-sm font-semibold my-3 flex-wrap gap-y-2">
+                                <div class="flex items-center gap-1"><i
+                                        class="ri-caravan-line text-xl text-gray-600"></i>
+                                    {{ carvehicle.doorCount || 4
+                                    }}
+                                </div>
+                                <div class="flex items-center gap-1"><i class="fas fa-user text-gray-600"></i> {{
+                                    carvehicle.seatCount || 5 }}</div>
+                                <div class="flex items-center gap-1"><i class="fas fa-gas-pump text-gray-600"></i> {{
+                                    carvehicle.fuelType }}</div>
+                                <div class="flex items-center gap-1"><i class="fas fa-cogs text-gray-600"></i> {{
+                                    carvehicle.transmission || 'Manual' }}</div>
+                            </div>
+
+                            <button (click)="goToBookingPage(carvehicle.vehicleId)"
+                                class="w-full bg-gradient-to-r cursor-pointer from-red-500 to-red-700 text-white py-2 mt-4 rounded-md font-semibold hover:from-red-600 hover:to-red-800 transition-transform duration-300 transform hover:scale-105">
+                                View Now
+                            </button>
+                        </div>
+                    </ng-container>
+                </ng-container>
+
+
+                <!-- BIKES ONLY -->
+                <ng-container *ngIf="selectedTab === 'bike'">
+                    <ng-container *ngFor="let bikevehicle of showdatabike">
+                        <div
+                            class="bg-white w-full max-w-xs rounded-xl shadow-lg p-5 transition-all duration-500 hover:scale-105 glow-hover">
+                            <h2 class="text-xl font-bold mt-1 text-gray-800 mb-3">{{ bikevehicle.modelName }}</h2>
+                            <img [src]="bikevehicle.imagePaths?.length ? 'http://localhost:7188/' + bikevehicle.imagePaths[0] : 'assets/image/car1.jpg'"
+                                alt="image"
+                                class="w-full h-44 object-cover rounded-md mb-4 transition duration-500 hover:scale-105" />
+                            <div class="flex justify-between text-black text-sm font-semibold my-3 flex-wrap gap-y-2">
+                                <div class="flex items-center gap-1"><i class="fas fa-road text-xl text-gray-600"></i>
+                                    {{
+                                    bikevehicle.mileage|| 'N/A' }}K/M
+                                </div>
+                                <div class="flex items-center gap-1"><i class="fas fa-user text-gray-600"></i> {{
+                                    bikevehicle.seatCount || 2 }}</div>
+                                <div class="flex items-center gap-1"><i class="fas fa-gas-pump text-gray-600"></i> {{
+                                    bikevehicle.fuelType }}</div>
+                            </div>
+                            <button (click)="goToBookingPage(bikevehicle.vehicleId)"
+                                class="w-full bg-gradient-to-r cursor-pointer from-red-500 to-red-700 text-white py-2 mt-4 rounded-md font-semibold hover:from-red-600 hover:to-red-800 transition-transform duration-300 transform hover:scale-105">
+                                View Now
+                            </button>
+                        </div>
+                    </ng-container>
+                </ng-container>
+            </div>
+        </div>
+    </div>
+</section>

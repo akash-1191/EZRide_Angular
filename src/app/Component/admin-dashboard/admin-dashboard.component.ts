@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, ElementRef, HostListener, inject } from '@angular/core';
 import { Router, RouterLink, RouterOutlet } from '@angular/router';
+
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -10,9 +11,17 @@ import { Router, RouterLink, RouterOutlet } from '@angular/router';
 })
 export class AdminDashboardComponent {
  isDropdownOpen=false;
+ userPanelOpen: boolean = false;
+ ownerPanelOpen: boolean = false;
+ isSidebarOpen: boolean = false;
+ 
+ toggleSidebar() {
+   this.isSidebarOpen = !this.isSidebarOpen;
+  }
+  
+  
   private router = inject(Router)
-  userPanelOpen: boolean = false;
-ownerPanelOpen: boolean = false;
+  private elementRef = inject(ElementRef); // 👈 required for click outside detection
 
   logout() {
     localStorage.clear();
@@ -20,5 +29,16 @@ ownerPanelOpen: boolean = false;
   }
    toggleDropdown() {
     this.isDropdownOpen = !this.isDropdownOpen;
+  }
+
+
+   @HostListener('document:click', ['$event'])
+  handleOutsideClick(event: MouseEvent) {
+    const clickedInsideSidebar = this.elementRef.nativeElement.querySelector('#sidebar')?.contains(event.target);
+    const clickedToggleButton = this.elementRef.nativeElement.querySelector('#toggleSidebarBtn')?.contains(event.target);
+
+    if (!clickedInsideSidebar && !clickedToggleButton) {
+      this.isSidebarOpen = false;
+    }
   }
 }

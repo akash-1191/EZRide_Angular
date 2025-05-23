@@ -31,7 +31,7 @@ export class ProfileComponent implements OnInit {
     address: new FormControl("", [Validators.required]),
   });
 
-  constructor(private services: MyServiceService) {}
+  constructor(private services: MyServiceService) { }
 
   ngOnInit(): void {
     this.loadUserProfile();
@@ -58,6 +58,11 @@ export class ProfileComponent implements OnInit {
       }
     });
   }
+  onImageError(event: Event): void {
+    const target = event.target as HTMLImageElement;
+    target.src = '../../../assets/image/DummyFprofile.png';
+  }
+
 
   submitProfileUpdate(): void {
     if (this.updateUserForm.invalid) {
@@ -120,7 +125,7 @@ export class ProfileComponent implements OnInit {
 
   submitImageUpload(): void {
     if (!this.selectedImage) {
-     const imageErrorMessage ="Please select an image first.";
+      const imageErrorMessage = "Please select an image first.";
       return;
     }
 
@@ -130,7 +135,7 @@ export class ProfileComponent implements OnInit {
       const userId = decode.UserId || decode.userId;
 
       const formData = new FormData();
-      formData.append('UserId',  userId.toString());
+      formData.append('UserId', userId.toString());
       formData.append('Image', this.selectedImage);
 
       this.services.updateUserImage(formData).subscribe({
@@ -159,18 +164,18 @@ export class ProfileComponent implements OnInit {
   }
 
   onImageSelected(event: Event): void {
-  const input = event.target as HTMLInputElement;
-  if (input.files && input.files.length > 0) {
-    this.selectedImage = input.files[0];
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      this.selectedImage = input.files[0];
 
-    // Optionally show a preview
-    const reader = new FileReader();
-    reader.onload = () => {
-      this.imagePreviewUrl = reader.result as string;
-    };
-    reader.readAsDataURL(this.selectedImage);
+      // Optionally show a preview
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.imagePreviewUrl = reader.result as string;
+      };
+      reader.readAsDataURL(this.selectedImage);
+    }
   }
-}
   // Form Getters
   get firstname() { return this.updateUserForm.get("firstname") as FormControl; }
   get middleName() { return this.updateUserForm.get("middleName") as FormControl; }

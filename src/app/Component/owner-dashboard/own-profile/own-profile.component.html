@@ -21,7 +21,9 @@
                 <!-- Header -->
                 <div class="flex flex-col md:flex-row items-start space-x-6 md:space-x-12">
                     <div class="relative group mb-4 md:mb-0">
-                        <img [src]="'http://localhost:7188' + profiledata.image" alt="Profile Picture"
+                       <img [src]="'http://localhost:7188' + profiledata.image"
+     alt="Profile Picture"
+     (error)="onImageError($event)"
                             class="md:w-52 md:h-52 w-44 h-44 md:rounded-sm rounded-full md: ml-12 border-4 border-gray-600 transition-all duration-300 ease-in-out group-hover:blur-[1px]" />
                         <div
                             class="absolute inset-0 left-18 flex items-center justify-center opacity-0 group-hover:opacity-100 group-hover:bg-none transition-all duration-300">

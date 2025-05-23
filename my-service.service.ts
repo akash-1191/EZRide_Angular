@@ -151,4 +151,47 @@ export class MyServiceService {
     const url = `http://localhost:7188/api/deleteVehicleImage/${vehicleImageId}`;
     return this.http.delete<any>(url, { headers });
   }
+
+
+  //insert and updaete price of the perticular vehicle
+  insertOrUpdatePricing(data: any): Observable<any> {
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+    const apiurl = `http://localhost:7188/api/set-Or-price`;
+    return this.http.post(apiurl, data);
+  }
+
+
+  //get all prive according to the vehicle id 
+  getPricingByVehicleId(vehicleId: number): Observable<any> {
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+
+    const url = `http://localhost:7188/api/get-by-vehicle/${vehicleId}`;
+    return this.http.get(url, { headers });
+  }
+
+
+  //get aal data of the 3 table vehhicle price and vehicleimage
+  getAllVehiclesdetails(): Observable<any[]> {
+    const url = 'http://localhost:7188/api/GetAllVehicle';
+    return this.http.get<any[]>(url);
+  }
+
+
+
+  // Get Vehicle Details by ID
+getVehicleDetailsById(vehicleId: number): Observable<any> {
+  const token = localStorage.getItem('token');
+  const headers = new HttpHeaders({
+    'Authorization': `Bearer ${token}`
+  });
+
+  const url = `http://localhost:7188/api/GetAllVehicleById/${vehicleId}`;
+  return this.http.get<any>(url, { headers });
+}
 }

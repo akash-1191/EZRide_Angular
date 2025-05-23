@@ -12,6 +12,8 @@ import { UnauthorizedComponent } from './Component/unauthorized/unauthorized.com
 import { OwnProfileComponent } from './Component/owner-dashboard/own-profile/own-profile.component';
 import { AAddvehicleComponent } from './Component/admin-dashboard/a-addvehicle/a-addvehicle.component';
 import { ManagevehicleComponent } from './Component/admin-dashboard/managevehicle/managevehicle.component';
+import { VehicleAvalibleComponent } from './Component/customers-dashboard/vehicle-avalible/vehicle-avalible.component';
+import { BookingPageComponent } from './Component/customers-dashboard/booking-page/booking-page.component';
 
 
 export const routes: Routes = [
@@ -54,7 +56,9 @@ export const routes: Routes = [
     data: { expectedRole: 'Customer' },
     children: [
       { path: '', component: DashboardComponent },
-      { path: 'Profile', component: ProfileComponent },
+      { path: 'customerProfile', component: ProfileComponent },
+      {path:"vehicleavaliblebooking",component:VehicleAvalibleComponent},
+      { path: 'custBookingpage/:id', component: BookingPageComponent }
     ]
   },
 
