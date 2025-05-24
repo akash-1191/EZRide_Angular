@@ -11,8 +11,10 @@ export class CustomersDashboardComponent {
 
   private router = inject(Router)
 
-  logout() {
-    localStorage.clear();
+   logout() {
+    sessionStorage.removeItem('token');
+    sessionStorage.removeItem('Role');
+    sessionStorage.clear();
     this.router.navigate(['/login']);
   }
 }

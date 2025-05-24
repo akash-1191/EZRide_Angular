@@ -21,10 +21,12 @@ export class AdminDashboardComponent {
   
   
   private router = inject(Router)
-  private elementRef = inject(ElementRef); // 👈 required for click outside detection
+  private elementRef = inject(ElementRef); // required for click outside detection
 
   logout() {
-    localStorage.clear();
+    sessionStorage.removeItem('token');
+    sessionStorage.removeItem('Role');
+    sessionStorage.clear();
     this.router.navigate(['/login']);
   }
    toggleDropdown() {

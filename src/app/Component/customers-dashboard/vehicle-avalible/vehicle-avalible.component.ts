@@ -17,17 +17,17 @@ export class VehicleAvalibleComponent implements OnInit {
   filteredBikes: any[] = [];
   carVehicles: any[] = [];
   bikeVehicles: any[] = [];
-  showdatabike:any[]=[];
-  showdatacar:any[]=[];
+  showdatabike: any[] = [];
+  showdatacar: any[] = [];
 
 
   constructor(private myService: MyServiceService, private cdr: ChangeDetectorRef) { }
 
- 
-goToBookingPage(vehicleId: number) {
-  this.router.navigate(['/customer-dashboard/custBookingpage', vehicleId]);
-  console.log("vehicleid is"+vehicleId);
-}
+
+  goToBookingPage(vehicleId: number) {
+    this.router.navigate(['/customer-dashboard/custBookingpage', vehicleId]);
+    console.log("vehicleid is" + vehicleId);
+  }
 
   ngOnInit(): void {
     this.loadAllVehicles();
@@ -36,21 +36,26 @@ goToBookingPage(vehicleId: number) {
 
   filterVehicles(type: string): void {
     this.selectedTab = type;
+    const hasPrice = (v: any) =>
+      (v.pricePerHour && v.pricePerHour > 0) ||
+      (v.pricePerDay && v.pricePerDay > 0) ||
+      (v.pricePerKm && v.pricePerKm > 0);
 
     if (type.toLowerCase() === 'all') {
-      this.filteredVehicles = [...this.allVehicles]; // all vehicles
+       this.filteredVehicles = this.allVehicles.filter(v => hasPrice(v)); // all vehicles
+
     } else if (type.toLowerCase() === 'car') {
       this.carVehicles = this.allVehicles.filter(
-        v => v.type?.toLowerCase() === 'car'
-      
+        v => v.type?.toLowerCase() === 'car'&& hasPrice(v)
+
       );
       this.showdatacar = [...this.carVehicles]; // show cars only
     } else if (type.toLowerCase() === 'bike') {
       this.bikeVehicles = this.allVehicles.filter(
-        v => v.type?.toLowerCase() === 'bike'
+        v => v.type?.toLowerCase() === 'bike' && hasPrice(v)
       );
       this.showdatabike = [...this.bikeVehicles]; // show bikes only
-     
+
     }
 
   }
@@ -58,9 +63,8 @@ goToBookingPage(vehicleId: number) {
   loadAllVehicles(): void {
     this.myService.getAllVehiclesdetails().subscribe({
       next: (res) => {
-        console.log('Vehicle Data:', res);
+       
         this.allVehicles = res;
-        // console.log("All Vehicles before filter:", this.allVehicles);
         this.filterVehicles(this.selectedTab);
         this.cdr.detectChanges();
       },

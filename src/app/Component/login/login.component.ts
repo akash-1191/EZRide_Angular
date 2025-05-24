@@ -32,8 +32,8 @@ export class LoginComponent implements OnInit {
 
 
   ngOnInit(): void {
-    const token = localStorage.getItem("token");
-    const role = localStorage.getItem("Role");
+    const token = sessionStorage.getItem("token");
+    const role = sessionStorage.getItem("Role");
 
     // If token and role exist, automatically redirect the user to their respective dashboard
     if (token && role) {
@@ -66,9 +66,9 @@ export class LoginComponent implements OnInit {
         const token = res.data.token;
         const roleName = res.data.user.roleName;
 
-        // Save token and role to localStorage
-        localStorage.setItem("token", token);
-        localStorage.setItem("Role", roleName);
+        // Save token and role to sessionStorage
+        sessionStorage.setItem("token", token);
+        sessionStorage.setItem("Role", roleName);
 
         this.isLoading = false;
         this.redirectBasedOnRole(roleName);

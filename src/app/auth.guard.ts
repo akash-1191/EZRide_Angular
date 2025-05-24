@@ -5,8 +5,8 @@ import { ActivatedRouteSnapshot, CanActivateFn, Router } from '@angular/router';
 
 export const authGuard: CanActivateFn = (route: ActivatedRouteSnapshot, state) => {
 
-  const token = localStorage.getItem('token');
-  const role = localStorage.getItem('Role')
+  const token = sessionStorage.getItem('token');
+  const role = sessionStorage.getItem('Role')
   const router = inject(Router);
   
   // Expected role from route data

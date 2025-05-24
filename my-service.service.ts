@@ -24,7 +24,7 @@ export class MyServiceService {
 
   // ProfileApi
   UserProfiledata(userId: number): Observable<any> {
-    const token = localStorage.getItem('token');
+    const token = sessionStorage.getItem('token');
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`
     });
@@ -35,7 +35,7 @@ export class MyServiceService {
 
   // updateprofiledata
   UpdateUserData(updateData: any): Observable<any> {
-    const token = localStorage.getItem('token');
+    const token = sessionStorage.getItem('token');
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json'
@@ -47,7 +47,7 @@ export class MyServiceService {
   // UpdateProfile Image of the user
 
   updateUserImage(formData: FormData): Observable<any> {
-    const token = localStorage.getItem('token');
+    const token = sessionStorage.getItem('token');
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`
     });
@@ -58,7 +58,7 @@ export class MyServiceService {
 
   // Add Vehicle
   addVehicle(vehicleData: any): Observable<any> {
-    const token = localStorage.getItem('token');  // If auth required
+    const token = sessionStorage.getItem('token');  // If auth required
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json'
@@ -70,7 +70,7 @@ export class MyServiceService {
 
   // Get All Vehicles (for Admin)
   getAllVehicles(): Observable<any> {
-    const token = localStorage.getItem('token');
+    const token = sessionStorage.getItem('token');
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json'
@@ -81,7 +81,7 @@ export class MyServiceService {
 
   // Update Vehicle Data
   updateVehicle(vehicleData: any): Observable<any> {
-    const token = localStorage.getItem('token');
+    const token = sessionStorage.getItem('token');
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json'
@@ -92,7 +92,7 @@ export class MyServiceService {
 
   //Delete data vehicle
   deleteVehicle(vehicleId: number): Observable<any> {
-    const token = localStorage.getItem('token');
+    const token = sessionStorage.getItem('token');
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`
     });
@@ -108,7 +108,7 @@ export class MyServiceService {
     formData.append('VehicleId', vehicleId.toString());
     formData.append('ImageFile', imageFile);
 
-    const token = localStorage.getItem('token');
+    const token = sessionStorage.getItem('token');
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`
     });
@@ -120,7 +120,7 @@ export class MyServiceService {
 
   // Get All Images by Vehicle ID
   getVehicleImages(vehicleId: number): Observable<any> {
-    const token = localStorage.getItem('token');
+    const token = sessionStorage.getItem('token');
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`
     });
@@ -131,7 +131,7 @@ export class MyServiceService {
 
   // Update Vehicle Image
   // updateVehicleImage(vehicleImageId: number, formData: FormData): Observable<any> {
-  //   const token = localStorage.getItem('token');
+  //   const token = sessionStorage.getItem('token');
   //   const headers = new HttpHeaders({
   //     'Authorization': `Bearer ${token}`
   //   });
@@ -143,7 +143,7 @@ export class MyServiceService {
 
   // Delete Vehicle Image
   deleteVehicleImage(vehicleImageId: number): Observable<any> {
-    const token = localStorage.getItem('token');
+    const token = sessionStorage.getItem('token');
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`
     });
@@ -155,7 +155,7 @@ export class MyServiceService {
 
   //insert and updaete price of the perticular vehicle
   insertOrUpdatePricing(data: any): Observable<any> {
-    const token = localStorage.getItem('token');
+    const token = sessionStorage.getItem('token');
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`
     });
@@ -166,7 +166,7 @@ export class MyServiceService {
 
   //get all prive according to the vehicle id 
   getPricingByVehicleId(vehicleId: number): Observable<any> {
-    const token = localStorage.getItem('token');
+    const token = sessionStorage.getItem('token');
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`
     });
@@ -186,7 +186,7 @@ export class MyServiceService {
 
   // Get Vehicle Details by ID
 getVehicleDetailsById(vehicleId: number): Observable<any> {
-  const token = localStorage.getItem('token');
+  const token = sessionStorage.getItem('token');
   const headers = new HttpHeaders({
     'Authorization': `Bearer ${token}`
   });

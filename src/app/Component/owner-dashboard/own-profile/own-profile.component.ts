@@ -37,7 +37,7 @@ export class OwnProfileComponent {
   }
 
   loadUserProfile(): void {
-    const token = localStorage.getItem('token');
+    const token = sessionStorage.getItem('token');
     if (token) {
       const decode: any = jwtDecode(token);
       const userId = decode.UserId || decode.userId;
@@ -70,7 +70,7 @@ export class OwnProfileComponent {
       return;
     }
 
-    const token = localStorage.getItem('token');
+    const token = sessionStorage.getItem('token');
     if (token) {
       const decode: any = jwtDecode(token);
       const userId = decode.UserId || decode.userId;
@@ -129,7 +129,7 @@ export class OwnProfileComponent {
       return;
     }
 
-    const token = localStorage.getItem('token');
+    const token = sessionStorage.getItem('token');
     if (token) {
       const decode: any = jwtDecode(token);
       const userId = decode.UserId || decode.userId;

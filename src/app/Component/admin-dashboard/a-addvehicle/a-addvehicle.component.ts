@@ -107,7 +107,7 @@ export class AAddvehicleComponent implements OnInit {
     if (this.vehicleForm.valid) {
       const vehicleData = this.vehicleForm.getRawValue();
 
-      const token = localStorage.getItem('token');
+      const token = sessionStorage.getItem('token');
       if (token) {
         const decodedToken: any = jwtDecode(token);
         const userId = decodedToken.UserId;

@@ -138,7 +138,7 @@ export class ManagevehicleComponent implements OnInit {
       return;
     }
 
-    const token = localStorage.getItem('token');
+    const token = sessionStorage.getItem('token');
     if (!token) {
       this.errormessage = 'Token not found. Please log in.';
       return;
@@ -269,7 +269,6 @@ export class ManagevehicleComponent implements OnInit {
       this.service.getVehicleImages(vehicle.vehicleId).subscribe(
         (images: any[]) => {
           if (images.length > 0) {
-            // Assuming imagePath is relative, you need to prefix with base URL
             this.vehicleImages[vehicle.vehicleId] = 'http://localhost:7188/' + images[0].imagePath;
 
           }
@@ -319,7 +318,7 @@ export class ManagevehicleComponent implements OnInit {
             vehicleImageId: img.vehicleImageId
 
           }));
-          console.log('selectedVehicle in onImageSelected _otherfuncetiuonj:', this.selectedVehicle);
+          
           this.noImagesFound = false;
         } else {
           this.selectedImages = [];
@@ -455,7 +454,7 @@ export class ManagevehicleComponent implements OnInit {
       },
       error: (err) => {
         this.errormessage = 'Error setting price!';
-        console.error(err);
+       
       }
     });
   }
