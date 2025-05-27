@@ -113,31 +113,27 @@
                         <li>Bluetooth</li>
                         <li>Multimedia Player</li>
                         <li>Central Lock</li>
-                        <li>Sunroof</li>
                     </ul>
                 </div>
-
             </div>
-
 
             <!-- Right: Booking Form & Share -->
             <div class="lg:col-span-1 space-y-4 mt-10">
-                <div class="bg-gray-200 rounded-xl p-4 text-center">
-                    <p class="text-sm text-gray-600">
-                        {{
-                        vehicleDetails?.pricePerHour > 0 ? 'Hourly Rate' :
-                        vehicleDetails?.pricePerDay > 0 ? 'Daily Rate' :
-                        vehicleDetails?.pricePerKm > 0 ? 'Per KM Rate' : 'Rate'
-                        }}
-                    </p>
-                    <p class="text-4xl font-bold text-blue-700">
-                        ₹{{
-                        vehicleDetails?.pricePerHour > 0 ? vehicleDetails?.pricePerHour :
-                        vehicleDetails?.pricePerDay > 0 ? vehicleDetails?.pricePerDay :
-                        vehicleDetails?.pricePerKm > 0 ? vehicleDetails?.pricePerKm : 0
-                        }}
-                    </p>
+                <div class="bg-gray-200 rounded-xl p-4 text-center flex justify-center gap-6">
+                    <div *ngIf="vehicleDetails?.pricePerKm > 0" class="text-sm text-gray-600">
+                        <div>Per KM Rate</div>
+                        <div class="text-2xl font-bold text-blue-700">₹{{ vehicleDetails.pricePerKm }}</div>
+                    </div>
+                    <div *ngIf="vehicleDetails?.pricePerHour > 0" class="text-sm text-gray-600">
+                        <div>Hourly Rate</div>
+                        <div class="text-2xl font-bold text-blue-700">₹{{ vehicleDetails.pricePerHour }}</div>
+                    </div>
+                    <div *ngIf="vehicleDetails?.pricePerDay > 0" class="text-sm text-gray-600">
+                        <div>Daily Rate</div>
+                        <div class="text-2xl font-bold text-blue-700">₹{{ vehicleDetails.pricePerDay }}</div>
+                    </div>
                 </div>
+
                 <form [formGroup]="bookingForm" (ngSubmit)="Booking()">
                     <div class="bg-gray-200 p-6 rounded-xl shadow-md space-y-4">
                         <h3 class="font-semibold text-lg">Booking this car</h3>
@@ -146,26 +142,91 @@
                         <div *ngIf="vehicleDetails?.type === 'Car'">
 
                             <label class="text-sm font-medium text-gray-700">Security Amount</label>
-                            <input type="text" value="₹500" disabled
+                            <input type="text" value="₹2000" disabled
                                 class="w-full bg-gray-100 border rounded-lg p-2 text-sm cursor-not-allowed" />
                         </div>
                         <div *ngIf="vehicleDetails?.type === 'Bike'">
 
                             <label class="text-sm font-medium text-gray-700">Security Amount</label>
-                            <input type="text" value="₹200" disabled
+                            <input type="text" value="₹1000" disabled
                                 class="w-full bg-gray-100 border rounded-lg p-2 text-sm cursor-not-allowed" />
+                        </div>
+
+
+                        <!-- Drive Basis Selection -->
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
+                            <!-- Hourly -->
+                            <label
+                                class="cursor-pointer border rounded-lg p-4 text-center transition-all duration-300 ease-in-out flex flex-col items-center hover:bg-red-100 hover:border-red-300"
+                                [ngClass]="{
+      'bg-red-100 text-gray-800': bookingForm.get('driveBasis')?.value === 'perHour',
+      'bg-white text-gray-800': bookingForm.get('driveBasis')?.value !== 'perHour'
+    }">
+                                <input type="radio" formControlName="driveBasis" value="perHour" class="hidden" />
+                                <div class="text-lg font-semibold">Hourly</div>
+                                <div class="text-2xl font-bold text-blue-700" *ngIf="vehicleDetails?.pricePerHour > 0">
+                                    ₹{{ vehicleDetails.pricePerHour }}
+                                </div>
+                            </label>
+
+                            <!-- Daily -->
+                            <label
+                                class="cursor-pointer border rounded-lg p-4 text-center transition-all duration-300 ease-in-out flex flex-col items-center hover:bg-red-100 hover:border-red-300"
+                                [ngClass]="{
+      'bg-red-100 text-gray-800': bookingForm.get('driveBasis')?.value === 'perDay',
+      'bg-white text-gray-800': bookingForm.get('driveBasis')?.value !== 'perDay'
+    }">
+                                <input type="radio" formControlName="driveBasis" value="perDay" class="hidden" />
+                                <div class="text-lg font-semibold">Daily</div>
+                                <div class="text-2xl font-bold text-blue-700" *ngIf="vehicleDetails?.pricePerDay > 0">
+                                    ₹{{ vehicleDetails.pricePerDay }}
+                                </div>
+                            </label>
+
+                            <!-- Per KM -->
+                            <label
+                                class="cursor-pointer border rounded-lg p-4 text-center transition-all duration-300 ease-in-out flex flex-col items-center hover:bg-red-100 hover:border-red-300"
+                                [ngClass]="{
+      'bg-red-100 text-gray-800': bookingForm.get('driveBasis')?.value === 'perKm',
+      'bg-white text-gray-800': bookingForm.get('driveBasis')?.value !== 'perKm'
+    }">
+                                <input type="radio" formControlName="driveBasis" value="perKm" class="hidden" />
+                                <div class="text-lg font-semibold">K/M</div>
+                                <div class="text-2xl font-bold text-blue-700" *ngIf="vehicleDetails?.pricePerKm > 0">
+                                    ₹{{ vehicleDetails.pricePerKm }}
+                                </div>
+                            </label>
+                        </div>
+
+                        <!-- Conditional Inputs for hours / days -->
+                        <div *ngIf="bookingForm.get('driveBasis')?.value === 'perHour'" class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">How many hours to drive?</label>
+                            <input type="number" min="1" formControlName="hoursToDrive"
+                                class="w-full  border rounded-lg p-2  text-sm" />
+                        </div>
+
+                        <div *ngIf="bookingForm.get('driveBasis')?.value === 'perDay'" class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">How many days to drive?</label>
+                            <input type="number" min="1" formControlName="daysToDrive"
+                                class="w-full  border rounded-lg p-2  text-sm" />
+                        </div>
+                        <div *ngIf="bookingForm.get('driveBasis')?.value === 'perKm'" class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">How many kilometers to
+                                drive?</label>
+                            <input type="number" min="1" formControlName="kmsToDrive"
+                                class="w-full border rounded-lg p-2 text-sm" />
                         </div>
 
                         <!-- Pickup Date & Time -->
                         <label class="text-sm font-medium text-gray-700">Pickup Date & Time</label>
-                        <div class="flex flex-col sm:flex-row gap-2">
+                        <div class="flex flex-col sm:flex-row gap-2 mb-2">
                             <input type="date" class="w-full sm:w-1/2 border rounded-lg p-2 text-sm"
                                 formControlName="pickupDate" [min]="todayDate" />
                             <input type="time" class="w-full sm:w-1/2 border rounded-lg p-2 text-sm"
                                 formControlName="pickupTime"
                                 [min]="bookingForm.get('pickupDate')?.value === todayDate ? currentTime : null" />
                         </div>
-                        <div class="flex flex-col sm:flex-row gap-2">
+                        <div class="flex flex-col sm:flex-row gap-2 mb-4">
                             <div *ngIf="bookingForm.get('pickupDate')?.touched && bookingForm.get('pickupDate')?.invalid"
                                 class="text-red-500 text-sm">
                                 Pickup Date is required<br>
@@ -177,8 +238,8 @@
                         </div>
 
                         <!-- Dropoff Date & Time -->
-                        <label class="text-sm font-medium text-gray-700">Dropoff Date & Time </label>
-                        <div class="flex flex-col sm:flex-row gap-2">
+                        <label class="text-sm font-medium text-gray-700">Dropoff Date & Time</label>
+                        <div class="flex flex-col sm:flex-row gap-2 mb-2">
                             <input type="date" class="w-full sm:w-1/2 border rounded-lg p-2 text-sm"
                                 formControlName="dropoffDate" [min]="todayDate" />
                             <input type="time" class="w-full sm:w-1/2 border rounded-lg p-2 text-sm"
@@ -194,7 +255,14 @@
                                 class="text-red-500 text-sm">
                                 Dropoff Time is required
                             </div>
+                            <div *ngIf="bookingForm.errors?.['minDuration'] && (bookingForm.get('dropoffDate')?.touched || bookingForm.get('dropoffTime')?.touched)"
+                                class="text-red-600 text-sm">
+                                Please book for at least 1 hour difference between pickup and dropoff.
+                            </div>
                         </div>
+
+
+
                         <!-- Submit Button -->
                         <button type="submit" (click)="openModal()" [disabled]="bookingForm.invalid" class="w-full text-white py-2 rounded-lg font-semibold
          bg-gray-500 hover:bg-gray-700
@@ -219,7 +287,7 @@
             </div>
         </div>
         <!-- Modal -->
-        <div *ngIf="showModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+        <div *ngIf="showModal" class="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
             <div class="bg-white rounded-xl shadow-lg w-full max-w-2xl p-6 relative">
 
                 <!-- Close Button -->
@@ -227,9 +295,9 @@
                     class="absolute top-3 right-3 text-gray-700 hover:text-red-600 text-xl font-bold">&times;</button>
 
                 <!-- Tabs -->
-                <div class="flex mb-4 border-b">
+                <div class="flex mb-4 border-b text-xl">
                     <button (click)="activeTab = 'en'"
-                        [ngClass]="{'border-b-2 border-blue-600 font-semibold': activeTab === 'en'}"
+                        [ngClass]="{'border-b-2 border-blue-600 font-semibold ': activeTab === 'en'}"
                         class="px-4 py-2 focus:outline-none">
                         English
                     </button>
@@ -241,7 +309,7 @@
                 </div>
 
                 <!-- English Tab -->
-                <div *ngIf="activeTab === 'en'" class="space-y-2 text-sm text-gray-700">
+                <div *ngIf="activeTab === 'en'" class="space-y-2 text-xl text-gray-700 ">
                     <ul class="space-y-2">
                         <li class="flex items-start space-x-2"
                             *ngFor="let control of englishTerms.controls; let i = index">
@@ -263,10 +331,9 @@
                         </li>
                     </ul>
                 </div>
-
                 <!-- Submit Button -->
-                <button type="button" [disabled]="!allChecked()" (click)="onSubmit()"
-                    class="mt-4 bg-gray-600 hover:bg-gray-800 text-white font-semibold px-6 py-2 rounded disabled:opacity-50">
+                <button type="button" [disabled]="!allChecked()" (click)="goToPreviewPage() "
+                    class="mt-4 cursor-pointer bg-gray-600 hover:bg-gray-800 text-white font-semibold px-6 py-2 rounded disabled:opacity-50">
                     Submit
                 </button>
             </div>

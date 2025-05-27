@@ -206,40 +206,47 @@
   <div class="bg-white rounded-xl shadow-lg w-full max-w-md p-6 relative animate-fadeIn">
     <h3 class="text-xl font-semibold text-gray-800 mb-4">Set Vehicle Price</h3>
     <form [formGroup]="priceForm" (ngSubmit)="submitPrice()">
-      <!-- Dropdown -->
-      <label class="block text-sm font-medium text-gray-700 mb-1">Select Price Type</label>
-      <select formControlName="priceType" class="w-full mb-4 px-4 py-2 border rounded focus:outline-none">
-        <option value="">-- Select --</option>
-        <option value="price_per_km">Price Per KM</option>
-        <option value="price_per_hour">Price Per Hour</option>
-        <option value="price_per_day">Price Per Day</option>
-      </select>
-      <div *ngIf="priceType.invalid && (priceType.dirty || priceType.touched)" class="text-red-600 text-sm mb-2">
-        Price Type is required.
-      </div>
-      <!-- Price Input -->
-      <label class="block text-sm font-medium text-gray-700 mb-1">Enter Price</label>
-      <input type="number" formControlName="priceAmount" placeholder="Enter amount"
+      <!-- Price Per KM -->
+      <label class="block text-sm font-medium text-gray-700 mb-1">Price Per KM</label>
+      <input type="number" formControlName="pricePerKm" placeholder="Enter Price Per KM"
         class="w-full mb-4 px-4 py-2 border rounded focus:outline-none" />
-      <div *ngIf="priceAmount.invalid && (priceAmount.dirty || priceAmount.touched)" class="text-red-600 text-sm mb-2">
-        <div *ngIf="priceAmount.errors?.['required']">Price is required.</div>
-        <div *ngIf="priceAmount.errors?.['min']">Price must be greater than 0.</div>
+      <div *ngIf="pricePerKm.invalid && (pricePerKm.dirty || pricePerKm.touched)" class="text-red-600 text-sm mb-2">
+        <div *ngIf="pricePerKm.errors?.['min']">Value must be ≥ 0.</div>
       </div>
-      <!-- Set Price Button -->
+
+      <!-- Price Per Hour -->
+      <label class="block text-sm font-medium text-gray-700 mb-1">Price Per Hour</label>
+      <input type="number" formControlName="pricePerHour" placeholder="Enter Price Per Hour"
+        class="w-full mb-4 px-4 py-2 border rounded focus:outline-none" />
+      <div *ngIf="pricePerHour.invalid && (pricePerHour.dirty || pricePerHour.touched)"
+        class="text-red-600 text-sm mb-2">
+        <div *ngIf="pricePerHour.errors?.['min']">Value must be ≥ 0.</div>
+      </div>
+
+      <!-- Price Per Day -->
+      <label class="block text-sm font-medium text-gray-700 mb-1">Price Per Day</label>
+      <input type="number" formControlName="pricePerDay" placeholder="Enter Price Per Day"
+        class="w-full mb-4 px-4 py-2 border rounded focus:outline-none" />
+      <div *ngIf="pricePerDay.invalid && (pricePerDay.dirty || pricePerDay.touched)" class="text-red-600 text-sm mb-2">
+        <div *ngIf="pricePerDay.errors?.['min']">Value must be ≥ 0.</div>
+      </div>
+
+      <!-- Submit Button -->
       <div class="flex justify-end gap-2 mt-4">
         <button type="button" (click)="closesetpricemodal()" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">
           Cancel
         </button>
         <button type="submit" [disabled]="priceForm.invalid" [ngClass]="{
-    'bg-gray-300 cursor-not-allowed': priceForm.invalid,
-    'bg-gray-800 hover:bg-gray-900 cursor-pointer': priceForm.valid
-  }" class="w-full text-white font-medium py-3 rounded-md transition duration-300 ease-in-out">
+      'bg-gray-300 cursor-not-allowed': priceForm.invalid,
+      'bg-gray-800 hover:bg-gray-900 cursor-pointer': priceForm.valid
+    }" class="w-full text-white font-medium py-3 rounded-md transition duration-300 ease-in-out">
           Set Price
         </button>
       </div>
+
       <div class="text-center flex justify-center w-full h-full text-xl">
-        <span class="text-red-500 text-md text-center ">{{errormessage}}</span>
-        <span class="text-green-500 text-md text-center ">{{Successmessage}}</span>
+        <span class="text-red-500 text-md text-center">{{errormessage}}</span>
+        <span class="text-green-500 text-md text-center">{{Successmessage}}</span>
       </div>
     </form>
   </div>

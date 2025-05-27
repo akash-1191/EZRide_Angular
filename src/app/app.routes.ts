@@ -14,6 +14,9 @@ import { AAddvehicleComponent } from './Component/admin-dashboard/a-addvehicle/a
 import { ManagevehicleComponent } from './Component/admin-dashboard/managevehicle/managevehicle.component';
 import { VehicleAvalibleComponent } from './Component/customers-dashboard/vehicle-avalible/vehicle-avalible.component';
 import { BookingPageComponent } from './Component/customers-dashboard/booking-page/booking-page.component';
+import { PreviewPageComponent } from './Component/customers-dashboard/preview-page/preview-page.component';
+import { MyBookingComponent } from './Component/customers-dashboard/my-booking/my-booking.component';
+import { PaymentSuccessComponent } from './Component/customers-dashboard/payment-success/payment-success.component';
 
 
 export const routes: Routes = [
@@ -57,13 +60,16 @@ export const routes: Routes = [
     children: [
       { path: '', component: DashboardComponent },
       { path: 'customerProfile', component: ProfileComponent },
-      {path:"vehicleavaliblebooking",component:VehicleAvalibleComponent},
-      { path: 'custBookingpage/:id', component: BookingPageComponent }
+      { path: "vehicleavaliblebooking", component: VehicleAvalibleComponent },
+      { path: 'custBookingpage/:id', component: BookingPageComponent },
+      { path: 'previewPage', component: PreviewPageComponent },
+      {path:'MyBooking',component:MyBookingComponent},
+      {path:'paymentsuccess',component:PaymentSuccessComponent}
     ]
   },
 
   {
-    path: 'OwnerVehicle-dashboard',component:OwnerDashboardComponent,
+    path: 'OwnerVehicle-dashboard', component: OwnerDashboardComponent,
     canActivate: [authGuard],
     data: { expectedRole: 'OwnerVehicle' },
     children: [
@@ -78,8 +84,8 @@ export const routes: Routes = [
     data: { expectedRole: 'Admin' },
     children: [
       { path: "", component: AdmiDashboardComponent },
-      {path:"a_addvehicle",component:AAddvehicleComponent},
-      {path:"manageVehicle",component:ManagevehicleComponent}
+      { path: "a_addvehicle", component: AAddvehicleComponent },
+      { path: "manageVehicle", component: ManagevehicleComponent }
     ]
   },
 ];

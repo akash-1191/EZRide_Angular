@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
-import { FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { Component, inject, OnInit } from '@angular/core';
+import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { MyServiceService } from '../../../../../my-service.service';
 
 @Component({
@@ -11,7 +11,7 @@ import { MyServiceService } from '../../../../../my-service.service';
   styleUrl: './booking-page.component.css'
 })
 
-export class BookingPageComponent {
+export class BookingPageComponent implements OnInit {
   activeTab: 'en' | 'hi' = 'en';
   isImageUploaded: boolean = false;
   imageFile: File | null = null;
@@ -21,18 +21,16 @@ export class BookingPageComponent {
   todayDate: string = '';
   currentTime: string = '';
   thumbnails: string[] = [];
-
   vehicleId!: number;
   vehicleDetails: any;
-
-
   selectedImage: string = this.thumbnails[0];
+
 
   changeImage(image: string): void {
     this.selectedImage = 'http://localhost:7188/' + image;
   }
   // validation formmodal
-  constructor(private fb: FormBuilder, private route: ActivatedRoute, private service: MyServiceService) {
+  constructor(private fb: FormBuilder, private route: ActivatedRoute, private service: MyServiceService, private router: Router) {
     this.formcheckcondition = this.fb.group({
       englishTerms: this.fb.array([]),
       hindiTerms: this.fb.array([])
@@ -48,7 +46,6 @@ export class BookingPageComponent {
     const now = new Date();
     // Format: YYYY-MM-DD
     this.todayDate = now.toISOString().split('T')[0];
-    // Format: HH:MM (24-hour)
     const hours = now.getHours().toString().padStart(2, '0');
     const minutes = now.getMinutes().toString().padStart(2, '0');
     this.currentTime = `${hours}:${minutes}`;
@@ -57,8 +54,79 @@ export class BookingPageComponent {
       pickupDate: ['', Validators.required],
       pickupTime: ['', Validators.required],
       dropoffDate: ['', Validators.required],
-      dropoffTime: ['', Validators.required]
+      dropoffTime: ['', Validators.required],
+      driveBasis: ['', Validators.required],
+      hoursToDrive: [null],  // for perHour
+      daysToDrive: [null], // for perDay
+      kmsToDrive: [null],//fro KM
+    }, {
+      validators: this.minimumBookingDurationValidator()
     });
+
+    // when driveBasis or hoursToDrive/daysToDrive change then auto-update of he dropoff
+    this.bookingForm.get('driveBasis')?.valueChanges.subscribe(() => this.updateDropoff());
+    this.bookingForm.get('hoursToDrive')?.valueChanges.subscribe(() => this.updateDropoff());
+    this.bookingForm.get('daysToDrive')?.valueChanges.subscribe(() => this.updateDropoff());
+    this.bookingForm.get('kmsToDrive')?.valueChanges.subscribe(() => this.updateDropoff());
+    this.bookingForm.get('pickupDate')?.valueChanges.subscribe(() => this.updateDropoff());
+    this.bookingForm.get('pickupTime')?.valueChanges.subscribe(() => this.updateDropoff());
+    this.bookingForm.valueChanges.subscribe(() => {
+      this.bookingForm.updateValueAndValidity({ onlySelf: false, emitEvent: false });
+    });
+  }
+
+  // autoupdate dropof 
+  updateDropoff() {
+    const driveBasis = this.bookingForm.get('driveBasis')?.value;
+    const pickupDate = this.bookingForm.get('pickupDate')?.value;
+    const pickupTime = this.bookingForm.get('pickupTime')?.value;
+
+    if (!pickupDate || !pickupTime) return;
+    let pickup = new Date(`${pickupDate}T${pickupTime}`);
+
+    if (driveBasis === 'perHour') {
+      const hours = this.bookingForm.get('hoursToDrive')?.value;
+      if (hours && hours > 0) {
+        let dropoff = new Date(pickup.getTime() + hours * 60 * 60 * 1000);
+        this.bookingForm.patchValue({
+          dropoffDate: dropoff.toISOString().split('T')[0],
+          dropoffTime: dropoff.toTimeString().split(' ')[0].slice(0, 5)  // HH:mm format
+        }, { emitEvent: false });
+      }
+    } else if (driveBasis === 'perDay') {
+      const days = this.bookingForm.get('daysToDrive')?.value;
+      if (days && days > 0) {
+        let dropoff = new Date(pickup.getTime() + days * 24 * 60 * 60 * 1000);
+        this.bookingForm.patchValue({
+          dropoffDate: dropoff.toISOString().split('T')[0],
+          dropoffTime: pickupTime
+        }, { emitEvent: false });
+      }
+    } else if (driveBasis === 'perKm') {
+      this.bookingForm.patchValue({
+        dropoffDate: '',
+        dropoffTime: ''
+      }, { emitEvent: false });
+    }
+  }
+
+  minimumBookingDurationValidator(): ValidatorFn {
+    return (group: AbstractControl): ValidationErrors | null => {
+      const pickupDate = group.get('pickupDate')?.value;
+      const pickupTime = group.get('pickupTime')?.value;
+      const dropoffDate = group.get('dropoffDate')?.value;
+      const dropoffTime = group.get('dropoffTime')?.value;
+
+      if (!pickupDate || !pickupTime || !dropoffDate || !dropoffTime) {
+        return null;
+      }
+
+      const pickup = new Date(`${pickupDate}T${pickupTime}`);
+      const dropoff = new Date(`${dropoffDate}T${dropoffTime}`);
+      const diffInMinutes = (dropoff.getTime() - pickup.getTime()) / (1000 * 60);
+
+      return diffInMinutes < 60 ? { minDuration: true } : null;
+    };
   }
 
   //load vehicle ddetails
@@ -68,15 +136,14 @@ export class BookingPageComponent {
       next: (res) => {
         this.vehicleDetails = res;
         if (res.imagePaths && res.imagePaths.length > 0) {
-           const baseUrl = 'http://localhost:7188/';  // <-- yahan apna backend url daalo
-        this.thumbnails = res.imagePaths.map((img:string) => baseUrl + img);
-        this.selectedImage = this.thumbnails[0]; // Pehla image selected hoga
+          const baseUrl = 'http://localhost:7188/';
+          this.thumbnails = res.imagePaths.map((img: string) => baseUrl + img);
+          this.selectedImage = this.thumbnails[0];
         } else {
           this.thumbnails = [];
-          this.selectedImage = ''; // Agar image na ho to blank
+          this.selectedImage = '../../../../assets/image/imageNotAvalible.png'; // Agar image na ho to blank
         }
-
-        console.log("Booking Page Data:", res);
+        // console.log("Booking Page Data:", res);
       },
       error: (err) => console.error('Error fetching vehicle:', err)
     });
@@ -84,7 +151,7 @@ export class BookingPageComponent {
 
   Booking() {
     if (this.bookingForm.valid) {
-      console.log('Form Data:', this.bookingForm.value);
+      this.bookingForm.value;
 
     } else {
       this.bookingForm.markAllAsTouched();
@@ -142,11 +209,67 @@ export class BookingPageComponent {
     return currentArray.controls.every(ctrl => ctrl.value === true);
   }
 
-  onSubmit() {
-    if (this.allChecked()) {
-      this.closeModal();
+
+  goToPreviewPage() {
+    if (this.bookingForm.valid) {
+      const amount = this.calculateAmountBreakup();
+
+      const bookingData = {
+        vehicleDetails: this.vehicleDetails,
+        bookingFormValues: this.bookingForm.value,
+        ...amount  // adds rentAmount, securityAmount, totalAmount
+      };
+
+      this.router.navigate(['/customer-dashboard/previewPage'], {
+        state: { bookingData }
+      });
+    } else {
+      this.bookingForm.markAllAsTouched();
     }
   }
+
+
+  //for privew page mate
+  calculateAmountBreakup() {
+    const driveBasis = this.bookingForm.get('driveBasis')?.value;
+    const vehicle = this.vehicleDetails;
+    let rentAmount = 0;
+    let securityAmount = 0;
+
+    if (!vehicle) return { rentAmount: 0, securityAmount: 0, totalAmount: 0 };
+
+    // Rent calculation based on drive basis
+    if (driveBasis === 'perHour') {
+      const hours = this.bookingForm.get('hoursToDrive')?.value || 0;
+      rentAmount = hours * (vehicle.pricePerHour || 0);
+    } else if (driveBasis === 'perDay') {
+      const days = this.bookingForm.get('daysToDrive')?.value || 0;
+      rentAmount = days * (vehicle.pricePerDay || 0);
+    } else if (driveBasis === 'perKm') {
+      const kms = this.bookingForm.get('kmsToDrive')?.value || 0; // assuming kmsToDrive control exists
+      rentAmount = kms * (vehicle.pricePerKm || 0);
+    }
+
+    // Security deposit based on vehicle type
+    const type = vehicle.type?.toLowerCase();
+    if (type === 'car') {
+      securityAmount = 2000;
+    } else if (type === 'bike' || type === 'two-wheeler') {
+      securityAmount = 1000;
+    } else {
+      securityAmount = 1000;
+    }
+
+    const totalAmount = rentAmount + securityAmount;
+
+    return {
+      rentAmount,
+      securityAmount,
+      totalAmount
+    };
+  }
+
+
 
   openModal(): void {
     this.showModal = true;
@@ -159,6 +282,8 @@ export class BookingPageComponent {
     this.activeTab = 'en';
     this.initCheckboxes();
   }
+
+
 
 
 }

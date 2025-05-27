@@ -160,7 +160,7 @@ export class MyServiceService {
       'Authorization': `Bearer ${token}`
     });
     const apiurl = `http://localhost:7188/api/set-Or-price`;
-    return this.http.post(apiurl, data);
+    return this.http.post(apiurl, data, { headers });
   }
 
 
@@ -185,13 +185,55 @@ export class MyServiceService {
 
 
   // Get Vehicle Details by ID
-getVehicleDetailsById(vehicleId: number): Observable<any> {
+  getVehicleDetailsById(vehicleId: number): Observable<any> {
+    const token = sessionStorage.getItem('token');
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+
+    const url = `http://localhost:7188/api/GetAllVehicleById/${vehicleId}`;
+    return this.http.get<any>(url, { headers });
+  }
+  //booking details insert in the booking table 
+
+  confirmBooking(data: any): Observable<any> {
+    const token = sessionStorage.getItem('token');
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+    const apiUrl = `http://localhost:7188/api/Booking/addbooking`;
+    return this.http.post<any>(apiUrl, data);
+  }
+
+
+  // get all data of the vehhicle table
+  gatAllDataOftheBooking(userId: number): Observable<any> {
+    const token = sessionStorage.getItem('token');
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+    const apiUrl = `http://localhost:7188/api/Booking/getbookings/${userId}`;
+    return this.http.get<any>(apiUrl, { headers });
+  }
+
+ 
+
+  //do payment api with rozerpage
+createOrder(data: any): Observable<any> {
   const token = sessionStorage.getItem('token');
   const headers = new HttpHeaders({
-    'Authorization': `Bearer ${token}`
+    Authorization: `Bearer ${token}`
   });
-
-  const url = `http://localhost:7188/api/GetAllVehicleById/${vehicleId}`;
-  return this.http.get<any>(url, { headers });
+  const url = 'http://localhost:7188/api/Payment/CreateOrder';
+  return this.http.post<any>(url, data, { headers });
 }
+//do payment api with rozerpage verify and done payments store data in tha payment table
+  verifyAndSavePayment(payment: any): Observable<any> {
+    const token = sessionStorage.getItem('token');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`
+    });
+    const url = 'http://localhost:7188/api/Payment/VerifyPayment';
+    return this.http.post<any>(url, payment, { headers });
+  }
 }

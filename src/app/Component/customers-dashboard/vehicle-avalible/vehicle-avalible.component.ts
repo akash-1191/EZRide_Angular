@@ -26,7 +26,7 @@ export class VehicleAvalibleComponent implements OnInit {
 
   goToBookingPage(vehicleId: number) {
     this.router.navigate(['/customer-dashboard/custBookingpage', vehicleId]);
-    console.log("vehicleid is" + vehicleId);
+    // console.log("vehicleid is" + vehicleId);
   }
 
   ngOnInit(): void {

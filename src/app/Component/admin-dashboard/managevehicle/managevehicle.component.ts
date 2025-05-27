@@ -318,7 +318,7 @@ export class ManagevehicleComponent implements OnInit {
             vehicleImageId: img.vehicleImageId
 
           }));
-          
+
           this.noImagesFound = false;
         } else {
           this.selectedImages = [];
@@ -408,56 +408,80 @@ export class ManagevehicleComponent implements OnInit {
     this.ngOnInit();
   }
 
-  // Reactive form declaration for price form
+
+  // Reactive form setup
   priceForm: FormGroup = new FormGroup({
-    priceType: new FormControl('', Validators.required),
-    priceAmount: new FormControl('', [Validators.required, Validators.min(1)])
+    pricePerKm: new FormControl(0, [Validators.min(0)]),
+    pricePerHour: new FormControl(0, [Validators.min(0)]),
+    pricePerDay: new FormControl(0, [Validators.min(0)])
   });
 
-  // Getters for easy access and validation checks in template 
-  get priceType(): FormControl { return this.priceForm.get('priceType') as FormControl; }
-  get priceAmount(): FormControl { return this.priceForm.get('priceAmount') as FormControl; }
+  // Getters (optional for HTML validation)
+  get pricePerKm(): FormControl { return this.priceForm.get('pricePerKm') as FormControl; }
+  get pricePerHour(): FormControl { return this.priceForm.get('pricePerHour') as FormControl; }
+  get pricePerDay(): FormControl { return this.priceForm.get('pricePerDay') as FormControl; }
 
 
-  // set price open modal
   setpriceopenmodal(vehicleId: number) {
     this.selectedVehicleId = vehicleId;
-    this.priceForm.reset();
+    // this.priceForm.reset({ pricePerKm: 0, pricePerHour: 0, pricePerDay: 0 });
+    this.Successmessage = '';
+    this.errormessage = '';
+
+    const existingPrice = this.pricesMap[vehicleId];
+    if (existingPrice) {
+      // Agar price data hai to usko form me daal do
+      this.priceForm.setValue({
+        pricePerKm: existingPrice.pricePerKm ?? 0,
+        pricePerHour: existingPrice.pricePerHour ?? 0,
+        pricePerDay: existingPrice.pricePerDay ?? 0
+      });
+    } else {
+      this.priceForm.reset({ pricePerKm: 0, pricePerHour: 0, pricePerDay: 0 });
+    }
     this.isPriceModalOpen = true;
+
   }
 
+  // Modal close
   closesetpricemodal() {
     this.isPriceModalOpen = false;
-    this.loadPrices();
+    this.loadPrices(); // assuming it refreshes UI
     this.Successmessage = '';
     this.errormessage = '';
   }
 
+  // Submit pricing
   submitPrice() {
     if (this.priceForm.invalid) {
       this.priceForm.markAllAsTouched();
       return;
     }
+
     if (!this.selectedVehicleId) {
       this.errormessage = 'Vehicle ID not found!';
       return;
     }
+
     const data = {
       vehicleId: this.selectedVehicleId,
-      priceType: this.priceType.value,
-      price: this.priceAmount.value
+      pricePerKm: this.priceForm.value.pricePerKm,
+      pricePerHour: this.priceForm.value.pricePerHour,
+      pricePerDay: this.priceForm.value.pricePerDay
     };
 
     this.service.insertOrUpdatePricing(data).subscribe({
       next: (res) => {
         this.Successmessage = 'Price set successfully!';
+        this.errormessage = '';
       },
       error: (err) => {
         this.errormessage = 'Error setting price!';
-       
+        this.Successmessage = '';
       }
     });
   }
+
   // get price data 
   loadPrices() {
     this.pricesMap = {};
