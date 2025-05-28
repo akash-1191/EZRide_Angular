@@ -67,6 +67,7 @@ export class ManagevehicleComponent implements OnInit {
         this.carVehicles = this.allVehicles.filter(v => v.vehicletype === 'Car');
         this.fetchFirstImageForEachVehicle();
         this.loadPrices();
+        console.log("res[onsefjasgsjk", res);
       },
       error: (err) => {
 
@@ -120,6 +121,7 @@ export class ManagevehicleComponent implements OnInit {
     acAvailability: new FormControl(''),
     bikeName: new FormControl(''),
     engineCapacity: new FormControl('', Validators.required),
+    securityDepositAmount: new FormControl('', Validators.required),
     fuelTankCapacity: new FormControl('', [Validators.required, Validators.min(0)])
   });
 
@@ -189,7 +191,8 @@ export class ManagevehicleComponent implements OnInit {
         seatingCapacity: vehicle.seatingCapacity,
         mileage: vehicle.mileage,
         bikeName: vehicle.bikeName, // For bike
-        carName: vehicle.carName, // For car
+        carName: vehicle.carName,
+        securityDepositAmount: vehicle.securityDepositAmount, // For car
         acAvailability: vehicle.acAvailability
       });
 
@@ -245,6 +248,7 @@ export class ManagevehicleComponent implements OnInit {
   get bikeName(): FormControl { return this.vehicleForm.get('bikeName') as FormControl; }
   get engineCapacity(): FormControl { return this.vehicleForm.get('engineCapacity') as FormControl; }
   get fuelTankCapacity(): FormControl { return this.vehicleForm.get('fuelTankCapacity') as FormControl; }
+  get securityDepositAmount(): FormControl { return this.vehicleForm.get('securityDepositAmount') as FormControl; }
 
   closeModal() {
     this.isModalOpen = false;
@@ -406,6 +410,7 @@ export class ManagevehicleComponent implements OnInit {
     this.selectedImages = [];
     this.noImagesFound = false;
     this.ngOnInit();
+    this.errormessageinsertimage = '';
   }
 
 

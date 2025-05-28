@@ -24,7 +24,7 @@ export class PreviewPageComponent {
     this.bookingData = history.state.bookingData;
 
     if (!this.bookingData) {
-      
+
       this.errormessage = 'Booking data missing!';
       return;
     }
@@ -36,11 +36,11 @@ export class PreviewPageComponent {
         const userId = decode.UserId || decode.userId;
         this.bookingData.userId = userId;
       } catch (e) {
-       
+
         this.errormessage = 'Invalid session token';
       }
     } else {
-   
+
       this.errormessage = 'User not logged in';
     }
   }
@@ -63,19 +63,18 @@ export class PreviewPageComponent {
       totalDistance: 0,
       totalAmount: this.bookingData.totalAmount,
       bookingType: this.bookingData.bookingFormValues.driveBasis,
+      securityAmount: this.bookingData.bookingFormValues.securityDepositAmount,
       totalDays: this.bookingData.bookingFormValues.driveBasis === 'perDay' ? this.bookingData.bookingFormValues.daysToDrive : null,
       totalHours: this.bookingData.bookingFormValues.driveBasis === 'perHour' ? this.bookingData.bookingFormValues.hoursToDrive : null,
       perKelomeater: this.bookingData.bookingFormValues.driveBasis === 'perKm' ? this.bookingData.bookingFormValues.kmsToDrive : null,
       status: 'Pending',
       createdAt: new Date()
     };
-
     this.services.confirmBooking(payload).subscribe({
       next: (res: any) => {
-       
+
         this.bookingData.bookingId = res.data.bookingId;
         this.submitPayment();
-
       },
       error: (err: any) => {
         // console.error(' Error while confirming booking:', err);
@@ -102,8 +101,6 @@ export class PreviewPageComponent {
           order_id: orderId,
 
           handler: (response: any) => {
-            // console.log(' Razorpay Response:', response);
-            // console.log(' Booking ID being sent for payment:', this.bookingData.bookingId);
 
             const paymentDetails = {
               bookingId: this.bookingData.bookingId,
@@ -118,13 +115,23 @@ export class PreviewPageComponent {
 
             this.services.verifyAndSavePayment(paymentDetails).subscribe({
               next: (res) => {
-                // this.sucsessmessage = 'Payment Verified & Saved';
-                // this.router.navigate(['/paymentsuccess']);
+                const depositData = {
+                  bookingId: this.bookingData.bookingId,
+                  amount: this.bookingData.vehicleDetails.securityDepositAmount
+                };
+              
                 // console.log(this.bookingData);
-                this.router.navigate(['/customer-dashboard/paymentsuccess'], {
-                  state: { bookingDetails: this.bookingData }
+                this.services.addSecurityDeposit(depositData).subscribe({
+                  next: (res2) => {
+                    // Step 2: After deposit saved, go to success page
+                    this.router.navigate(['/customer-dashboard/paymentsuccess'], {
+                      state: { bookingDetails: this.bookingData }
+                    });
+                  },
+                  error: (err2) => {
+                    this.errormessage = 'Security deposit save failed';
+                  }
                 });
-
               },
               error: (err) => {
                 // console.error(err);

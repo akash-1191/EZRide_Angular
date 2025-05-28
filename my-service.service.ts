@@ -264,4 +264,27 @@ export class MyServiceService {
     return this.http.post<any>(url, filter, { headers });
   }
 
+
+
+  //add securityamount in the security tabel
+
+  addSecurityDeposit(depositData: any): Observable<any> {
+    const token = sessionStorage.getItem('token');
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
+    const apiUrl = `http://localhost:7188/api/addSecurityDepositPayment`;
+    return this.http.post<any>(apiUrl, depositData, { headers });
+  }
+
+//find the data according to the userid of the securit deposite amount table
+  getSecurityDepositsByUser(userId: number): Observable<any> {
+    const token = sessionStorage.getItem('token');
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+    const url = `http://localhost:7188/api/SecurityDeposit/${userId}`;
+    return this.http.get<any>(url, { headers });
+  }
 }

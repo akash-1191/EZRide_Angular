@@ -17,6 +17,7 @@ import { BookingPageComponent } from './Component/customers-dashboard/booking-pa
 import { PreviewPageComponent } from './Component/customers-dashboard/preview-page/preview-page.component';
 import { MyBookingComponent } from './Component/customers-dashboard/my-booking/my-booking.component';
 import { PaymentSuccessComponent } from './Component/customers-dashboard/payment-success/payment-success.component';
+import { SecurityRefundComponent } from './Component/customers-dashboard/security-refund/security-refund.component';
 
 
 export const routes: Routes = [
@@ -64,7 +65,8 @@ export const routes: Routes = [
       { path: 'custBookingpage/:id', component: BookingPageComponent },
       { path: 'previewPage', component: PreviewPageComponent },
       {path:'MyBooking',component:MyBookingComponent},
-      {path:'paymentsuccess',component:PaymentSuccessComponent}
+      {path:'paymentsuccess',component:PaymentSuccessComponent},
+      {path:'security-refund',component:SecurityRefundComponent}
     ]
   },
 

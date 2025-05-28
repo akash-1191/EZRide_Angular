@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, HostListener, inject, OnInit } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MyServiceService } from '../../../../../my-service.service';
@@ -24,7 +24,11 @@ export class BookingPageComponent implements OnInit {
   vehicleId!: number;
   vehicleDetails: any;
   selectedImage: string = this.thumbnails[0];
-
+  amountBreakup = {
+    rentAmount: 0,
+    securityAmount: 0,
+    totalAmount: 0
+  };
 
   changeImage(image: string): void {
     this.selectedImage = 'http://localhost:7188/' + image;
@@ -82,24 +86,35 @@ export class BookingPageComponent implements OnInit {
     const pickupTime = this.bookingForm.get('pickupTime')?.value;
 
     if (!pickupDate || !pickupTime) return;
-    let pickup = new Date(`${pickupDate}T${pickupTime}`);
+
+    // Proper parsing of time into 24-hour format
+    const [hoursStr, minutesStr] = pickupTime.split(':');
+    const hours = parseInt(hoursStr, 10);
+    const minutes = parseInt(minutesStr, 10);
+    const pickup = new Date(pickupDate);
+    pickup.setHours(hours, minutes, 0, 0);
 
     if (driveBasis === 'perHour') {
-      const hours = this.bookingForm.get('hoursToDrive')?.value;
-      if (hours && hours > 0) {
-        let dropoff = new Date(pickup.getTime() + hours * 60 * 60 * 1000);
+      const driveHours = this.bookingForm.get('hoursToDrive')?.value;
+      if (driveHours && driveHours > 0) {
+        const dropoff = new Date(pickup.getTime() + driveHours * 60 * 60 * 1000);
         this.bookingForm.patchValue({
-          dropoffDate: dropoff.toISOString().split('T')[0],
-          dropoffTime: dropoff.toTimeString().split(' ')[0].slice(0, 5)  // HH:mm format
+          dropoffDate: dropoff.getFullYear() + '-' +
+            String(dropoff.getMonth() + 1).padStart(2, '0') + '-' +
+            String(dropoff.getDate()).padStart(2, '0'),
+          dropoffTime: String(dropoff.getHours()).padStart(2, '0') + ':' +
+            String(dropoff.getMinutes()).padStart(2, '0')
         }, { emitEvent: false });
       }
     } else if (driveBasis === 'perDay') {
       const days = this.bookingForm.get('daysToDrive')?.value;
       if (days && days > 0) {
-        let dropoff = new Date(pickup.getTime() + days * 24 * 60 * 60 * 1000);
+        const dropoff = new Date(pickup.getTime() + days * 24 * 60 * 60 * 1000);
         this.bookingForm.patchValue({
-          dropoffDate: dropoff.toISOString().split('T')[0],
-          dropoffTime: pickupTime
+          dropoffDate: dropoff.getFullYear() + '-' +
+            String(dropoff.getMonth() + 1).padStart(2, '0') + '-' +
+            String(dropoff.getDate()).padStart(2, '0'),
+          dropoffTime: pickupTime  // Keep same time
         }, { emitEvent: false });
       }
     } else if (driveBasis === 'perKm') {
@@ -109,6 +124,7 @@ export class BookingPageComponent implements OnInit {
       }, { emitEvent: false });
     }
   }
+
 
   minimumBookingDurationValidator(): ValidatorFn {
     return (group: AbstractControl): ValidationErrors | null => {
@@ -143,7 +159,6 @@ export class BookingPageComponent implements OnInit {
           this.thumbnails = [];
           this.selectedImage = '../../../../assets/image/imageNotAvalible.png'; // Agar image na ho to blank
         }
-        // console.log("Booking Page Data:", res);
       },
       error: (err) => console.error('Error fetching vehicle:', err)
     });
@@ -166,7 +181,7 @@ export class BookingPageComponent implements OnInit {
     'Valid Driving License is mandatory.',
     'EZRide is not responsible for any accidental deaths.',
     'Any damage or dent cost must be borne by the customer.',
-    'Upload Driving License (Image below).'
+    'Please make sure you have uploaded your document before proceeding.'
   ];
 
   hindiTexts: string[] = [
@@ -176,7 +191,7 @@ export class BookingPageComponent implements OnInit {
     'मान्य ड्राइविंग लाइसेंस अनिवार्य है।',
     'किसी भी दुर्घटना या मृत्यु के लिए EZRide जिम्मेदार नहीं होगा।',
     'किसी भी डेंट या नुकसान की भरपाई ग्राहक को करनी होगी।',
-    'ड्राइविंग लाइसेंस की छवि अपलोड करें।'
+    'कृपया सुनिश्चित करें कि आपने बुकिंग से पहले अपना दस्तावेज़ अपलोड किया है।'
   ];
 
   // Create 7 checkbox controls for both tabs
@@ -251,14 +266,7 @@ export class BookingPageComponent implements OnInit {
     }
 
     // Security deposit based on vehicle type
-    const type = vehicle.type?.toLowerCase();
-    if (type === 'car') {
-      securityAmount = 2000;
-    } else if (type === 'bike' || type === 'two-wheeler') {
-      securityAmount = 1000;
-    } else {
-      securityAmount = 1000;
-    }
+    securityAmount = vehicle.securityDepositAmount;
 
     const totalAmount = rentAmount + securityAmount;
 
@@ -269,10 +277,14 @@ export class BookingPageComponent implements OnInit {
     };
   }
 
-
-
   openModal(): void {
     this.showModal = true;
+     const enArr = this.formcheckcondition.get('englishTerms') as FormArray;
+  const hiArr = this.formcheckcondition.get('hindiTerms') as FormArray;
+
+  enArr.clear();
+  hiArr.clear();
+    this.initCheckboxes();
   }
 
   closeModal(): void {
@@ -281,8 +293,31 @@ export class BookingPageComponent implements OnInit {
     this.selectedImage = this.thumbnails[0];
     this.activeTab = 'en';
     this.initCheckboxes();
+    this.clearCheckboxes();
   }
 
+  @HostListener('window:keydown', ['$event'])
+  handleKeyDown(event: KeyboardEvent) {
+    if (event.key === 'Escape' || event.key === 'Esc') {
+      if (this.showModal) {
+        this.closeModal();
+
+      }
+    }
+  }
+
+  //clear termcondition bokx data
+  clearCheckboxes() {
+    const enArr = this.englishTerms;
+    const hiArr = this.hindiTerms;
+
+    while (enArr.length !== 0) {
+      enArr.removeAt(0);
+    }
+    while (hiArr.length !== 0) {
+      hiArr.removeAt(0);
+    }
+  }
 
 
 

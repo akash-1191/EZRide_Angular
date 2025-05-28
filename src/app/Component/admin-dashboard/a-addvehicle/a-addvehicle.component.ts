@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { MyServiceService } from '../../../../../my-service.service';
 import { jwtDecode } from 'jwt-decode';
 @Component({
@@ -13,10 +13,10 @@ import { jwtDecode } from 'jwt-decode';
 })
 export class AAddvehicleComponent implements OnInit {
 
-  constructor(private services: MyServiceService) { }
+  constructor(private services: MyServiceService, private router: Router) { }
 
   vehicleTypes: string = '';
-  Successmessage:string='';
+  Successmessage: string = '';
   errormessage: string = '';
   currentYear: number = new Date().getFullYear();
 
@@ -39,6 +39,7 @@ export class AAddvehicleComponent implements OnInit {
     acAvailability: new FormControl(''),
     bikeName: new FormControl(''),
     engineCapacity: new FormControl('', Validators.required),
+    securityDepositAmount: new FormControl('', Validators.required),
     fuelTankCapacity: new FormControl('', [Validators.required, Validators.min(0)])
   });
 
@@ -102,11 +103,11 @@ export class AAddvehicleComponent implements OnInit {
   get bikeName(): FormControl { return this.vehicleForm.get('bikeName') as FormControl; }
   get engineCapacity(): FormControl { return this.vehicleForm.get('engineCapacity') as FormControl; }
   get fuelTankCapacity(): FormControl { return this.vehicleForm.get('fuelTankCapacity') as FormControl; }
+  get securityDepositAmount(): FormControl { return this.vehicleForm.get('securityDepositAmount') as FormControl; }
 
   submitForm() {
     if (this.vehicleForm.valid) {
       const vehicleData = this.vehicleForm.getRawValue();
-
       const token = sessionStorage.getItem('token');
       if (token) {
         const decodedToken: any = jwtDecode(token);
@@ -125,11 +126,11 @@ export class AAddvehicleComponent implements OnInit {
       } else if (vehicleData.vehicleType === 'Car') {
         vehicleData.bikeName = null;
       }
-
       // Call the service to add the vehicle
       this.services.addVehicle(vehicleData).subscribe({
         next: (res) => {
-          this.Successmessage = 'Vehicle added successfully! Please check Manage Vehicles Section';
+          console.log("vehicleaddresponse", res);
+          this.Successmessage = 'Vehicle added successfully! Please click Manage_Vehicles add Complete';
           this.vehicleForm.reset();
         },
         error: (err) => {
@@ -137,8 +138,11 @@ export class AAddvehicleComponent implements OnInit {
         }
       });
     } else {
-      this.errormessage='Form is invalid!';
+      this.errormessage = 'Form is invalid!';
       this.vehicleForm.markAllAsTouched();
     }
+  }
+  redirectManagevihiclepage() {
+    this.router.navigate(['/admin-dashboard/manageVehicle']);
   }
 }

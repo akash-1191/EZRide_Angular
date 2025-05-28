@@ -68,6 +68,7 @@
           <th class="px-4 py-3">Year</th>
           <th class="px-4 py-3">Color</th>
           <th class="px-4 py-3">Price</th>
+          <th class="px-4 py-3">S_Amount</th>
           <th class="px-4 py-3 text-center">Actions</th>
         </tr>
       </thead>
@@ -114,6 +115,7 @@
               <i class="fas fa-plus text-blue-600 text-2xl cursor-pointer"></i>
             </button>
           </td>
+          <td class="px-4 py-3">{{ bike.securityDepositAmount }}</td>
           <td class="px-4 md:px-2 py-3 text-center space-x-2">
             <button title="Edit" (click)="openModal(bike)">
               <i class="fas fa-edit text-green-500 text-lg cursor-pointer"></i>
@@ -142,6 +144,7 @@
           <th class="px-4 py-3">Fuel</th>
           <th class="px-4 py-3">Year</th>
           <th class="px-4 py-3">Price</th>
+          <th class="px-4 py-3">S_Amount</th>
           <th class="px-4 py-3 text-center">Actions</th>
         </tr>
       </thead>
@@ -189,6 +192,7 @@
               <i class="fas fa-plus text-blue-600 text-2xl cursor-pointer"></i>
             </button>
           </td>
+          <td class="px-4 py-3">{{ car.securityDepositAmount }}</td>
           <td class="px-4 md:px-2 py-3 text-center space-x-2">
             <button title="Edit" (click)="openModal(car)"><i
                 class="fas fa-edit text-green-500 text-lg cursor-pointer"></i></button>
@@ -264,7 +268,8 @@
         class="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 text-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-white transition">
         Cancel
       </button>
-      <button (click)="confirmDelete()" class="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white transition">
+      <button (click)="confirmDelete()"
+        class="cursor-pointer px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white transition">
         Yes, Delete
       </button>
     </div>
@@ -284,7 +289,7 @@
         Cancel
       </button>
       <button (click)="confirmVehicleDelete()"
-        class="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white transition">
+        class="px-4 py-2 cursor-pointer  rounded-lg bg-red-600 hover:bg-red-700 text-white transition">
         Yes, Delete
       </button>
     </div>
@@ -514,6 +519,16 @@
         <span class="text-red-500 text-sm"
           *ngIf="bikeName.errors?.['required'] && (bikeName.touched || bikeName.dirty)">
           Bike name is required.
+        </span>
+      </div>
+      <!-- security amount -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">security_Deposit_Amount</label>
+        <input type="number" formControlName="securityDepositAmount"
+          class="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-gray-500" />
+        <span class="text-red-500 text-sm"
+          *ngIf="securityDepositAmount.errors?.['required'] && (securityDepositAmount.touched || securityDepositAmount.dirty)">
+          Security Amount is required.
         </span>
       </div>
 
