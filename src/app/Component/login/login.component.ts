@@ -17,6 +17,7 @@ export class LoginComponent implements OnInit {
   private router = inject(Router);
   roleError: string | null = null;
   isLoading: boolean = false;
+  showPassword = false;
 
   constructor(private loginservices: MyServiceService) { }
 

@@ -119,14 +119,13 @@ export class PreviewPageComponent {
                   bookingId: this.bookingData.bookingId,
                   amount: this.bookingData.vehicleDetails.securityDepositAmount
                 };
-              
                 // console.log(this.bookingData);
                 this.services.addSecurityDeposit(depositData).subscribe({
                   next: (res2) => {
-                    // Step 2: After deposit saved, go to success page
                     this.router.navigate(['/customer-dashboard/paymentsuccess'], {
                       state: { bookingDetails: this.bookingData }
                     });
+
                   },
                   error: (err2) => {
                     this.errormessage = 'Security deposit save failed';
@@ -134,7 +133,6 @@ export class PreviewPageComponent {
                 });
               },
               error: (err) => {
-                // console.error(err);
                 this.errormessage = 'Payment verification failed';
               }
             });
@@ -154,7 +152,6 @@ export class PreviewPageComponent {
         rzp.open();
 
         rzp.on('payment.failed', (response: any) => {
-          // console.log('Payment Failed:', response.error);
           this.errormessage = ' Payment Failed: ' + response.error.description;
         });
       },

@@ -22,7 +22,9 @@ export class PaymentSuccessComponent {
     const nav = this.router.getCurrentNavigation();
     this.bookingDetails = nav?.extras?.state?.['bookingDetails'] || {};
   }
-  
-  
+  redirecttothepage() {
+    this.router.navigate(['customer-dashboard/paymentDetails']);
+  }
+
 }
 

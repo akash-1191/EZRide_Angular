@@ -59,7 +59,7 @@
                             <div *ngIf="vehicle.type?.toLowerCase() === 'bike'"
                                 class="flex justify-between text-black text-sm font-semibold my-3 flex-wrap gap-y-2 gap-x-2">
                                 <div class="flex items-center gap-1">
-                                    <i class="fas fa-road text-xl text-gray-600"></i> {{ vehicle.mileage || 'N/A' }}
+                                    <i class="fa-solid fa-gauge-high text-lg text-gray-600"></i> {{ vehicle.mileage || 'N/A' }}
                                     km/l
                                 </div>
                                 <div class="flex items-center gap-1">
@@ -121,7 +121,7 @@
                                 alt="image"
                                 class="w-full h-44 object-cover rounded-md mb-4 transition duration-500 hover:scale-105" />
                             <div class="flex justify-between text-black text-sm font-semibold my-3 flex-wrap gap-y-2">
-                                <div class="flex items-center gap-1"><i class="fas fa-road text-xl text-gray-600"></i>
+                                <div class="flex items-center gap-1"><i class="fa-solid fa-gauge-high text-lg text-gray-600"></i>
                                     {{
                                     bikevehicle.mileage|| 'N/A' }}K/M
                                 </div>

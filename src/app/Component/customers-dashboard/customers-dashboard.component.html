@@ -27,7 +27,7 @@
         <div
             class="fixed flex flex-col top-14 left-0 w-14 hover:w-64 md:w-64 bg-gray-900 h-full text-white transition-all duration-300 border-none z-10 sidebar">
             <div class="flex flex-col justify-between flex-grow">
-               
+
                 <ul class="flex flex-col py-4 space-y-1">
 
                     <!-- Dashboard Home -->
@@ -58,7 +58,7 @@
                     </a>
 
                     <!-- Payments -->
-                    <a routerLink="/customer-dashboard/payments" class="cursor-pointer">
+                    <a routerLink="/customer-dashboard/paymentDetails" class="cursor-pointer">
                         <span class="relative flex flex-row items-center h-11 hover:bg-gray-600 hover:text-indigo-300 
         border-l-4 border-transparent hover:border-indigo-500 pr-6 px-4">
                             <i class="fa-solid fa-wallet w-5 text-sm"></i>
@@ -100,7 +100,6 @@
                             <button class="ml-3 text-sm tracking-wide truncate cursor-pointer">Profile</button>
                         </span>
                     </a>
-
                     <!-- Feedback -->
                     <a routerLink="/customer-dashboard/feedback" class="cursor-pointer">
                         <span class="relative flex flex-row items-center h-11 hover:bg-gray-600 hover:text-indigo-300 
@@ -109,15 +108,12 @@
                             <button class="ml-3 text-sm tracking-wide truncate cursor-pointer">Feedback</button>
                         </span>
                     </a>
-
                 </ul>
-
                 <p class="mb-14 px-5 py-3 hidden md:block text-center text-xs text-slate-400">
                     Copyright BDCS 2024
                 </p>
             </div>
         </div>
-
         <!-- Page Content -->
         <div class="content h-full ml-14 mt-14 mb-10 md:ml-64 p-4">
             <router-outlet></router-outlet>

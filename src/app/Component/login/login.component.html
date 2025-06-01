@@ -4,52 +4,58 @@
 </div>
 
 <section class="bgimagelogin h-screen flex items-center justify-center px-4">
-    <form [formGroup]="LoginForm" (ngSubmit)="Login()"
-      class="relative animate-fade-in backdrop-blur-lg bg-white/10 border border-white/20 shadow-2xl rounded-3xl p-8 w-full max-w-sm transition-all duration-300 hover:shadow-[0_0_30px_rgba(255,255,255,0.2)]">
-  
-      <div class="flex justify-center mb-6">
-        <img src="assets/logo.png" alt="Logo" class="w-16 h-16 rounded-full shadow-md" />
-      </div>
-  
-      <h2 class="text-3xl font-bold text-center mb-6 tracking-wide text-white drop-shadow-lg">Welcome Back</h2>
+  <form [formGroup]="LoginForm" (ngSubmit)="Login()"
+    class="relative animate-fade-in backdrop-blur-lg bg-white/10 border border-white/20 shadow-2xl rounded-3xl p-8 w-full max-w-sm transition-all duration-300 hover:shadow-[0_0_30px_rgba(255,255,255,0.2)]">
 
-      <div class="mb-5">
-        <input type="text" id="email" name="email" formControlName="Email" autofocus
-          class="w-full px-4 py-3 rounded-lg bg-white/20 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white/60"
-          placeholder="Email" />
-        <span class="text-red-500 text-sm"
-          *ngIf="Email.errors?.['required'] && (Email.dirty || Email.touched)">Email is required</span>
-        <span class="text-red-500 text-sm"
-          *ngIf="Email.errors?.['email'] && (Email.dirty || Email.touched)">Invalid email</span>
-      </div>
+    <div class="flex justify-center mb-6">
+      <img src="assets/logo.png" alt="Logo" class="w-16 h-16 rounded-full shadow-md" />
+    </div>
 
-      <div class="mb-6">
-        <input type="password" id="password" formControlName="Password"
-          class="w-full px-4 py-3 rounded-lg bg-white/20 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white/60"
-          placeholder="Password" />
-        <span class="text-red-500 text-sm"
-          *ngIf="Password.invalid && (Password.dirty || Password.touched)">Password is required</span>
-      </div>
-  
-      <!-- Submit Button -->
-      <button type="submit" [disabled]="LoginForm.invalid"
-        [ngClass]="LoginForm.invalid ? 'bg-gray-400 cursor-not-allowed' : 'bg-gradient-to-r from-[#0f2027] via-[#203a43] to-[#2c5364] hover:brightness-110 cursor-pointer'"
-        class=" w-full py-2 rounded-lg text-white font-semibold transition-all duration-300">
-        Login
+    <h2 class="text-3xl font-bold text-center mb-6 tracking-wide text-white drop-shadow-lg">Welcome Back</h2>
+
+    <div class="mb-5">
+      <input type="text" id="email" name="email" formControlName="Email" autofocus
+        class="w-full px-4 py-3 rounded-lg bg-white/20 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white/60"
+        placeholder="Email" />
+      <span class="text-red-500 text-sm" *ngIf="Email.errors?.['required'] && (Email.dirty || Email.touched)">Email is
+        required</span>
+      <span class="text-red-500 text-sm" *ngIf="Email.errors?.['email'] && (Email.dirty || Email.touched)">Invalid
+        email</span>
+    </div>
+
+    <div class="mb-6 relative">
+      <input [type]="showPassword ? 'text' : 'password'" id="password" formControlName="Password"
+        class="w-full px-4 py-3 rounded-lg bg-white/20 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white/60"
+        placeholder="Password" />
+      <button type="button" (click)="showPassword = !showPassword"
+        class="absolute cursor-pointer right-3 top-1/2 transform -translate-y-1/2 text-white" tabindex="-1">
+        <i class="fa" [ngClass]="showPassword ? 'fa-eye-slash' : 'fa-eye'" aria-hidden="true"></i>
       </button>
-      <div>
+
+      <span class="text-red-500 text-sm" *ngIf="Password.invalid && (Password.dirty || Password.touched)">Password is
+        required</span>
+    </div>
+
+
+    <!-- Submit Button -->
+    <button type="submit" [disabled]="LoginForm.invalid"
+      [ngClass]="LoginForm.invalid ? 'bg-gray-400 cursor-not-allowed' : 'bg-gradient-to-r from-[#0f2027] via-[#203a43] to-[#2c5364] hover:brightness-110 cursor-pointer'"
+      class=" w-full py-2 rounded-lg text-white font-semibold transition-all duration-300">
+      Login
+    </button>
+    <div>
       <p *ngIf="roleError" class="flex justify-center text-red-500 text-sm">{{roleError}}</p>
-      </div>
-  
-      <!-- Register & Forgot -->
-      <div class="mt-5 text-center text-sm text-white">
-        <p>Don't have an account?
-          <span class="font-semibold underline hover:text-gray-300 transition cursor-pointer" (click)="SignUpPage()">Create one</span>
-        </p>
-        <p class="mt-2">
-          <span class="hover:underline cursor-pointer text-gray-300 hover:text-white transition">Forgot password?</span>
-        </p>
-      </div>
-    </form>
-  </section>
-  
+    </div>
+
+    <!-- Register & Forgot -->
+    <div class="mt-5 text-center text-sm text-white">
+      <p>Don't have an account?
+        <span class="font-semibold underline hover:text-gray-300 transition cursor-pointer"
+          (click)="SignUpPage()">Create one</span>
+      </p>
+      <p class="mt-2">
+        <span class="hover:underline cursor-pointer text-gray-300 hover:text-white transition">Forgot password?</span>
+      </p>
+    </div>
+  </form>
+</section>

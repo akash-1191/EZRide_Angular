@@ -1,10 +1,17 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+// import { DateAvailabilityDTO } from './date-availability.model';
+export interface AvailabilitySlot {
+  startDateTime: string; // ISO string
+  endDateTime: string;   // ISO string
+  isAvailable: boolean;
+}
 
 @Injectable({
   providedIn: 'root'
 })
+
 export class MyServiceService {
 
   constructor(private http: HttpClient) { }
@@ -241,6 +248,7 @@ export class MyServiceService {
     const url = 'http://localhost:7188/api/Payment/CreateOrder';
     return this.http.post<any>(url, data, { headers });
   }
+
   //do payment api with rozerpage verify and done payments store data in tha payment table
   verifyAndSavePayment(payment: any): Observable<any> {
     const token = sessionStorage.getItem('token');
@@ -252,7 +260,6 @@ export class MyServiceService {
   }
 
   //  Booking Filter API
-
   getFilteredBookings(filter: any): Observable<any> {
     const token = sessionStorage.getItem('token');
     const headers = new HttpHeaders({
@@ -278,7 +285,7 @@ export class MyServiceService {
     return this.http.post<any>(apiUrl, depositData, { headers });
   }
 
-//find the data according to the userid of the securit deposite amount table
+  //find the data according to the userid of the securit deposite amount table
   getSecurityDepositsByUser(userId: number): Observable<any> {
     const token = sessionStorage.getItem('token');
     const headers = new HttpHeaders({
@@ -287,4 +294,120 @@ export class MyServiceService {
     const url = `http://localhost:7188/api/SecurityDeposit/${userId}`;
     return this.http.get<any>(url, { headers });
   }
+
+
+
+  // upload Documnet api 
+  uploadDocuments(formData: FormData): Observable<any> {
+    const token = sessionStorage.getItem('token');
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+    const uploadDoc = `http://localhost:7188/api/uploadCustomerDocument`;
+    return this.http.post(uploadDoc, formData, { headers });
+  }
+
+  // check using this api perticular user uploas yopr document or not 
+  checkDocumentsUploaded(userId: number): Observable<{ exists: boolean }> {
+    const token = sessionStorage.getItem('token');
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+    const url = `http://localhost:7188/api/checkDocumentsUploaded/${userId}`;
+    return this.http.get<{ exists: boolean }>(url, { headers });
+  }
+
+  //get all documnet of the Pertucular user
+  getCustomerDocument(userId: number): Observable<any> {
+    const token = sessionStorage.getItem('token');
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+    const url = `http://localhost:7188/api/getCustomerDocument/${userId}`;
+    return this.http.get(url, { headers });
+  }
+
+  updateUserDocumentFieldToNull(userId: number, fieldName: string): Observable<any> {
+    const token = sessionStorage.getItem('token');
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+
+    const url = `http://localhost:7188/api/update-document-field-null/${userId}/${fieldName}`;
+    return this.http.put<any>(url, {}, { headers });
+  }
+
+  // get payment status 
+  paymentStatusDetails(UserId: any): Observable<any> {
+    const token = sessionStorage.getItem('token');
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+    const url = `http://localhost:7188/api/user-PaymentDetails/${UserId}`;
+    return this.http.get(url, { headers });
+  }
+
+
+  //  Check vehicle availability by date
+  // getAvailability(vehicleId: number, startDate: string, endDate: string): Observable<any> {
+  //   const params = new HttpParams()
+  //     .set('vehicleId', vehicleId.toString())
+  //     .set('startDate', startDate)
+  //     .set('endDate', endDate);
+
+  //   const url = `http://localhost:7188/api/Booking/availability`;
+  //   return this.http.get<any>(url, { params });
+  // }  
+
+
+  getAvailability(vehicleId: number, startDateTime: string, endDateTime: string): Observable<AvailabilitySlot[]> {
+    const params = new HttpParams()
+      .set('vehicleId', vehicleId.toString())
+      .set('startDateTime', startDateTime)
+      .set('endDateTime', endDateTime);
+
+    return this.http.get<AvailabilitySlot[]>('/api/Booking/availability', { params });
+  }
+
+  //recipt download
+  downloadReceipt(userId: number, bookingId: number) {
+    const token = sessionStorage.getItem('token');
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+
+    const baseUrl = 'http://localhost:7188/api/PaymentReceipt';
+    return this.http.get(`${baseUrl}/download/${userId}/${bookingId}`, {
+      headers,
+      responseType: 'blob',
+    });
+  }
+
+
+  // send pdf in the email id 
+  sendReceiptEmail(userId: number, bookingId: number, email: string) {
+    const token = sessionStorage.getItem('token');
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
+    const baseUrl = 'http://localhost:7188/api/PaymentReceipt';
+    return this.http.post(`${baseUrl}/send-email?userId=${userId}&bookingId=${bookingId}`, JSON.stringify(email), { headers, responseType: 'text' as 'json' });
+  }
+
+
+
+  //add feed back message top the user 
+  addFeedback(feedback: any): Observable<any> {
+    const token = sessionStorage.getItem('token');
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
+
+    const url = `http://localhost:7188/api/Feedback/addFeedbackmsg`;
+    return this.http.post<any>(url, feedback, { headers });
+  }
+
+
 }

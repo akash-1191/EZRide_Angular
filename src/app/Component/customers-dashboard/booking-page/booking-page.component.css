@@ -42,3 +42,23 @@ img.fade-in {
 .slide-up {
   animation: slideUp 0.8s ease-out forwards;
 }
+
+
+::ng-deep {
+  .available-date .mat-calendar-body-cell-content {
+    background-color: #4CAF50 !important;
+    color: white !important;
+    border-radius: 50%;
+  }
+  
+  .unavailable-date .mat-calendar-body-cell-content {
+    background-color: #F44336 !important;
+    color: white !important;
+    border-radius: 50%;
+    text-decoration: line-through;
+  }
+  
+  .mat-calendar-body-disabled .unavailable-date .mat-calendar-body-cell-content {
+    opacity: 0.5;
+  }
+}

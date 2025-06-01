@@ -18,6 +18,9 @@ import { PreviewPageComponent } from './Component/customers-dashboard/preview-pa
 import { MyBookingComponent } from './Component/customers-dashboard/my-booking/my-booking.component';
 import { PaymentSuccessComponent } from './Component/customers-dashboard/payment-success/payment-success.component';
 import { SecurityRefundComponent } from './Component/customers-dashboard/security-refund/security-refund.component';
+import { PaymentDetailsComponent } from './Component/customers-dashboard/payment-details/payment-details.component';
+import { ReciptpageComponent } from './Component/customers-dashboard/reciptpage/reciptpage.component';
+import { FeedbackpageComponent } from './Component/customers-dashboard/feedbackpage/feedbackpage.component';
 
 
 export const routes: Routes = [
@@ -64,9 +67,12 @@ export const routes: Routes = [
       { path: "vehicleavaliblebooking", component: VehicleAvalibleComponent },
       { path: 'custBookingpage/:id', component: BookingPageComponent },
       { path: 'previewPage', component: PreviewPageComponent },
-      {path:'MyBooking',component:MyBookingComponent},
-      {path:'paymentsuccess',component:PaymentSuccessComponent},
-      {path:'security-refund',component:SecurityRefundComponent}
+      { path:'MyBooking',component:MyBookingComponent},
+      { path:'paymentsuccess',component:PaymentSuccessComponent},
+      { path:'security-refund',component:SecurityRefundComponent},
+      { path:'paymentDetails',component:PaymentDetailsComponent},
+      { path:'reciptpage',component:ReciptpageComponent},
+      {path:'feedback',component:FeedbackpageComponent}
     ]
   },
 

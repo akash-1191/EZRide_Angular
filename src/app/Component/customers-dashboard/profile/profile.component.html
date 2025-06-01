@@ -80,7 +80,7 @@
 
                 </div>
 
-                <!-- Modal for File Upload -->
+
                 <!-- Modal for File Upload -->
                 <div *ngIf="isImageUploadModalOpen"
                     class="modal fixed inset-0 z-50 bg-black/30 flex justify-center items-center transition-all duration-300 ease-in-out">
@@ -109,8 +109,128 @@
                     </div>
                 </div>
 
+
+                <div class="bg-white mt-6 rounded-lg shadow-lg p-6 w-full">
+
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+                        <h2 class="text-xl font-semibold text-gray-800">Uploaded Documents</h2>
+                        <button type="button" (click)="UploadModalOpen()"
+                            class="text-sm bg-gray-700 text-white px-4 py-2 cursor-pointer rounded hover:bg-gray-800 transition">
+                            <i class="fas fa-upload mr-2"></i> Upload Documents
+                        </button>
+                    </div>
+
+                    <!-- Document Grid -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                        <!--  AGE PROOF -->
+                        <div class="relative border rounded-lg p-4 shadow-sm hover:shadow-md transition">
+                            <span class="block font-semibold mb-2 text-gray-700">Age Proof</span>
+                            <ng-container *ngIf="uploadedDocData?.ageProofPath; else noAgeProof">
+                                <ng-container [ngSwitch]="getFileType(uploadedDocData.ageProofPath)">
+                                    <!-- Image -->
+                                    <img *ngSwitchCase="'image'"
+                                        [src]="'http://localhost:7188/' + uploadedDocData.ageProofPath"
+                                        class="w-full h-52 object-cover rounded" alt="Age Proof" />
+
+
+                                    <!-- PDF -->
+                                    <div *ngSwitchCase="'pdf'"
+                                        class="w-full h-52 flex flex-col items-center justify-center bg-gray-100 rounded">
+                                        <i class="fas fa-file-pdf text-red-600 text-4xl mb-2 cursor-pointer"
+                                            (click)="deleteDocumentField('ageproof')"></i>
+                                        <a [href]="'http://localhost:7188/' + uploadedDocData.ageProofPath"
+                                            target="_blank" class="text-sm text-blue-600 underline">View PDF</a>
+                                    </div>
+                                </ng-container>
+                                <!--  Close -->
+                                <button
+                                    class="absolute top-0 right-0 text-white bg-black/60 hover:bg-black p-1 rounded-sm text-xs">
+                                    <i class="fas fa-times cursor-pointer text-lg hover:text-red-500"
+                                        (click)="deleteDocumentField('ageproof')"></i>
+                                </button>
+                            </ng-container>
+                            <ng-template #noAgeProof>
+                                <div
+                                    class="w-full h-52 flex items-center justify-center bg-gray-100 rounded text-gray-500 text-sm text-center">
+                                    <i class="fas fa-image text-2xl mr-2"></i> No document uploaded
+                                </div>
+                            </ng-template>
+                        </div>
+
+                        <!-- ADDRESS PROOF -->
+                        <div class="relative border rounded-lg p-4 shadow-sm hover:shadow-md transition">
+                            <span class="block font-semibold mb-2 text-gray-700">Address Proof</span>
+                            <ng-container *ngIf="uploadedDocData?.addressProofPath; else noAddressProof">
+                                <ng-container [ngSwitch]="getFileType(uploadedDocData.addressProofPath)">
+                                    <img *ngSwitchCase="'image'"
+                                        [src]="'http://localhost:7188/' + uploadedDocData.addressProofPath"
+                                        class="w-full h-52 object-cover rounded" alt="Address Proof" />
+                                    
+
+                                    <div *ngSwitchCase="'pdf'"
+                                        class="w-full h-52 flex flex-col items-center justify-center bg-gray-100 rounded">
+                                        <i class="fas fa-file-pdf text-red-600 text-4xl mb-2 cursor-pointer"
+                                            (click)="deleteDocumentField('addressproof')"></i>
+                                        <a [href]="'http://localhost:7188/' + uploadedDocData.addressProofPath"
+                                            target="_blank" class="text-sm text-blue-600 underline">View PDF</a>
+                                    </div>
+                                </ng-container>
+                                <button
+                                    class="absolute top-0 right-0 text-white bg-black/60 hover:bg-black p-1 rounded-sm text-xs">
+                                    <i class="fas fa-times cursor-pointer text-lg hover:text-red-500"
+                                        (click)="deleteDocumentField('addressproof')"></i>
+                                </button>
+                            </ng-container>
+                            <ng-template #noAddressProof>
+                                <div
+                                    class="w-full h-52 flex items-center justify-center bg-gray-100 rounded text-gray-500 text-sm text-center">
+                                    <i class="fas fa-image text-2xl mr-2"></i> No document uploaded
+                                </div>
+                            </ng-template>
+                        </div>
+
+                        <!--  DRIVING LICENSE -->
+                        <div class="relative border rounded-lg p-4 shadow-sm hover:shadow-md transition">
+                            <span class="block font-semibold mb-2 text-gray-700">Driving Licence</span>
+                            <ng-container *ngIf="uploadedDocData?.dlImagePath; else noDLProof">
+                                <ng-container [ngSwitch]="getFileType(uploadedDocData.dlImagePath)">
+                                    <img *ngSwitchCase="'image'"
+                                        [src]="'http://localhost:7188/' + uploadedDocData.dlImagePath"
+                                        class="w-full h-52 object-cover rounded" alt="DL Proof" />
+                                    <div *ngSwitchCase="'pdf'"
+                                        class="w-full h-52 flex flex-col items-center justify-center bg-gray-100 rounded">
+                                        <i class="fas fa-file-pdf text-red-600 text-4xl mb-2 cursor-pointer"
+                                            (click)="deleteDocumentField('dlimage')"></i>
+                                        <a [href]="'http://localhost:7188/' + uploadedDocData.dlImagePath"
+                                            target="_blank" class="text-sm text-blue-600 underline">View PDF</a>
+                                    </div>
+                                </ng-container>
+                                <button
+                                    class="absolute top-0 right-0 text-white bg-black/60 hover:bg-black p-1 rounded-sm text-xs">
+                                    <i class="fas fa-times cursor-pointer text-lg hover:text-red-500"
+                                        (click)="deleteDocumentField('dlimage')"></i>
+                                </button>
+                            </ng-container>
+                            <ng-template #noDLProof>
+                                <div
+                                    class="w-full h-52 flex items-center justify-center bg-gray-100 rounded text-gray-500 text-sm text-center">
+                                    <i class="fas fa-image text-2xl mr-2"></i> No document uploaded
+                                </div>
+                            </ng-template>
+                        </div>
+                    </div>
+                    <!--  Footer Info -->
+                    <p class="text-md text-gray-500 mt-6 text-center">
+                        <span class="text-xl">📎</span> Supported formats: JPG, PNG, PDF. Max size 5 MB per file.
+                    </p>
+                </div>
+
             </div>
         </div>
+
+
+
+
         <!-- Edit Profile Section -->
         <div class="border-t-2 border-gray-300 w-full"></div>
         <div class="bg-white rounded-lg shadow-lg w-full p-6">
@@ -130,7 +250,7 @@
             <div class="bg-white text-gray-800 rounded-lg w-full max-w-2xl p-4 sm:p-6 md:p-8 shadow-lg relative">
                 <button type="button" (click)="closeEditProfileModal()"
                     class="cursor-pointer absolute top-2 right-2 text-gray-600 hover:text-gray-800 text-2xl">
-                    <i class="fas fa-times"></i>
+                    <i class="fas fa-times cursor-pointer"></i>
                 </button>
                 <h2 class="text-2xl font-bold mb-6 text-gray-800">Edit User Profile</h2>
 
@@ -264,6 +384,87 @@
                         class="cursor-pointer bg-gray-600 w-full text-white py-3 px-6 rounded-lg hover:bg-gray-700 text-sm font-bold  transition duration-300"
                         type="submit" name="sign">Update Profile</button>
                 </form>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+    <!-- Upload Document Modal -->
+    <div *ngIf="isUploadModalOpen" class="fixed inset-0 bg-black/50 flex justify-center items-center z-50 px-4">
+        <div class="bg-white p-6 rounded-lg w-full max-w-md relative shadow-xl">
+            <!-- Close Button -->
+            <button type="button" (click)="UploadModalClose()"
+                class="absolute top-2 right-2 text-gray-600 hover:text-gray-900 transition-colors duration-200">
+                <i class="fa fa-times cursor-pointer"></i>
+            </button>
+
+
+            <h2 class="text-xl font-semibold text-gray-800 mb-4 text-center">Upload Documents</h2>
+            <div>
+                <!-- Upload Form -->
+                <form *ngIf="!isUploaded" [formGroup]="uploaddocumnet" (ngSubmit)="onUpload()"
+                    enctype="multipart/form-data" class="space-y-4">
+                    <!-- Driving  licence -->
+                    <div>
+                        <label class="block text-gray-700 font-medium mb-2">Driving licence</label>
+                        <input type="file" (change)="onFileChange($event, 'DLProof')" accept=".pdf,.jpg,.jpeg,.png"
+                            formControlName="DLProof"
+                            class="w-full border-2 border-gray-300 p-2 rounded-md cursor-pointer" />
+                        <small class="text-green-500" *ngIf="uploadedFileNames.DLProof">
+                            Previously uploaded: {{ uploadedFileNames.DLProof }}
+                        </small>
+                    </div>
+                    <!-- <span class="text-red-500"
+                        *ngIf="DLProof.errors?.['required'] && (DLProof.touched || DLProof.dirty)">Please
+                        Upload Driving licence</span> -->
+                    <!-- Address Proof -->
+                    <div>
+                        <label class="block text-gray-700 font-medium mb-2">Address Proof</label>
+                        <input type="file" (change)="onFileChange($event, 'AddressProof')" accept=".pdf,.jpg,.jpeg,.png"
+                            formControlName="AddressProof"
+                            class="w-full border-2 border-gray-300 p-2 rounded-md cursor-pointer" />
+                            <small class="text-green-500" *ngIf="uploadedFileNames.AddressProof">
+                            Previously uploaded: {{ uploadedFileNames.AddressProof }}
+                        </small>
+                    </div>
+                    <!-- <span class="text-red-500"
+                        *ngIf="AddressProof.errors?.['required'] && (AddressProof.touched || AddressProof.dirty)">Please
+                        Upload Current Address Proof </span> -->
+                    <!-- Age Proof -->
+                    <div>
+                        <label class="block text-gray-700 font-medium mb-2">Age Proof</label>
+                        <input type="file" (change)="onFileChange($event, 'AgeProof')" accept=".pdf,.jpg,.jpeg,.png"
+                            formControlName="AgeProof"
+                            class="w-full border-2 border-gray-300 p-2 rounded-md cursor-pointer" />
+                            <small class="text-green-500  " *ngIf="uploadedFileNames.AgeProof">
+                            Previously uploaded: {{ uploadedFileNames.AgeProof }}
+                        </small>
+                    </div>
+                    <!-- <span class="text-red-500"
+                        *ngIf="AgeProof.errors?.['required'] && (AgeProof.touched || AgeProof.dirty)">Please
+                        Upload Age Proof</span> -->
+                    <!-- Upload Button -->
+                    <div class="flex justify-center mt-6">
+                        <button type="submit"
+                            class="bg-gray-700 text-white px-4 py-2 rounded hover:bg-gray-800 transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+                            Upload
+                        </button>
+                    </div>
+                    <div class="flex justify-center items-center">
+                        <span class="text-md text-red-500">{{erromessage}}</span>
+                        <span class="text-md text-green-500">{{successmessage}}</span>
+                    </div>
+                    <p class="text-md flex justify-center text-gray-700 mt-1">Supported formats: PDF, JPG, PNG</p>
+                </form>
+                <!-- Success message after upload -->
+                <div *ngIf="isUploaded" class="text-center mt-4 p-10">
+                    <p class="text-green-600 text-lg font-semibold animate-fade-in">📁 You've already uploaded all
+                        required documents.
+                        To upload new ones, please delete the existing documents first.</p>
+                </div>
             </div>
         </div>
     </div>

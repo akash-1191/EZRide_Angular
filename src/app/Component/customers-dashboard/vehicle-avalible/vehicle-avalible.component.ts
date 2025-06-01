@@ -9,6 +9,7 @@ import { CommonModule } from '@angular/common';
   templateUrl: './vehicle-avalible.component.html',
   styleUrl: './vehicle-avalible.component.css'
 })
+
 export class VehicleAvalibleComponent implements OnInit {
   selectedTab: string = 'all';
   private router = inject(Router);

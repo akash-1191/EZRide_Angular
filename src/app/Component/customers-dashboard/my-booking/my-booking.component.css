@@ -1,0 +1,24 @@
+.image-container {
+  overflow: hidden;
+  border-radius: 0.5rem;
+  height: 16rem; /* same as h-64 */
+  width: 100%;
+}
+
+.image-zoom {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.image-container:hover .image-zoom {
+  transform: scale(1.1);
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
