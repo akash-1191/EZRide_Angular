@@ -1,1 +1,76 @@
-<p>dashboard works!</p>
+<div class="bg-gradient-to-br from-indigo-100 via-purple-50 to-pink-100 min-h-screen font-sans py-12 px-4 sm:px-6 lg:px-8">
+  <!-- Title -->
+  <div class="text-center mb-16">
+    <h2 class="text-4xl sm:text-5xl font-extrabold text-indigo-700 drop-shadow-lg">Your Rental Summary</h2>
+    <p class="text-gray-600 mt-3 text-lg sm:text-xl">Overview of your vehicle rental activity</p>
+  </div>
+
+  <!-- Cards Grid -->
+  <div class="max-w-5xl  mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 ">
+
+    <!-- Total Bookings -->
+    <div class="bg-white shadow-xl rounded-2xl overflow-hidden hover:scale-105 transition-transform duration-300">
+      <div class="h-2 bg-indigo-500"></div>
+      <div class="p-6">
+        <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Total Bookings</h3>
+        <p class="text-4xl font-bold text-indigo-600 mt-3">{{ totalBooking }}</p>
+      </div>
+    </div>
+
+    <!-- Bikes Booked -->
+    <div class="bg-white shadow-xl rounded-2xl overflow-hidden hover:scale-105 transition-transform duration-300">
+      <div class="h-2 bg-blue-400"></div>
+      <div class="p-6">
+        <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Bikes Booked</h3>
+        <p class="text-4xl font-bold text-blue-500 mt-3">{{ bikecount }}</p>
+      </div>
+    </div>
+
+    <!-- Cars Booked -->
+    <div class="bg-white shadow-xl rounded-2xl overflow-hidden hover:scale-105 transition-transform duration-300">
+      <div class="h-2 bg-pink-400"></div>
+      <div class="p-6">
+        <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Cars Booked</h3>
+        <p class="text-4xl font-bold text-pink-500 mt-3">{{ carcount }}</p>
+      </div>
+    </div>
+
+    <!-- Pending Payments -->
+    <div class="bg-white shadow-xl rounded-2xl overflow-hidden hover:scale-105 transition-transform duration-300">
+      <div class="h-2 bg-red-500"></div>
+      <div class="p-6">
+        <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Pending Payments</h3>
+        <p class="text-4xl font-bold text-red-500 mt-3">{{ pendingAmount }}</p>
+      </div>
+    </div>
+
+    <!-- Refunds Received -->
+    <div class="bg-white shadow-xl rounded-2xl overflow-hidden hover:scale-105 transition-transform duration-300">
+      <div class="h-2 bg-green-400"></div>
+      <div class="p-6">
+        <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Refunds Received</h3>
+        <p class="text-4xl font-bold text-green-500 mt-3">₹{{ amount }}</p>
+        <p class="text-sm text-green-500  font-medium mt-2">{{ refundedAt | date: 'dd MMM y, h:mm a' }}</p>
+      </div>
+    </div>
+
+    <!-- Available Vehicles -->
+    <div class="bg-white shadow-xl rounded-2xl overflow-hidden hover:scale-105 transition-transform duration-300">
+      <div class="h-2 bg-purple-500"></div>
+      <div class="p-6">
+        <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Available Vehicles</h3>
+        <p class="text-4xl font-bold text-purple-600 mt-3">{{ avaliblevehicle }}</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- CTA Button -->
+  <div class="text-center mt-20">
+    <h3 class="text-2xl sm:text-3xl font-semibold text-gray-700 mb-5">Ready to Book Your Next Ride?</h3>
+    <button
+      class="bg-gradient-to-r from-indigo-500 to-pink-500 hover:from-pink-600 hover:to-red-500 text-white px-10 py-4 rounded-full text-lg font-semibold shadow-lg hover:shadow-xl transition duration-300 transform hover:scale-105">
+      🚗 Book a Vehicle Now
+    </button>
+  </div>
+</div>

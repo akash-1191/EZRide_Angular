@@ -404,10 +404,70 @@ export class MyServiceService {
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json'
     });
-
     const url = `http://localhost:7188/api/Feedback/addFeedbackmsg`;
     return this.http.post<any>(url, feedback, { headers });
   }
 
 
+  //get total count of the booking peerticular user
+
+  TotalBookingsCount(userId: any): Observable<any> {
+    const token = sessionStorage.getItem('token');
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
+    const TotalBookingsCount = `http://localhost:7188/api/BookingSummary/total-bookings/${userId}`;
+    return this.http.get<any>(TotalBookingsCount, { headers });
+  }
+
+
+  //totsl bookin vehicle by users
+  TatolVehicleBookingCount(): Observable<any> {
+    const token = sessionStorage.getItem('token');
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
+
+    const TatalVehicleBookingCount = `http://localhost:7188/api/BookingSummary/booked-vehicle-type-count`;
+    return this.http.get<any>(TatalVehicleBookingCount, { headers });
+  }
+
+//total vehicla avalible count in thewebsite 
+  TatolAvalibleVehicleCount(): Observable<any> {
+    const token = sessionStorage.getItem('token');
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
+
+    const TatolAvalibleVehicleCount = `http://localhost:7188/api/BookingSummary/available-vehicle-count`;
+    return this.http.get<any>(TatolAvalibleVehicleCount, { headers });
+  }
+
+
+  //pendinga amount to ahow the user
+  pandingAmount(userId:number):Observable<number>{
+    const token = sessionStorage.getItem('token');
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
+      const pandingAmount = `http://localhost:7188/api/BookingSummary/pending-payment-count/${userId}`;
+      return this.http.get<number>(pandingAmount,{headers})
+  }
+
+  //last refended amount
+  LastRefendedamount(userId:number):Observable<any>{
+    const token=sessionStorage.getItem('token');
+    const headers=new HttpHeaders({
+     'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
+    const refaundurl=`http://localhost:7188/api/BookingSummary/latest-refund/${userId}`;
+    return this.http.get<any>(refaundurl,{headers});
+  }
 }
+
+

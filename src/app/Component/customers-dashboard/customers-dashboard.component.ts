@@ -1,9 +1,9 @@
 import { Component, inject } from '@angular/core';
-import { Router, RouterLink, RouterOutlet } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-customers-dashboard',
-  imports: [RouterOutlet, RouterLink],
+  imports: [RouterOutlet, RouterLink,RouterLinkActive],
   templateUrl: './customers-dashboard.component.html',
   styleUrl: './customers-dashboard.component.css'
 })
