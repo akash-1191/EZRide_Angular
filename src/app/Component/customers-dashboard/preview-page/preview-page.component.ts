@@ -16,8 +16,8 @@ export class PreviewPageComponent {
   bookingData: any;
   errormessage: string = '';
   sucsessmessage: string = '';
-  // declare var Razorpay: any;
 
+  // declare var Razorpay: any;
   constructor(private router: Router, private services: MyServiceService) { }
 
   ngOnInit(): void {
@@ -70,14 +70,14 @@ export class PreviewPageComponent {
       status: 'Pending',
       createdAt: new Date()
     };
+
     this.services.confirmBooking(payload).subscribe({
       next: (res: any) => {
-
         this.bookingData.bookingId = res.data.bookingId;
         this.submitPayment();
       },
       error: (err: any) => {
-        // console.error(' Error while confirming booking:', err);
+        console.error(' Error while confirming booking:', err);
         if (err.error && err.error.message) {
           this.errormessage = err.error.message;
         } else {

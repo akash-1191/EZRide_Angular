@@ -234,11 +234,17 @@
                         <!-- Dropoff Date & Time -->
                         <label class="text-sm font-medium text-gray-700">Dropoff Date & Time</label>
                         <div class="flex flex-col sm:flex-row gap-2 mb-2">
+                            <!-- Dropoff Date -->
                             <input type="date" class="w-full sm:w-1/2 border rounded-lg p-2 text-sm"
-                                formControlName="dropoffDate" [min]="todayDate" />
+                                formControlName="dropoffDate" [min]="todayDate"
+                                [disabled]="bookingForm.get('driveBasis')?.value !== 'perKm'" />
+
+                            <!-- Dropoff Time -->
                             <input type="time" class="w-full sm:w-1/2 border rounded-lg p-2 text-sm"
                                 formControlName="dropoffTime"
-                                [min]="bookingForm.get('pickupDate')?.value === todayDate ? currentTime : null" />
+                                [min]="bookingForm.get('pickupDate')?.value === todayDate ? currentTime : null"
+                                [disabled]="bookingForm.get('driveBasis')?.value !== 'perKm'" />
+
                         </div>
                         <div class="flex flex-col sm:flex-row gap-2">
                             <div *ngIf="bookingForm.get('dropoffDate')?.touched && bookingForm.get('dropoffDate')?.invalid"
@@ -284,7 +290,7 @@
             class="fixed inset-0 flex items-center justify-center bg-black/50 z-50 overflow-y-auto p-4">
             <div class="bg-white rounded-xl shadow-lg w-full max-w-2xl p-6 relative">
 
-                
+
                 <button (click)="closeModal()"
                     class="absolute cursor-pointer top-3  hover:text-3xl right-3 text-gray-700 hover:text-red-600 text-2xl font-bold">&times;</button>
                 <div class="flex flex-wrap mb-4 border-b text-base sm:text-lg">

@@ -349,15 +349,15 @@ export class MyServiceService {
 
 
   //  Check vehicle availability by date
-  // getAvailability(vehicleId: number, startDate: string, endDate: string): Observable<any> {
-  //   const params = new HttpParams()
-  //     .set('vehicleId', vehicleId.toString())
-  //     .set('startDate', startDate)
-  //     .set('endDate', endDate);
+  getAvailabilityvehicle(vehicleId: number, startDate: string, endDate: string): Observable<any> {
+    const params = new HttpParams()
+      .set('vehicleId', vehicleId.toString())
+      .set('startDate', startDate)
+      .set('endDate', endDate);
 
-  //   const url = `http://localhost:7188/api/Booking/availability`;
-  //   return this.http.get<any>(url, { params });
-  // }  
+    const url = `http://localhost:7188/api/Booking/availability`;
+    return this.http.get<any>(url, { params });
+  }  
 
 
   getAvailability(vehicleId: number, startDateTime: string, endDateTime: string): Observable<AvailabilitySlot[]> {
@@ -423,19 +423,19 @@ export class MyServiceService {
 
 
   //totsl bookin vehicle by users
-  TatolVehicleBookingCount(): Observable<any> {
+  TatolVehicleBookingCount(userId:any): Observable<any> {
     const token = sessionStorage.getItem('token');
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json'
     });
 
-    const TatalVehicleBookingCount = `http://localhost:7188/api/BookingSummary/booked-vehicle-type-count`;
+    const TatalVehicleBookingCount = `http://localhost:7188/api/BookingSummary/booked-vehicle-type-count${userId}`;
     return this.http.get<any>(TatalVehicleBookingCount, { headers });
   }
 
 //total vehicla avalible count in thewebsite 
-  TatolAvalibleVehicleCount(): Observable<any> {
+  TatolAvalibleVehicleCount(): Observable<any> {   // badd specific userid know the which user is book 
     const token = sessionStorage.getItem('token');
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`,

@@ -28,11 +28,14 @@ export class MyBookingComponent implements OnInit {
   newEmail = '';
   useOwnEmail = true;
   currentBooking: any = null;
-  isSendingEmail = false; 
+  isSendingEmail = false;
 
 
   filterTypes: string[] = [
     'All',
+    'Today',
+    'StartTime_Asc',
+    'StartTime_Desc',
     'Pending',
     'Confirmed',
     'InProgress',
@@ -178,6 +181,18 @@ export class MyBookingComponent implements OnInit {
         filterPayload.vehicleType = filterType;
         break;
 
+      case 'Today':
+        filterPayload.onlyToday = true;
+        break;
+
+      case 'StartTime_Asc':
+        filterPayload.sortBy = 'starttime_asc';
+        break;
+
+      case 'StartTime_Desc':
+        filterPayload.sortBy = 'starttime_desc';
+        break;
+
       case 'All':
       default:
 
@@ -187,6 +202,7 @@ export class MyBookingComponent implements OnInit {
     this.services.getFilteredBookings(filterPayload).subscribe({
       next: (res) => {
         this.bookings = res?.data || res || [];
+        // console.log("filterdata is:",res);
       },
       error: (err) => {
         this.errorMsg = 'Failed to load filtered bookings';
@@ -207,7 +223,7 @@ export class MyBookingComponent implements OnInit {
     this.closeCancelModal();
     this.closeModal()
     this.showFilterDropdown = false;
-    this.showEmailPopup=false;
+    this.showEmailPopup = false;
   }
 
   handleDownload(booking: any) {
@@ -241,28 +257,28 @@ export class MyBookingComponent implements OnInit {
 
   sendEmailReceipt() {
     const selectedEmail = this.useOwnEmail
-    ? this.currentBooking.useremail
-    : this.newEmail.trim();
+      ? this.currentBooking.useremail
+      : this.newEmail.trim();
 
-  if (!selectedEmail) {
-    this.erromessage = 'Please provide a valid email address.';
-    return;
-  }
+    if (!selectedEmail) {
+      this.erromessage = 'Please provide a valid email address.';
+      return;
+    }
 
-  this.isSendingEmail = true;
+    this.isSendingEmail = true;
 
     this.services.sendReceiptEmail(this.userId, this.currentBooking.bookingId, selectedEmail).subscribe({
       next: () => {
         this.successmessage = 'Receipt email sent successfully!';
         this.erromessage = '';
         this.showEmailPopup = false;
-         this.isSendingEmail = false; 
+        this.isSendingEmail = false;
       },
       error: (err) => {
         console.error(err);
         this.successmessage = '';
         this.erromessage = 'Failed to send receipt email.';
-        this.isSendingEmail = false; 
+        this.isSendingEmail = false;
       }
     });
   }

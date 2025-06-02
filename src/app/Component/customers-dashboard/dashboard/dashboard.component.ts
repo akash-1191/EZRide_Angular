@@ -55,7 +55,7 @@ export class DashboardComponent implements OnInit {
 
 
   TatolVehicleBookingCount(): void {
-    this.services.TatolVehicleBookingCount().subscribe({
+    this.services.TatolVehicleBookingCount(this.userId).subscribe({
       next: (data1) => {
         this.bikecount = data1.bikeCount;
         this.carcount = data1.carCount;

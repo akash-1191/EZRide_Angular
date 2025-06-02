@@ -45,6 +45,7 @@ export class BookingPageComponent implements OnInit {
 
   // validation for the dattime
   ngOnInit() {
+
     this.vehicleId = +this.route.snapshot.paramMap.get('id')!;
     this.loadVehicleDetails();
     const now = new Date();
@@ -68,7 +69,8 @@ export class BookingPageComponent implements OnInit {
     });
 
     // when driveBasis or hoursToDrive/daysToDrive change then auto-update of he dropoff
-    this.bookingForm.get('driveBasis')?.valueChanges.subscribe(() => this.updateDropoff());
+    // this.bookingForm.get('driveBasis')?.valueChanges.subscribe(() => this.updateDropoff());
+    this.bookingForm.get('driveBasis')?.valueChanges.subscribe(() => { this.updateDropoff(); this.manageDropoffControlState(); });
     this.bookingForm.get('hoursToDrive')?.valueChanges.subscribe(() => this.updateDropoff());
     this.bookingForm.get('daysToDrive')?.valueChanges.subscribe(() => this.updateDropoff());
     this.bookingForm.get('kmsToDrive')?.valueChanges.subscribe(() => this.updateDropoff());
@@ -145,6 +147,20 @@ export class BookingPageComponent implements OnInit {
     };
   }
 
+
+  manageDropoffControlState() {
+    const driveBasis = this.bookingForm.get('driveBasis')?.value;
+
+    if (driveBasis === 'perKm') {
+      //  Enable for perKm
+      this.bookingForm.get('dropoffDate')?.enable({ emitEvent: false });
+      this.bookingForm.get('dropoffTime')?.enable({ emitEvent: false });
+    } else {
+      //  Disable for perHour or perDay
+      this.bookingForm.get('dropoffDate')?.disable({ emitEvent: false });
+      this.bookingForm.get('dropoffTime')?.disable({ emitEvent: false });
+    }
+  }
   //load vehicle ddetails
 
   loadVehicleDetails() {
@@ -231,10 +247,10 @@ export class BookingPageComponent implements OnInit {
 
       const bookingData = {
         vehicleDetails: this.vehicleDetails,
-        bookingFormValues: this.bookingForm.value,
+        bookingFormValues:this.bookingForm.getRawValue(),
         ...amount  // adds rentAmount, securityAmount, totalAmount
       };
-
+      const bookingFormValues = this.bookingForm.getRawValue();
       this.router.navigate(['/customer-dashboard/previewPage'], {
         state: { bookingData }
       });
@@ -279,11 +295,11 @@ export class BookingPageComponent implements OnInit {
 
   openModal(): void {
     this.showModal = true;
-     const enArr = this.formcheckcondition.get('englishTerms') as FormArray;
-  const hiArr = this.formcheckcondition.get('hindiTerms') as FormArray;
+    const enArr = this.formcheckcondition.get('englishTerms') as FormArray;
+    const hiArr = this.formcheckcondition.get('hindiTerms') as FormArray;
 
-  enArr.clear();
-  hiArr.clear();
+    enArr.clear();
+    hiArr.clear();
     this.initCheckboxes();
   }
 

@@ -55,12 +55,12 @@ export class PaymentDetailsComponent implements OnInit {
     }
   }
 
-  // if date and tiem has gone if is a pendog the not show the paynow button 
-  isFutureDate(dateString: string): boolean {
-    const now = new Date();
-    const endTime = new Date(dateString);
-    return endTime > now;
-  }
+  // if date and tiem has gone if is a pending the not show the paynow button 
+  isFutureDate(dateTimeString: string): boolean {
+  const now = new Date();
+  const endTime = new Date(dateTimeString);
+  return endTime.getTime() > now.getTime();
+}
 
   toggleFilterDropdown() {
     this.showFilterDropdown = !this.showFilterDropdown;
