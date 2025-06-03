@@ -4,6 +4,7 @@ import { ChartConfiguration, ChartOptions } from 'chart.js';
 import { MyServiceService } from '../../../../../my-service.service';
 import { jwtDecode } from 'jwt-decode';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-dashboard',
@@ -22,9 +23,9 @@ export class DashboardComponent implements OnInit {
   avaliblevehicle: any;
   pendingAmount: number = 0;
   amount: number = 0;
- refundedAt: Date | string = '';
+  refundedAt: Date | string = '';
 
-  constructor(private services: MyServiceService) { }
+  constructor(private services: MyServiceService, private router: Router) { }
 
   ngOnInit(): void {
     const token = sessionStorage.getItem('token');
@@ -93,7 +94,7 @@ export class DashboardComponent implements OnInit {
     this.services.LastRefendedamount(this.userId).subscribe({
       next: (res1) => {
         this.amount = res1.amount;
-        this.refundedAt= new Date(res1.refundedAt);
+        this.refundedAt = new Date(res1.refundedAt);
       },
       error: () => {
         this.errormessage = "Error fetching bookings";
@@ -101,7 +102,9 @@ export class DashboardComponent implements OnInit {
     })
   }
 
-
+  bookingpageRedirect() {
+    this.router.navigate(['/customer-dashboard/vehicleavaliblebooking']);
+  }
 
 
 }

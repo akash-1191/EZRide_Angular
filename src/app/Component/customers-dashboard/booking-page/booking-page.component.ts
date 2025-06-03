@@ -4,9 +4,22 @@ import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, Reacti
 import { ActivatedRoute, Router } from '@angular/router';
 import { MyServiceService } from '../../../../../my-service.service';
 
+
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatInputModule } from '@angular/material/input';
+import { MatNativeDateModule } from '@angular/material/core';  // Date adapter for native JS Date
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { NgxMatTimepickerModule } from 'ngx-mat-timepicker';
+
 @Component({
   selector: 'app-booking-page',
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule,
+    ReactiveFormsModule,
+    MatDatepickerModule,
+    MatInputModule,
+    MatNativeDateModule,
+    MatFormFieldModule,
+    NgxMatTimepickerModule],
   templateUrl: './booking-page.component.html',
   styleUrl: './booking-page.component.css'
 })
@@ -30,6 +43,11 @@ export class BookingPageComponent implements OnInit {
     totalAmount: 0
   };
 
+  bookedSlots: { startDateTime: string, endDateTime: string }[] = [];
+  availabilityColor: 'green' | 'red' | null = null;
+  minDate: Date = new Date();
+  minTime: string = '';
+
   changeImage(image: string): void {
     this.selectedImage = 'http://localhost:7188/' + image;
   }
@@ -43,22 +61,100 @@ export class BookingPageComponent implements OnInit {
     this.initCheckboxes();
   }
 
+
+  loadUnavailableSlots(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const vehicleId = this.vehicleId;
+      const start = new Date();
+      const end = new Date();
+      end.setDate(end.getDate() + 730);
+
+      const startDateTime = start.toISOString();
+      const endDateTime = end.toISOString();
+
+      this.service.getAvailability(vehicleId, startDateTime, endDateTime).subscribe({
+        next: (res) => {
+          this.bookedSlots = res.filter(x => x.isAvailable === false);
+          // console.log('🚫 Booked slots loaded:', this.bookedSlots); // 👈 Add this
+          resolve();
+        },
+        error: (err) => {
+          // console.error('Failed to load availability', err);
+          reject(err);
+        }
+      });
+    });
+  }
+
+  isDateDisabled = (date: Date): boolean => {
+    const dateStr = date.toISOString().split('T')[0]; // yyyy-mm-dd
+    return this.bookedSlots.some(slot => {
+      const slotStart = new Date(slot.startDateTime).toISOString().split('T')[0];
+      return dateStr === slotStart;
+    });
+  };
+  isDateAvailable = (date: Date | null): boolean => {
+
+    if (!date) return false;
+
+    const dateOnly = date.toISOString().split('T')[0];
+
+    return !this.bookedSlots.some(slot => {
+      const slotStartDate = new Date(slot.startDateTime);
+      const slotDateOnly = slotStartDate.toISOString().split('T')[0];
+      return dateOnly === slotDateOnly;
+    });
+    
+  };
+  checkAvailabilityStatus() {
+    const pickupDate = this.bookingForm.get('pickupDate')?.value;
+    const pickupTime = this.bookingForm.get('pickupTime')?.value;
+
+    if (!pickupDate || !pickupTime) {
+      this.availabilityColor = null;
+      return;
+    }
+
+    
+    const pickup = new Date(pickupDate);
+    const [hours, minutes] = pickupTime.split(':').map(Number);
+    pickup.setHours(hours, minutes, 0, 0);
+
+    const selectedTimeISO = pickup.toISOString();
+
+    const foundUnavailable = this.bookedSlots.some(slot =>
+      selectedTimeISO >= new Date(slot.startDateTime).toISOString() &&
+      selectedTimeISO < new Date(slot.endDateTime).toISOString()
+    );
+
+    this.availabilityColor = foundUnavailable ? 'red' : 'green';
+  }
+dateClass = (date: Date): string => {
+  const dateStr = date.toISOString().split('T')[0];
+
+  const isBooked = this.bookedSlots.some(slot => {
+    const slotDate = new Date(slot.startDateTime).toISOString().split('T')[0];
+    return slotDate === dateStr;
+  });
+
+  return isBooked ? 'red-date' : 'green-date';
+};
+  
   // validation for the dattime
-  ngOnInit() {
+  async ngOnInit() {
 
     this.vehicleId = +this.route.snapshot.paramMap.get('id')!;
     this.loadVehicleDetails();
     const now = new Date();
-    // Format: YYYY-MM-DD
-    this.todayDate = now.toISOString().split('T')[0];
+    this.minDate = now; // aaj ke date se pehle pick nahi kar sakte
     const hours = now.getHours().toString().padStart(2, '0');
     const minutes = now.getMinutes().toString().padStart(2, '0');
-    this.currentTime = `${hours}:${minutes}`;
-
+    await this.loadUnavailableSlots();
+    this.minTime = `${hours}:${minutes}`;
     this.bookingForm = this.fb.group({
-      pickupDate: ['', Validators.required],
+      pickupDate: [null, Validators.required],
       pickupTime: ['', Validators.required],
-      dropoffDate: ['', Validators.required],
+      dropoffDate: [null, Validators.required],
       dropoffTime: ['', Validators.required],
       driveBasis: ['', Validators.required],
       hoursToDrive: [null],  // for perHour
@@ -76,24 +172,33 @@ export class BookingPageComponent implements OnInit {
     this.bookingForm.get('kmsToDrive')?.valueChanges.subscribe(() => this.updateDropoff());
     this.bookingForm.get('pickupDate')?.valueChanges.subscribe(() => this.updateDropoff());
     this.bookingForm.get('pickupTime')?.valueChanges.subscribe(() => this.updateDropoff());
+    this.bookingForm.get('pickupDate')?.valueChanges.subscribe(() => {
+      this.updateDropoff();
+      this.checkAvailabilityStatus();
+    });
+    this.bookingForm.get('pickupTime')?.valueChanges.subscribe(() => {
+      this.updateDropoff();
+      this.checkAvailabilityStatus();
+    });
+
     this.bookingForm.valueChanges.subscribe(() => {
       this.bookingForm.updateValueAndValidity({ onlySelf: false, emitEvent: false });
     });
   }
 
+
   // autoupdate dropof 
   updateDropoff() {
     const driveBasis = this.bookingForm.get('driveBasis')?.value;
-    const pickupDate = this.bookingForm.get('pickupDate')?.value;
-    const pickupTime = this.bookingForm.get('pickupTime')?.value;
+    const pickupDate: Date = this.bookingForm.get('pickupDate')?.value;
+    const pickupTime: string = this.bookingForm.get('pickupTime')?.value;
 
     if (!pickupDate || !pickupTime) return;
 
-    // Proper parsing of time into 24-hour format
+    const pickup = new Date(pickupDate);
     const [hoursStr, minutesStr] = pickupTime.split(':');
     const hours = parseInt(hoursStr, 10);
     const minutes = parseInt(minutesStr, 10);
-    const pickup = new Date(pickupDate);
     pickup.setHours(hours, minutes, 0, 0);
 
     if (driveBasis === 'perHour') {
@@ -101,11 +206,8 @@ export class BookingPageComponent implements OnInit {
       if (driveHours && driveHours > 0) {
         const dropoff = new Date(pickup.getTime() + driveHours * 60 * 60 * 1000);
         this.bookingForm.patchValue({
-          dropoffDate: dropoff.getFullYear() + '-' +
-            String(dropoff.getMonth() + 1).padStart(2, '0') + '-' +
-            String(dropoff.getDate()).padStart(2, '0'),
-          dropoffTime: String(dropoff.getHours()).padStart(2, '0') + ':' +
-            String(dropoff.getMinutes()).padStart(2, '0')
+          dropoffDate: dropoff,
+          dropoffTime: `${String(dropoff.getHours()).padStart(2, '0')}:${String(dropoff.getMinutes()).padStart(2, '0')}`
         }, { emitEvent: false });
       }
     } else if (driveBasis === 'perDay') {
@@ -113,15 +215,13 @@ export class BookingPageComponent implements OnInit {
       if (days && days > 0) {
         const dropoff = new Date(pickup.getTime() + days * 24 * 60 * 60 * 1000);
         this.bookingForm.patchValue({
-          dropoffDate: dropoff.getFullYear() + '-' +
-            String(dropoff.getMonth() + 1).padStart(2, '0') + '-' +
-            String(dropoff.getDate()).padStart(2, '0'),
-          dropoffTime: pickupTime  // Keep same time
+          dropoffDate: dropoff,
+          dropoffTime: pickupTime
         }, { emitEvent: false });
       }
     } else if (driveBasis === 'perKm') {
       this.bookingForm.patchValue({
-        dropoffDate: '',
+        dropoffDate: null,
         dropoffTime: ''
       }, { emitEvent: false });
     }
@@ -130,23 +230,30 @@ export class BookingPageComponent implements OnInit {
 
   minimumBookingDurationValidator(): ValidatorFn {
     return (group: AbstractControl): ValidationErrors | null => {
-      const pickupDate = group.get('pickupDate')?.value;
-      const pickupTime = group.get('pickupTime')?.value;
-      const dropoffDate = group.get('dropoffDate')?.value;
-      const dropoffTime = group.get('dropoffTime')?.value;
+      const pickupDate: Date | null = group.get('pickupDate')?.value;
+      const pickupTime: string = group.get('pickupTime')?.value;
+      const dropoffDate: Date | null = group.get('dropoffDate')?.value;
+      const dropoffTime: string = group.get('dropoffTime')?.value;
 
       if (!pickupDate || !pickupTime || !dropoffDate || !dropoffTime) {
         return null;
       }
 
-      const pickup = new Date(`${pickupDate}T${pickupTime}`);
-      const dropoff = new Date(`${dropoffDate}T${dropoffTime}`);
+      // Combine date and time to create full Date object for pickup
+      const pickup = new Date(pickupDate);
+      const [pickupHour, pickupMinute] = pickupTime.split(':').map(Number);
+      pickup.setHours(pickupHour, pickupMinute, 0, 0);
+
+      // Combine date and time to create full Date object for dropoff
+      const dropoff = new Date(dropoffDate);
+      const [dropoffHour, dropoffMinute] = dropoffTime.split(':').map(Number);
+      dropoff.setHours(dropoffHour, dropoffMinute, 0, 0);
+
       const diffInMinutes = (dropoff.getTime() - pickup.getTime()) / (1000 * 60);
 
       return diffInMinutes < 60 ? { minDuration: true } : null;
     };
   }
-
 
   manageDropoffControlState() {
     const driveBasis = this.bookingForm.get('driveBasis')?.value;
@@ -167,6 +274,7 @@ export class BookingPageComponent implements OnInit {
     this.service.getVehicleDetailsById(this.vehicleId).subscribe({
       next: (res) => {
         this.vehicleDetails = res;
+        // console.log("response datais:",res);
         if (res.imagePaths && res.imagePaths.length > 0) {
           const baseUrl = 'http://localhost:7188/';
           this.thumbnails = res.imagePaths.map((img: string) => baseUrl + img);
@@ -247,9 +355,11 @@ export class BookingPageComponent implements OnInit {
 
       const bookingData = {
         vehicleDetails: this.vehicleDetails,
-        bookingFormValues:this.bookingForm.getRawValue(),
-        ...amount  // adds rentAmount, securityAmount, totalAmount
+        bookingFormValues: this.bookingForm.getRawValue(),
+        ...amount
+
       };
+      // console.log(bookingData);
       const bookingFormValues = this.bookingForm.getRawValue();
       this.router.navigate(['/customer-dashboard/previewPage'], {
         state: { bookingData }

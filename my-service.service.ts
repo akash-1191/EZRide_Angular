@@ -3,11 +3,10 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 // import { DateAvailabilityDTO } from './date-availability.model';
 export interface AvailabilitySlot {
-  startDateTime: string; // ISO string
-  endDateTime: string;   // ISO string
+  startDateTime: string; // ISO format string, e.g. "2025-06-03T12:00:00"
+  endDateTime: string;   // ISO format string
   isAvailable: boolean;
 }
-
 @Injectable({
   providedIn: 'root'
 })
@@ -274,7 +273,6 @@ export class MyServiceService {
 
 
   //add securityamount in the security tabel
-
   addSecurityDeposit(depositData: any): Observable<any> {
     const token = sessionStorage.getItem('token');
     const headers = new HttpHeaders({
@@ -349,25 +347,25 @@ export class MyServiceService {
 
 
   //  Check vehicle availability by date
-  getAvailabilityvehicle(vehicleId: number, startDate: string, endDate: string): Observable<any> {
-    const params = new HttpParams()
-      .set('vehicleId', vehicleId.toString())
-      .set('startDate', startDate)
-      .set('endDate', endDate);
+getAvailability(vehicleId: number, startDateTime: string, endDateTime: string): Observable<AvailabilitySlot[]> {
+  const params = new HttpParams()
+    .set('vehicleId', vehicleId.toString())
+    .set('startDateTime', startDateTime)
+    .set('endDateTime', endDateTime);
 
-    const url = `http://localhost:7188/api/Booking/availability`;
-    return this.http.get<any>(url, { params });
-  }  
+  const url = 'http://localhost:7188/api/Booking/availability';
 
+  return this.http.get<AvailabilitySlot[]>(url, { params });
+}
 
-  getAvailability(vehicleId: number, startDateTime: string, endDateTime: string): Observable<AvailabilitySlot[]> {
-    const params = new HttpParams()
-      .set('vehicleId', vehicleId.toString())
-      .set('startDateTime', startDateTime)
-      .set('endDateTime', endDateTime);
+  // getAvailability(vehicleId: number, startDateTime: string, endDateTime: string): Observable<AvailabilitySlot[]> {
+  //   const params = new HttpParams()
+  //     .set('vehicleId', vehicleId.toString())
+  //     .set('startDateTime', startDateTime)
+  //     .set('endDateTime', endDateTime);
 
-    return this.http.get<AvailabilitySlot[]>('/api/Booking/availability', { params });
-  }
+  //   return this.http.get<AvailabilitySlot[]>('/api/Booking/availability', { params });
+  // }
 
   //recipt download
   downloadReceipt(userId: number, bookingId: number) {
@@ -397,7 +395,7 @@ export class MyServiceService {
 
 
 
-  //add feed back message top the user 
+  //add feed back message to the user 
   addFeedback(feedback: any): Observable<any> {
     const token = sessionStorage.getItem('token');
     const headers = new HttpHeaders({
@@ -422,7 +420,7 @@ export class MyServiceService {
   }
 
 
-  //totsl bookin vehicle by users
+  //total booking vehicle by  user by type
   TatolVehicleBookingCount(userId:any): Observable<any> {
     const token = sessionStorage.getItem('token');
     const headers = new HttpHeaders({
@@ -430,12 +428,12 @@ export class MyServiceService {
       'Content-Type': 'application/json'
     });
 
-    const TatalVehicleBookingCount = `http://localhost:7188/api/BookingSummary/booked-vehicle-type-count${userId}`;
+    const TatalVehicleBookingCount = `http://localhost:7188/api/BookingSummary/booked-vehicle-type-count/${userId}`;
     return this.http.get<any>(TatalVehicleBookingCount, { headers });
   }
 
-//total vehicla avalible count in thewebsite 
-  TatolAvalibleVehicleCount(): Observable<any> {   // badd specific userid know the which user is book 
+//total vehicla avalible count in the website 
+  TatolAvalibleVehicleCount(): Observable<any> {  
     const token = sessionStorage.getItem('token');
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`,

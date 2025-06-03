@@ -142,7 +142,7 @@
 
                         <div>
                             <label class="text-sm font-medium text-gray-700">Security Amount</label>
-                            <input type="text" value="₹{{vehicleDetails.securityDepositAmount}}" disabled
+                            <input type="text" [value]="'₹' + (vehicleDetails?.securityDepositAmount || '')" disabled
                                 class="w-full bg-gray-100 border rounded-lg p-2 text-sm cursor-not-allowed" />
                         </div>
 
@@ -214,11 +214,38 @@
                         <!-- Pickup Date & Time -->
                         <label class="text-sm font-medium text-gray-700">Pickup Date & Time</label>
                         <div class="flex flex-col sm:flex-row gap-2 mb-2">
-                            <input type="date" class="w-full sm:w-1/2 border rounded-lg p-2 text-sm"
-                                formControlName="pickupDate" [min]="todayDate" />
-                            <input type="time" class="w-full sm:w-1/2 border rounded-lg p-2 text-sm"
-                                formControlName="pickupTime"
-                                [min]="bookingForm.get('pickupDate')?.value === todayDate ? currentTime : null" />
+
+                            <!-- <mat-form-field appearance="fill" class="w-full sm:w-1/2 ">
+                                <mat-label>Pickup Date</mat-label>
+                                <input matInput [matDatepicker]="pickupDatePicker" formControlName="pickupDate"
+                                    [min]="minDate" />
+                                <mat-datepicker-toggle matSuffix [for]="pickupDatePicker"></mat-datepicker-toggle>
+                                <mat-datepicker #pickupDatePicker></mat-datepicker>
+                            </mat-form-field> -->
+
+                            <mat-form-field appearance="fill" class="w-full sm:w-1/2 ">
+                                <mat-label>Pickup Date</mat-label>
+                           
+<input
+  matInput
+  [matDatepicker]="pickupDatePicker"
+  formControlName="pickupDate"
+  [min]="minDate"
+  [matDatepickerFilter]="isDateAvailable"
+   />
+<mat-datepicker #pickupDatePicker></mat-datepicker>
+                                <mat-datepicker-toggle matSuffix [for]="pickupDatePicker"></mat-datepicker-toggle>
+                                <mat-datepicker #pickupDatePicker></mat-datepicker>
+                            </mat-form-field>
+
+
+
+                            <mat-form-field appearance="fill" class="w-full sm:w-1/2">
+                                <mat-label>Pickup Time</mat-label>
+                                <input matInput [ngxMatTimepicker]="pickupTimePicker" formControlName="pickupTime"
+                                    readonly>
+                                <ngx-mat-timepicker #pickupTimePicker></ngx-mat-timepicker>
+                            </mat-form-field>
                         </div>
                         <div class="flex flex-col sm:flex-row gap-2 mb-4">
                             <div *ngIf="bookingForm.get('pickupDate')?.touched && bookingForm.get('pickupDate')?.invalid"
@@ -234,16 +261,23 @@
                         <!-- Dropoff Date & Time -->
                         <label class="text-sm font-medium text-gray-700">Dropoff Date & Time</label>
                         <div class="flex flex-col sm:flex-row gap-2 mb-2">
+
                             <!-- Dropoff Date -->
-                            <input type="date" class="w-full sm:w-1/2 border rounded-lg p-2 text-sm"
-                                formControlName="dropoffDate" [min]="todayDate"
-                                [disabled]="bookingForm.get('driveBasis')?.value !== 'perKm'" />
+                            <mat-form-field appearance="fill" class="w-full sm:w-1/2">
+                                <mat-label>Dropoff Date</mat-label>
+                                <input matInput [matDatepicker]="dropoffDatePicker" formControlName="dropoffDate"
+                                    [min]="minDate" [disabled]="bookingForm.get('driveBasis')?.value !== 'perKm'" />
+                                <mat-datepicker-toggle matSuffix [for]="dropoffDatePicker"></mat-datepicker-toggle>
+                                <mat-datepicker #dropoffDatePicker></mat-datepicker>
+                            </mat-form-field>
 
                             <!-- Dropoff Time -->
-                            <input type="time" class="w-full sm:w-1/2 border rounded-lg p-2 text-sm"
-                                formControlName="dropoffTime"
-                                [min]="bookingForm.get('pickupDate')?.value === todayDate ? currentTime : null"
-                                [disabled]="bookingForm.get('driveBasis')?.value !== 'perKm'" />
+                            <mat-form-field appearance="fill" class="w-full sm:w-1/2">
+                                <mat-label>Dropoff Time</mat-label>
+                                <input matInput [ngxMatTimepicker]="dropoffTimePicker" formControlName="dropoffTime"
+                                    readonly [disabled]="bookingForm.get('driveBasis')?.value !== 'perKm'">
+                                <ngx-mat-timepicker #dropoffTimePicker></ngx-mat-timepicker>
+                            </mat-form-field>
 
                         </div>
                         <div class="flex flex-col sm:flex-row gap-2">

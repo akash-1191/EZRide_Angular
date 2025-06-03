@@ -64,15 +64,17 @@ export const routes: Routes = [
     children: [
       { path: '', component: DashboardComponent },
       { path: 'customerProfile', component: ProfileComponent },
-      { path: "vehicleavaliblebooking", component: VehicleAvalibleComponent },
-      { path: 'custBookingpage/:id', component: BookingPageComponent },
+      { path: 'vehicleavaliblebooking', loadComponent: () => import('./Component/customers-dashboard/vehicle-avalible/vehicle-avalible.component').then((m) => m.VehicleAvalibleComponent), },
+
+      { path: 'custBookingpage/:id', loadComponent: () => import('./Component/customers-dashboard/booking-page/booking-page.component').then((m) => m.BookingPageComponent), },
+
       { path: 'previewPage', component: PreviewPageComponent },
-      { path:'MyBooking',component:MyBookingComponent},
-      { path:'paymentsuccess',component:PaymentSuccessComponent},
-      { path:'security-refund',component:SecurityRefundComponent},
-      { path:'paymentDetails',component:PaymentDetailsComponent},
-      { path:'reciptpage',component:ReciptpageComponent},
-      {path:'feedback',component:FeedbackpageComponent}
+      { path: 'MyBooking', component: MyBookingComponent },
+      { path: 'paymentsuccess', component: PaymentSuccessComponent },
+      { path: 'security-refund', component: SecurityRefundComponent },
+      { path: 'paymentDetails', component: PaymentDetailsComponent },
+      { path: 'reciptpage', component: ReciptpageComponent },
+      { path: 'feedback', component: FeedbackpageComponent }
     ]
   },
 

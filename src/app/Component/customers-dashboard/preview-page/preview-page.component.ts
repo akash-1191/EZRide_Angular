@@ -45,21 +45,27 @@ export class PreviewPageComponent {
     }
   }
 
+
+
   confirmBooking(): void {
     if (!this.bookingData || !this.bookingData.userId) {
       this.errormessage = 'Cannot proceed without valid booking data or user ID';
       return;
     }
 
+    const pickupDate: Date = new Date(this.bookingData.bookingFormValues.pickupDate);
+    const { hour: pickupHour, minute: pickupMinute } = this.parseTime(this.bookingData.bookingFormValues.pickupTime);
+    pickupDate.setHours(pickupHour, pickupMinute, 0, 0);
+
+    const dropoffDate: Date = new Date(this.bookingData.bookingFormValues.dropoffDate);
+    const { hour: dropoffHour, minute: dropoffMinute } = this.parseTime(this.bookingData.bookingFormValues.dropoffTime);
+    dropoffDate.setHours(dropoffHour, dropoffMinute, 0, 0);
+
     const payload = {
       userId: this.bookingData.userId,
       vehicleId: this.bookingData.vehicleDetails?.vehicleId,
-      startTime: new Date(
-        this.bookingData.bookingFormValues.pickupDate + 'T' + this.bookingData.bookingFormValues.pickupTime
-      ),
-      endTime: new Date(
-        this.bookingData.bookingFormValues.dropoffDate + 'T' + this.bookingData.bookingFormValues.dropoffTime
-      ),
+      startTime: pickupDate.toISOString(),   // ✅ ISO format string
+      endTime: dropoffDate.toISOString(),
       totalDistance: 0,
       totalAmount: this.bookingData.totalAmount,
       bookingType: this.bookingData.bookingFormValues.driveBasis,
@@ -77,7 +83,6 @@ export class PreviewPageComponent {
         this.submitPayment();
       },
       error: (err: any) => {
-        console.error(' Error while confirming booking:', err);
         if (err.error && err.error.message) {
           this.errormessage = err.error.message;
         } else {
@@ -85,6 +90,29 @@ export class PreviewPageComponent {
         }
       }
     });
+  }
+
+
+  parseTime(timeStr: string): { hour: number, minute: number } {
+    const isAmPmFormat = /am|pm/i.test(timeStr);
+    let hour = 0, minute = 0;
+
+    if (isAmPmFormat) {
+      const [time, modifier] = timeStr.toLowerCase().split(/(am|pm)/i);
+      const [h, m] = time.trim().split(':').map(Number);
+
+      hour = h;
+      minute = m;
+
+      if (modifier === 'pm' && hour < 12) hour += 12;
+      if (modifier === 'am' && hour === 12) hour = 0;
+    } else {
+      const [h, m] = timeStr.split(':').map(Number);
+      hour = h;
+      minute = m;
+    }
+
+    return { hour, minute };
   }
 
   submitPayment(): void {
