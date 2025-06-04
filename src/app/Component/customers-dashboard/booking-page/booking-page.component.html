@@ -225,15 +225,8 @@
 
                             <mat-form-field appearance="fill" class="w-full sm:w-1/2 ">
                                 <mat-label>Pickup Date</mat-label>
-                           
-<input
-  matInput
-  [matDatepicker]="pickupDatePicker"
-  formControlName="pickupDate"
-  [min]="minDate"
-  [matDatepickerFilter]="isDateAvailable"
-   />
-<mat-datepicker #pickupDatePicker></mat-datepicker>
+                                <input matInput [matDatepicker]="pickupDatePicker" formControlName="pickupDate"
+                                    [min]="minDate" [matDatepickerFilter]="isDateAvailable" />
                                 <mat-datepicker-toggle matSuffix [for]="pickupDatePicker"></mat-datepicker-toggle>
                                 <mat-datepicker #pickupDatePicker></mat-datepicker>
                             </mat-form-field>

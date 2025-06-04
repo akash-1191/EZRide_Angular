@@ -150,9 +150,10 @@ export class PreviewPageComponent {
                 // console.log(this.bookingData);
                 this.services.addSecurityDeposit(depositData).subscribe({
                   next: (res2) => {
-                    this.router.navigate(['/customer-dashboard/paymentsuccess'], {
-                      state: { bookingDetails: this.bookingData }
+                    this.router.navigate(['/customer-dashboard/reciptpage'], {
+                     queryParams: { bookingId: this.bookingData.bookingId }
                     });
+                  
 
                   },
                   error: (err2) => {

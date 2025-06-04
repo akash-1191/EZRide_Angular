@@ -42,11 +42,14 @@ export class BookingPageComponent implements OnInit {
     securityAmount: 0,
     totalAmount: 0
   };
-
+  bookedDates: Set<string> = new Set();
   bookedSlots: { startDateTime: string, endDateTime: string }[] = [];
   availabilityColor: 'green' | 'red' | null = null;
   minDate: Date = new Date();
   minTime: string = '';
+
+availabilitySlotsByDate: Record<string, { startTime: string, endTime: string }[]> = {};
+
 
   changeImage(image: string): void {
     this.selectedImage = 'http://localhost:7188/' + image;
@@ -74,7 +77,27 @@ export class BookingPageComponent implements OnInit {
 
       this.service.getAvailability(vehicleId, startDateTime, endDateTime).subscribe({
         next: (res) => {
+         
           this.bookedSlots = res.filter(x => x.isAvailable === false);
+          this.bookedDates.clear();
+
+          this.bookedSlots.forEach(slot => {
+            const start = new Date(slot.startDateTime);
+            const end = new Date(slot.endDateTime);
+
+            // Normalize start and end to 00:00:00 to only care about dates
+            let current = new Date(start);
+            current.setHours(0, 0, 0, 0);
+
+            const endDate = new Date(end);
+            endDate.setHours(0, 0, 0, 0);
+
+            while (current <= endDate) {
+              const dateStr = current.toISOString().split('T')[0]; // 'YYYY-MM-DD'
+              this.bookedDates.add(dateStr);
+              current.setDate(current.getDate() + 1);
+            }
+          });
           // console.log('🚫 Booked slots loaded:', this.bookedSlots); // 👈 Add this
           resolve();
         },
@@ -86,25 +109,20 @@ export class BookingPageComponent implements OnInit {
     });
   }
 
+  
+
   isDateDisabled = (date: Date): boolean => {
-    const dateStr = date.toISOString().split('T')[0]; // yyyy-mm-dd
-    return this.bookedSlots.some(slot => {
-      const slotStart = new Date(slot.startDateTime).toISOString().split('T')[0];
-      return dateStr === slotStart;
-    });
+   if (!date) return false;
+const dateOnly = date.toISOString().split('T')[0];
+return !this.bookedDates.has(dateOnly);
   };
+
   isDateAvailable = (date: Date | null): boolean => {
+  if (!date) return false;
 
-    if (!date) return false;
+  const dateOnly = date.toISOString().split('T')[0];
+  return !this.bookedDates.has(dateOnly);
 
-    const dateOnly = date.toISOString().split('T')[0];
-
-    return !this.bookedSlots.some(slot => {
-      const slotStartDate = new Date(slot.startDateTime);
-      const slotDateOnly = slotStartDate.toISOString().split('T')[0];
-      return dateOnly === slotDateOnly;
-    });
-    
   };
   checkAvailabilityStatus() {
     const pickupDate = this.bookingForm.get('pickupDate')?.value;
@@ -115,7 +133,7 @@ export class BookingPageComponent implements OnInit {
       return;
     }
 
-    
+
     const pickup = new Date(pickupDate);
     const [hours, minutes] = pickupTime.split(':').map(Number);
     pickup.setHours(hours, minutes, 0, 0);
@@ -129,17 +147,7 @@ export class BookingPageComponent implements OnInit {
 
     this.availabilityColor = foundUnavailable ? 'red' : 'green';
   }
-dateClass = (date: Date): string => {
-  const dateStr = date.toISOString().split('T')[0];
 
-  const isBooked = this.bookedSlots.some(slot => {
-    const slotDate = new Date(slot.startDateTime).toISOString().split('T')[0];
-    return slotDate === dateStr;
-  });
-
-  return isBooked ? 'red-date' : 'green-date';
-};
-  
   // validation for the dattime
   async ngOnInit() {
 
@@ -268,6 +276,7 @@ dateClass = (date: Date): string => {
       this.bookingForm.get('dropoffTime')?.disable({ emitEvent: false });
     }
   }
+
   //load vehicle ddetails
 
   loadVehicleDetails() {
