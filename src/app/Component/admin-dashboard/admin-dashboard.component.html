@@ -1,5 +1,5 @@
-<section>
-  <div class="min-h-screen flex flex-col antialiased bg-slate-100">
+<section >
+  <div class="min-h-screen flex flex-col antialiased bg-slate-100 ">
 
     <!-- Header -->
     <div class="fixed w-full flex items-center justify-between h-14 bg-slate-800 text-white z-20 shadow-md px-4">
@@ -56,7 +56,7 @@
           </a>
 
           <!-- Contact Messages -->
-          <a routerLink="/admin-dashboard/contact-us" class="cursor-pointer">
+          <a routerLink="/admin-dashboard/ContachMeaaage" class="cursor-pointer">
             <span class="relative flex flex-row items-center h-11 hover:bg-gray-600 hover:text-indigo-300  
               border-l-4 border-transparent hover:border-indigo-500 pr-6 px-4">
               <i class="fa-solid fa-envelope w-5 text-sm"></i>
@@ -77,7 +77,7 @@
             </div>
 
             <ul *ngIf="userPanelOpen" class="pl-10 py-1 text-sm space-y-1 text-gray-300">
-              <li><a routerLink="/admin-dashboard/booking-requests" class="flex items-center p-2 hover:text-indigo-300 hover:bg-gray-700">
+              <li><a routerLink="/admin-dashboard/bookingrequest" class="flex items-center p-2 hover:text-indigo-300 hover:bg-gray-700">
                 <i class="fa-solid fa-calendar-check mr-2"></i> Booking Requests</a></li>
               <li><a routerLink="/admin-dashboard/return-checks" class="flex items-center p-2 hover:text-indigo-300 hover:bg-gray-700">
                 <i class="fa-solid fa-clipboard-check mr-2"></i> Return Vehicle Check</a></li>
@@ -124,7 +124,7 @@
     </div>
 
     <!-- Main Content -->
-    <div class="content p-4 h-full mt-14 md:ml-64 transition-all duration-300">
+    <div class="content overflow-y-scroll px-5  md:ml-64 ml-14 h-screen pt-14 hide-scrollbar">
       <router-outlet></router-outlet>
     </div>
   </div>

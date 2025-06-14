@@ -2,10 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { MyServiceService } from '../../../../../my-service.service';
 import { jwtDecode } from 'jwt-decode';
 import { CommonModule } from '@angular/common';
+import { NgxPaginationModule } from 'ngx-pagination';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-security-refund',
-  imports: [CommonModule],
+  imports: [CommonModule, NgxPaginationModule, FormsModule],
   templateUrl: './security-refund.component.html',
   styleUrl: './security-refund.component.css'
 })
@@ -13,7 +15,9 @@ export class SecurityRefundComponent implements OnInit {
 
   deposits: any[] = [];
   errorMessage: string = '';
-
+  currentPage: number = 1;
+  selectedType: string = '';
+  filteredDeposits: any[] = [];
 
   constructor(private service: MyServiceService) { }
 
@@ -46,7 +50,8 @@ export class SecurityRefundComponent implements OnInit {
       next: (res) => {
         if (res && res.isSuccess) {
           this.deposits = res.data;
-          console.log("resdfjksd", res.data);
+          this.applyFilter();
+          // console.log("resdfjksd", res.data);
         } else {
           this.errorMessage = res.message || 'No deposits found.';
         }
@@ -55,5 +60,16 @@ export class SecurityRefundComponent implements OnInit {
         this.errorMessage = 'Error fetching deposits.';
       }
     });
+  }
+
+  applyFilter() {
+    if (this.selectedType === 'Pending') {
+      this.filteredDeposits = this.deposits.filter(d => !d.refundedAt);
+    } else if (this.selectedType === 'Refunded') {
+      this.filteredDeposits = this.deposits.filter(d => !!d.refundedAt);
+    } else {
+      this.filteredDeposits = [...this.deposits];
+    }
+    this.currentPage = 1;
   }
 }

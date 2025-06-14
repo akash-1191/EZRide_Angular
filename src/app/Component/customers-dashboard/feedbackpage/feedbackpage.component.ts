@@ -70,6 +70,7 @@ export class FeedbackpageComponent {
       }
     });
   }
+
   isInvalid(controlName: string): boolean {
     const control = this.feedbackForm.get(controlName);
     return !!(control && control.invalid && (control.dirty || control.touched));

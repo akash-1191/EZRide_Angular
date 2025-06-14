@@ -1,55 +1,52 @@
-<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 p-6 overflow-hidden">
-  <div class="w-full max-w-md bg-white rounded-3xl shadow-xl border border-gray-200 p-8">
+<div class="min-h-screen bg-gray-200 flex items-center justify-center p-4">
+  <div class="w-full max-w-6xl bg-white shadow-2xl rounded-xl overflow-hidden flex flex-col lg:flex-row">
 
-    <h2 class="text-3xl font-extrabold text-indigo-700 mb-6 text-center">Send Your Feedback</h2>
-    <p class="text-center text-gray-600 mb-8">
-      We’d love to hear your thoughts, complaints, or suggestions!
-    </p>
+    <!-- Image Section -->
+    <div class="w-full lg:w-1/2 h-80 lg:h-auto flex items-center justify-center bg-gray-50">
+      <img src="../../../../assets/image/feed.png" alt="Car Illustration" class=" object-fill h-[100%] " />
+    </div>
 
-    <form [formGroup]="feedbackForm" (ngSubmit)="onSubmit()" class="space-y-6" novalidate>
+    <!-- Form Section -->
+    <div class="w-full lg:w-1/2 flex flex-col  justify-center p-6 md:p-10">
+      <h2 class="text-2xl md:text-3xl font-bold text-gray-800 mb-2 text-center">Send Us Your Feedback</h2>
+      <p class="text-center text-gray-600 mb-6">We value your suggestions and concerns. Help us improve your experience.
+      </p>
 
-      <div>
-        <label for="feedbackType" class="block text-sm font-medium text-gray-700 mb-1">Feedback Type</label>
-        <select
-          id="feedbackType"
-          formControlName="feedbackType"
-          class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-          [class.border-red-500]="isInvalid('feedbackType')"
-        >
-          <option value="" disabled>Select Type</option>
-          <option *ngFor="let type of feedbackTypes" [value]="type.value">{{ type.display }}</option>
-        </select>
-        <div *ngIf="isInvalid('feedbackType')" class="text-red-500 text-xs mt-1">Feedback Type is required.</div>
-      </div>
+      <form [formGroup]="feedbackForm" (ngSubmit)="onSubmit()" class="space-y-5">
 
-      <div>
-        <label for="message" class="block text-sm font-medium text-gray-700 mb-1">Your Message</label>
-        <textarea
-          id="message"
-          rows="5"
-          maxlength="500"
-          placeholder="Write your feedback here..."
-          formControlName="message"
-          class="w-full rounded-lg border border-gray-300 px-4 py-3 resize-none focus:outline-none focus:ring-2 focus:ring-indigo-500"
-          [class.border-red-500]="isInvalid('message')"
-        ></textarea>
-        <p class="text-xs text-gray-400 mt-1">Max 500 characters</p>
-        <div *ngIf="isInvalid('message')" class="text-red-500 text-xs mt-1">
-          Message is required and must be less than 500 characters.
+        <!-- Feedback Type -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Feedback Type</label>
+          <select formControlName="feedbackType"
+            class="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-gray-400">
+            <option value="" disabled>Select a type</option>
+            <option *ngFor="let type of feedbackTypes" [value]="type.value">{{ type.display }}</option>
+          </select>
+          <div *ngIf="isInvalid('feedbackType')" class="text-red-500 text-sm mt-1">Please select a feedback type.</div>
         </div>
-      </div>
 
-      <button
-        type="submit"
-        [disabled]="isSubmitting"
-        class="w-full py-3 cursor-pointer bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white font-semibold rounded-full shadow-lg hover:from-pink-600 hover:to-red-600 transition transform hover:scale-105 disabled:opacity-50"
-      >
-        {{ isSubmitting ? 'Sending...' : 'Send Feedback' }}
-      </button>
-    </form>
+        <!-- Message Field -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Message</label>
+          <textarea formControlName="message" rows="5" maxlength="500"
+            class="w-full border border-gray-300 rounded-md px-4 py-3 resize-none focus:outline-none focus:ring-2 focus:ring-gray-400"
+            placeholder="Write your feedback here..."></textarea>
+          <div class="text-xs text-gray-500 mt-1">Max 500 characters</div>
+          <div *ngIf="isInvalid('message')" class="text-red-500 text-sm mt-1">Message is required.</div>
+        </div>
 
-    <p *ngIf="submitSuccess" class="text-green-600 mt-4 text-center font-semibold">{{ submitSuccess }}</p>
-    <p *ngIf="submitError" class="text-red-600 mt-4 text-center font-semibold">{{ submitError }}</p>
+        <!-- Submit Button -->
+        <button type="submit" [disabled]="feedbackForm.invalid || isSubmitting" [ngClass]="{
+            'bg-gray-700 hover:bg-gray-800 cursor-pointer': !feedbackForm.invalid && !isSubmitting,
+            'bg-gray-400 cursor-not-allowed': feedbackForm.invalid || isSubmitting
+          }" class="w-full text-white py-3 rounded-md font-semibold transition duration-200">
+          {{ isSubmitting ? 'Sending...' : 'Submit Feedback' }}
+        </button>
+      </form>
 
+      <!-- Status Messages -->
+      <p *ngIf="submitSuccess" class="text-green-600 mt-4 text-center font-medium">{{ submitSuccess }}</p>
+      <p *ngIf="submitError" class="text-red-600 mt-4 text-center font-medium">{{ submitError }}</p>
+    </div>
   </div>
 </div>

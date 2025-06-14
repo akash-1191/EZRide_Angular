@@ -21,6 +21,11 @@ import { SecurityRefundComponent } from './Component/customers-dashboard/securit
 import { PaymentDetailsComponent } from './Component/customers-dashboard/payment-details/payment-details.component';
 import { ReciptpageComponent } from './Component/customers-dashboard/reciptpage/reciptpage.component';
 import { FeedbackpageComponent } from './Component/customers-dashboard/feedbackpage/feedbackpage.component';
+import { ContactmessaegComponent } from './Component/admin-dashboard/contactmessaeg/contactmessaeg.component';
+import { BookingRequestComponent } from './Component/admin-dashboard/booking-request/booking-request.component';
+import { RejectedBookingsComponent } from './Component/customers-dashboard/rejected-bookings/rejected-bookings.component';
+import { CurrentRidesComponent } from './Component/customers-dashboard/current-rides/current-rides.component';
+
 
 
 export const routes: Routes = [
@@ -67,14 +72,15 @@ export const routes: Routes = [
       { path: 'vehicleavaliblebooking', loadComponent: () => import('./Component/customers-dashboard/vehicle-avalible/vehicle-avalible.component').then((m) => m.VehicleAvalibleComponent), },
 
       { path: 'custBookingpage/:id', loadComponent: () => import('./Component/customers-dashboard/booking-page/booking-page.component').then((m) => m.BookingPageComponent), },
-
       { path: 'previewPage', component: PreviewPageComponent },
       { path: 'MyBooking', component: MyBookingComponent },
       { path: 'paymentsuccess', component: PaymentSuccessComponent },
       { path: 'security-refund', component: SecurityRefundComponent },
       { path: 'paymentDetails', component: PaymentDetailsComponent },
       { path: 'reciptpage', component: ReciptpageComponent },
-      { path: 'feedback', component: FeedbackpageComponent }
+      { path: 'feedback', component: FeedbackpageComponent },
+      {path:'Rejected_Bookings',component:RejectedBookingsComponent},
+      {path:'Current_Rides', component:CurrentRidesComponent}
     ]
   },
 
@@ -95,7 +101,9 @@ export const routes: Routes = [
     children: [
       { path: "", component: AdmiDashboardComponent },
       { path: "a_addvehicle", component: AAddvehicleComponent },
-      { path: "manageVehicle", component: ManagevehicleComponent }
+      { path: "manageVehicle", component: ManagevehicleComponent },
+      {path:'ContachMeaaage',component:ContactmessaegComponent},
+      {path:'bookingrequest',component:BookingRequestComponent}
     ]
   },
 ];

@@ -4,16 +4,18 @@ import { MyServiceService } from '../../../../../my-service.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { NgxPaginationModule } from 'ngx-pagination';
+
 declare var Razorpay: any;
 @Component({
   selector: 'app-payment-details',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule,NgxPaginationModule],
   templateUrl: './payment-details.component.html',
   styleUrl: './payment-details.component.css'
 })
 export class PaymentDetailsComponent implements OnInit {
 
-
+ currentPage: number = 1;
   paymentdetails: any[] = [];
   errormessage: any;
   successmessage: any;

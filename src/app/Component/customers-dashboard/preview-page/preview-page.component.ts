@@ -81,8 +81,10 @@ export class PreviewPageComponent {
       next: (res: any) => {
         this.bookingData.bookingId = res.data.bookingId;
         this.submitPayment();
+        console.log("conferm booking data is the :",res)
       },
       error: (err: any) => {
+        console.log("errormsg:",err); 
         if (err.error && err.error.message) {
           this.errormessage = err.error.message;
         } else {
@@ -157,12 +159,12 @@ export class PreviewPageComponent {
 
                   },
                   error: (err2) => {
-                    this.errormessage = 'Security deposit save failed';
+                    this.errormessage = 'Security deposit save failed',err2;
                   }
                 });
               },
               error: (err) => {
-                this.errormessage = 'Payment verification failed';
+                this.errormessage = 'Payment verification failed',err;
               }
             });
           },
@@ -187,7 +189,7 @@ export class PreviewPageComponent {
 
       error: (err) => {
         // console.error('Order creation failed', err);
-        this.errormessage = 'Failed to create order';
+        this.errormessage = 'Failed to create order',err;
       }
     });
   }

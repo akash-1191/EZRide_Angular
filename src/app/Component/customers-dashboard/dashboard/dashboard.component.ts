@@ -25,6 +25,15 @@ export class DashboardComponent implements OnInit {
   amount: number = 0;
   refundedAt: Date | string = '';
 
+
+  // Animated counters (for UI)
+  displayTotalBooking = 0;
+  displayBikeCount = 0;
+  displayCarCount = 0;
+  displayPendingAmount = 0;
+  displayAmount = 0;
+  displayAvailableVehicle = 0;
+
   constructor(private services: MyServiceService, private router: Router) { }
 
   ngOnInit(): void {
@@ -42,11 +51,26 @@ export class DashboardComponent implements OnInit {
     }
   }
 
+   animateCount(property: keyof DashboardComponent, target: number) {
+    let current = 0;
+    const increment = Math.ceil(target / 40);
+    const interval = setInterval(() => {
+      if (current >= target) {
+        (this as any)[property] = target;
+        clearInterval(interval);
+      } else {
+        current += increment;
+        (this as any)[property] = current > target ? target : current;
+      }
+    }, 100);
+  }
+
 
   TotalBookingsCount(): void {
     this.services.TotalBookingsCount(this.userId).subscribe({
       next: (data) => {
         this.totalBooking = data.totalBookings;
+         this.animateCount('displayTotalBooking', this.totalBooking);
       },
       error: (err) => {
         this.errormessage = "Error fetching bookings:";
@@ -60,6 +84,8 @@ export class DashboardComponent implements OnInit {
       next: (data1) => {
         this.bikecount = data1.bikeCount;
         this.carcount = data1.carCount;
+            this.animateCount('displayBikeCount', this.bikecount);
+        this.animateCount('displayCarCount', this.carcount);
       },
       error: (err1) => {
         this.errormessage = "Error fetching bookings";
@@ -72,6 +98,7 @@ export class DashboardComponent implements OnInit {
     this.services.TatolAvalibleVehicleCount().subscribe({
       next: (data2) => {
         this.avaliblevehicle = data2;
+         this.animateCount('displayAvailableVehicle', this.avaliblevehicle);
       },
       error: (err1) => {
         this.errormessage = "Error fetching bookings";
@@ -83,6 +110,7 @@ export class DashboardComponent implements OnInit {
     this.services.pandingAmount(this.userId).subscribe({
       next: (res) => {
         this.pendingAmount = res;
+         this.animateCount('displayPendingAmount', this.pendingAmount);
       },
       error: () => {
         this.errormessage = "Error fetching bookings";
@@ -93,8 +121,9 @@ export class DashboardComponent implements OnInit {
   LastRefendedamount(): void {
     this.services.LastRefendedamount(this.userId).subscribe({
       next: (res1) => {
-        this.amount = res1.amount;
+         this.amount = res1.amount;
         this.refundedAt = new Date(res1.refundedAt);
+        this.animateCount('displayAmount', this.amount);
       },
       error: () => {
         this.errormessage = "Error fetching bookings";

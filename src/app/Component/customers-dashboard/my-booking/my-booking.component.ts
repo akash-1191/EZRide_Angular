@@ -3,15 +3,16 @@ import { MyServiceService } from '../../../../../my-service.service';
 import { jwtDecode } from 'jwt-decode';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-
+import { NgxPaginationModule } from 'ngx-pagination';
 @Component({
   selector: 'app-my-booking',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule,NgxPaginationModule],
   templateUrl: './my-booking.component.html',
   styleUrl: './my-booking.component.css'
 })
 export class MyBookingComponent implements OnInit {
 
+  currentPage: number = 1;
   bookings: any[] = [];
   errorMsg: string = '';
   successmessage: string = '';

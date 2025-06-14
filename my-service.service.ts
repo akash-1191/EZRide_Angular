@@ -1,6 +1,7 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { observableToBeFn } from 'rxjs/internal/testing/TestScheduler';
 // import { DateAvailabilityDTO } from './date-availability.model';
 export interface AvailabilitySlot {
   startDateTime: string; // ISO format string, e.g. "2025-06-03T12:00:00"
@@ -202,14 +203,13 @@ export class MyServiceService {
   }
 
   //booking details insert in the booking table 
-
   confirmBooking(data: any): Observable<any> {
     const token = sessionStorage.getItem('token');
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`
     });
     const apiUrl = `http://localhost:7188/api/Booking/addbooking`;
-    return this.http.post<any>(apiUrl, data);
+    return this.http.post<any>(apiUrl, data, { headers });
   }
 
 
@@ -347,16 +347,16 @@ export class MyServiceService {
 
 
   //  Check vehicle availability by date
-getAvailability(vehicleId: number, startDateTime: string, endDateTime: string): Observable<AvailabilitySlot[]> {
-  const params = new HttpParams()
-    .set('vehicleId', vehicleId.toString())
-    .set('startDateTime', startDateTime)
-    .set('endDateTime', endDateTime);
+  getAvailability(vehicleId: number, startDateTime: string, endDateTime: string): Observable<AvailabilitySlot[]> {
+    const params = new HttpParams()
+      .set('vehicleId', vehicleId.toString())
+      .set('startDateTime', startDateTime)
+      .set('endDateTime', endDateTime);
 
-  const url = 'http://localhost:7188/api/Booking/availability';
+    const url = 'http://localhost:7188/api/Booking/availability';
 
-  return this.http.get<AvailabilitySlot[]>(url, { params });
-}
+    return this.http.get<AvailabilitySlot[]>(url, { params });
+  }
 
   // getAvailability(vehicleId: number, startDateTime: string, endDateTime: string): Observable<AvailabilitySlot[]> {
   //   const params = new HttpParams()
@@ -421,7 +421,7 @@ getAvailability(vehicleId: number, startDateTime: string, endDateTime: string): 
 
 
   //total booking vehicle by  user by type
-  TatolVehicleBookingCount(userId:any): Observable<any> {
+  TatolVehicleBookingCount(userId: any): Observable<any> {
     const token = sessionStorage.getItem('token');
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`,
@@ -432,8 +432,8 @@ getAvailability(vehicleId: number, startDateTime: string, endDateTime: string): 
     return this.http.get<any>(TatalVehicleBookingCount, { headers });
   }
 
-//total vehicla avalible count in the website 
-  TatolAvalibleVehicleCount(): Observable<any> {  
+  //total vehicla avalible count in the website 
+  TatolAvalibleVehicleCount(): Observable<any> {
     const token = sessionStorage.getItem('token');
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`,
@@ -446,26 +446,138 @@ getAvailability(vehicleId: number, startDateTime: string, endDateTime: string): 
 
 
   //pendinga amount to ahow the user
-  pandingAmount(userId:number):Observable<number>{
+  pandingAmount(userId: number): Observable<number> {
     const token = sessionStorage.getItem('token');
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json'
     });
-      const pandingAmount = `http://localhost:7188/api/BookingSummary/pending-payment-count/${userId}`;
-      return this.http.get<number>(pandingAmount,{headers})
+    const pandingAmount = `http://localhost:7188/api/BookingSummary/pending-payment-count/${userId}`;
+    return this.http.get<number>(pandingAmount, { headers })
   }
 
   //last refended amount
-  LastRefendedamount(userId:number):Observable<any>{
-    const token=sessionStorage.getItem('token');
-    const headers=new HttpHeaders({
-     'Authorization': `Bearer ${token}`,
+  LastRefendedamount(userId: number): Observable<any> {
+    const token = sessionStorage.getItem('token');
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json'
     });
-    const refaundurl=`http://localhost:7188/api/BookingSummary/latest-refund/${userId}`;
-    return this.http.get<any>(refaundurl,{headers});
+    const refaundurl = `http://localhost:7188/api/BookingSummary/latest-refund/${userId}`;
+    return this.http.get<any>(refaundurl, { headers });
   }
+
+  //add contack form data
+  Contackmessage(obj: any): Observable<any> {
+    const url = 'http://localhost:7188/api/Contact/add';
+    return this.http.post<any>(url, obj);
+  }
+
+  //get contect message o the contact table 
+  contactMessageLoad(): Observable<any> {
+    const LoadContectMessage = `http://localhost:7188/api/Contact/allContactDetails`;
+    return this.http.get<any>(LoadContectMessage);
+  }
+
+
+  // send message in the watsapp to the user number this message send to use third party
+
+  // private apiUrl = 'https://api.ultramsg.com/instance124193/messages/chat';
+  // private token = 'z5lhl4h70gppj4k8';
+
+  // sendMessage(phone: string, message: string): Observable<any> {
+  //   const body = new HttpParams()
+  //     .set('token', this.token)
+  //     .set('to', phone)
+  //     .set('body', message);
+
+  //   const headers = new HttpHeaders({
+  //     'Content-Type': 'application/x-www-form-urlencoded'
+  //   });
+
+  //   return this.http.post(this.apiUrl, body.toString(), { headers });
+  // }
+
+
+
+  // send message in the watsapp to the user number own create api
+  sendMessage(phone: string, message: string): Observable<any> {
+    const body = {
+      phone: phone,
+      message: message
+    };
+
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json'
+    });
+
+    const apiUrl = 'http://localhost:7188/api/WhatsApp/sendWhatsAppMessage';
+    return this.http.post(apiUrl, body, { headers });
+  }
+
+
+
+  //admin get all use that is book or not vehiclde 
+  getAllDataOftheUser(): Observable<any> {
+    const token = sessionStorage.getItem('token');
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
+    const userdataurl = `http://localhost:7188/api/user-booking-info`;
+    return this.http.get<any>(userdataurl, { headers });
+  }
+
+
+  //cancel resion display  to the user by the admin
+  getallCancelResion(): Observable<any> {
+    const token = sessionStorage.getItem('token');
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+    const userdataurl = `http://localhost:7188/api/CancelledBookings`;
+    return this.http.get<any>(userdataurl, { headers });
+  }
+  
+  //current ride to be  display to the user by the admin
+  getCurrentRide(): Observable<any> {
+    const token = sessionStorage.getItem('token');
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+    const userdataurl = `http://localhost:7188/api/bookings/inprogressStatus`;
+    return this.http.get<any>(userdataurl, { headers });
+  }
+
+  //admin put the mesage for the cancel reasion
+  updateCancelReason(bookingId: number, cancelReason: string): Observable<any> {
+    const token = sessionStorage.getItem('token');
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
+    const url = `http://localhost:7188/api/cancel-reason`;
+    const body = {
+      BookingId: bookingId,
+      Cancelreasion: cancelReason
+    };
+    return this.http.put<any>(url, body, { headers });
+  }
+
+  //admin hanover the vehiicle to the customer
+  setInProgress(bookingId: number): Observable<any> {
+    const token = sessionStorage.getItem('token');
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
+
+    const body = { bookingId };
+
+    return this.http.put<any>('http://localhost:7188/api/status/inprogress', body, { headers });
+  }
+
+
 }
 
 

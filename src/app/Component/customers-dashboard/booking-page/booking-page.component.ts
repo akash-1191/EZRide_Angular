@@ -48,7 +48,7 @@ export class BookingPageComponent implements OnInit {
   minDate: Date = new Date();
   minTime: string = '';
 
-availabilitySlotsByDate: Record<string, { startTime: string, endTime: string }[]> = {};
+  availabilitySlotsByDate: Record<string, { startTime: string, endTime: string }[]> = {};
 
 
   changeImage(image: string): void {
@@ -77,7 +77,7 @@ availabilitySlotsByDate: Record<string, { startTime: string, endTime: string }[]
 
       this.service.getAvailability(vehicleId, startDateTime, endDateTime).subscribe({
         next: (res) => {
-         
+
           this.bookedSlots = res.filter(x => x.isAvailable === false);
           this.bookedDates.clear();
 
@@ -109,44 +109,65 @@ availabilitySlotsByDate: Record<string, { startTime: string, endTime: string }[]
     });
   }
 
-  
 
   isDateDisabled = (date: Date): boolean => {
-   if (!date) return false;
-const dateOnly = date.toISOString().split('T')[0];
-return !this.bookedDates.has(dateOnly);
+    if (!date) return false;
+    const dateOnly = date.toISOString().split('T')[0];
+    return !this.bookedDates.has(dateOnly);
   };
 
   isDateAvailable = (date: Date | null): boolean => {
-  if (!date) return false;
+    if (!date) return false;
 
-  const dateOnly = date.toISOString().split('T')[0];
-  return !this.bookedDates.has(dateOnly);
+    const dateOnly = date.toISOString().split('T')[0];
+    return !this.bookedDates.has(dateOnly);
 
   };
   checkAvailabilityStatus() {
-    const pickupDate = this.bookingForm.get('pickupDate')?.value;
-    const pickupTime = this.bookingForm.get('pickupTime')?.value;
+  const pickupDate = this.bookingForm.get('pickupDate')?.value;
+  const pickupTime = this.bookingForm.get('pickupTime')?.value;
 
-    if (!pickupDate || !pickupTime) {
-      this.availabilityColor = null;
-      return;
-    }
-
-
-    const pickup = new Date(pickupDate);
-    const [hours, minutes] = pickupTime.split(':').map(Number);
-    pickup.setHours(hours, minutes, 0, 0);
-
-    const selectedTimeISO = pickup.toISOString();
-
-    const foundUnavailable = this.bookedSlots.some(slot =>
-      selectedTimeISO >= new Date(slot.startDateTime).toISOString() &&
-      selectedTimeISO < new Date(slot.endDateTime).toISOString()
-    );
-
-    this.availabilityColor = foundUnavailable ? 'red' : 'green';
+  if (!pickupDate || !pickupTime || typeof pickupTime !== 'string' || !pickupTime.includes(':')) {
+    this.availabilityColor = null;
+    return;
   }
+
+  const pickup = new Date(pickupDate);
+
+  if (isNaN(pickup.getTime())) {
+    console.error('Invalid pickup date:', pickupDate);
+    this.availabilityColor = null;
+    return;
+  }
+
+  const [hoursStr, minutesStr] = pickupTime.split(':');
+  const hours = parseInt(hoursStr, 10);
+  const minutes = parseInt(minutesStr, 10);
+
+  if (isNaN(hours) || isNaN(minutes)) {
+    console.error('Invalid pickup time:', pickupTime);
+    this.availabilityColor = null;
+    return;
+  }
+
+  pickup.setHours(hours, minutes, 0, 0);
+
+  if (isNaN(pickup.getTime())) {
+    console.error('Final pickup datetime is invalid:', pickup);
+    this.availabilityColor = null;
+    return;
+  }
+
+  const selectedTimeISO = pickup.toISOString();
+
+  const foundUnavailable = this.bookedSlots.some(slot =>
+    selectedTimeISO >= new Date(slot.startDateTime).toISOString() &&
+    selectedTimeISO < new Date(slot.endDateTime).toISOString()
+  );
+
+  this.availabilityColor = foundUnavailable ? 'red' : 'green';
+}
+
 
   // validation for the dattime
   async ngOnInit() {
@@ -157,8 +178,8 @@ return !this.bookedDates.has(dateOnly);
     this.minDate = now; // aaj ke date se pehle pick nahi kar sakte
     const hours = now.getHours().toString().padStart(2, '0');
     const minutes = now.getMinutes().toString().padStart(2, '0');
-    await this.loadUnavailableSlots();
     this.minTime = `${hours}:${minutes}`;
+
     this.bookingForm = this.fb.group({
       pickupDate: [null, Validators.required],
       pickupTime: ['', Validators.required],
@@ -171,6 +192,8 @@ return !this.bookedDates.has(dateOnly);
     }, {
       validators: this.minimumBookingDurationValidator()
     });
+    await this.loadUnavailableSlots();
+
 
     // when driveBasis or hoursToDrive/daysToDrive change then auto-update of he dropoff
     // this.bookingForm.get('driveBasis')?.valueChanges.subscribe(() => this.updateDropoff());
@@ -453,7 +476,5 @@ return !this.bookedDates.has(dateOnly);
       hiArr.removeAt(0);
     }
   }
-
-
 
 }
