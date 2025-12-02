@@ -9,13 +9,13 @@ import { NgxPaginationModule } from 'ngx-pagination';
 declare var Razorpay: any;
 @Component({
   selector: 'app-payment-details',
-  imports: [CommonModule, FormsModule,NgxPaginationModule],
+  imports: [CommonModule, FormsModule, NgxPaginationModule],
   templateUrl: './payment-details.component.html',
   styleUrl: './payment-details.component.css'
 })
 export class PaymentDetailsComponent implements OnInit {
 
- currentPage: number = 1;
+  currentPage: number = 1;
   paymentdetails: any[] = [];
   errormessage: any;
   successmessage: any;
@@ -59,10 +59,10 @@ export class PaymentDetailsComponent implements OnInit {
 
   // if date and tiem has gone if is a pending the not show the paynow button 
   isFutureDate(dateTimeString: string): boolean {
-  const now = new Date();
-  const endTime = new Date(dateTimeString);
-  return endTime.getTime() > now.getTime();
-}
+    const now = new Date();
+    const endTime = new Date(dateTimeString);
+    return endTime.getTime() > now.getTime();
+  }
 
   toggleFilterDropdown() {
     this.showFilterDropdown = !this.showFilterDropdown;
@@ -105,7 +105,7 @@ export class PaymentDetailsComponent implements OnInit {
   }
 
   @HostListener('document:keydown.escape', ['$event'])
-  onEscapePress(event: KeyboardEvent) {
+  onEscapePress(event: any) {
 
     this.showFilterDropdown = false;
   }
@@ -116,7 +116,7 @@ export class PaymentDetailsComponent implements OnInit {
         const orderId = res.orderId;
 
         const options: any = {
-          key: 'rzp_test_icoOUo8PN7viYp',
+          key: 'rzp_test_RlH2yK1IJryhJo',
           amount: bookingData.securityDepositAmount,
           currency: 'INR',
           name: 'EZRide Payment',
@@ -165,7 +165,7 @@ export class PaymentDetailsComponent implements OnInit {
           prefill: {
             name: 'Akash',
             email: 'ezride123@gmail.com',
-            contact: '6355923492'
+            contact: '+91 6355923492'
           },
           theme: {
             color: '#528FF0'

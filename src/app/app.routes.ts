@@ -25,6 +25,18 @@ import { ContactmessaegComponent } from './Component/admin-dashboard/contactmess
 import { BookingRequestComponent } from './Component/admin-dashboard/booking-request/booking-request.component';
 import { RejectedBookingsComponent } from './Component/customers-dashboard/rejected-bookings/rejected-bookings.component';
 import { CurrentRidesComponent } from './Component/customers-dashboard/current-rides/current-rides.component';
+import { ReturnVehicleComponent } from './Component/admin-dashboard/return-vehicle/return-vehicle.component';
+import { HelpComponent } from './Component/help/help.component';
+import { FuelDamageReportComponent } from './Component/admin-dashboard/fuel-damage-report/fuel-damage-report.component';
+import { SecuritydepositRefaundAdminComponent } from './Component/admin-dashboard/securitydeposit-refaund-admin/securitydeposit-refaund-admin.component';
+import { UserFeedbackbyadminComponent } from './Component/admin-dashboard/user-feedbackbyadmin/user-feedbackbyadmin.component';
+import { ServiceComponent } from './Component/service/service.component';
+import { HelpCustomerDashboardComponent } from './Component/customers-dashboard/help-customer-dashboard/help-customer-dashboard.component';
+import { Component } from '@angular/core';
+import { DriverProfileComponent } from './Component/Driver-dashboard/driver-profile/driver-profile.component';
+import { DriverDashboardComponent } from './Component/Driver-dashboard/driver-dashboard.component';
+import { OwnAddvehicleComponent } from './Component/owner-dashboard/own-addvehicle/own-addvehicle.component';
+import { MyVehicleComponent } from './Component/owner-dashboard/my-vehicle/my-vehicle.component';
 
 
 
@@ -58,7 +70,9 @@ export const routes: Routes = [
       },
       {
         path: 'unauthorized', component: UnauthorizedComponent
-      }
+      },
+      {path:'help',component:HelpComponent},
+      {path:'services',component:ServiceComponent}
     ]
   },
 
@@ -80,7 +94,8 @@ export const routes: Routes = [
       { path: 'reciptpage', component: ReciptpageComponent },
       { path: 'feedback', component: FeedbackpageComponent },
       {path:'Rejected_Bookings',component:RejectedBookingsComponent},
-      {path:'Current_Rides', component:CurrentRidesComponent}
+      {path:'Current_Rides', component:CurrentRidesComponent},
+       {path:"Helpcustomer",component:HelpCustomerDashboardComponent}
     ]
   },
 
@@ -90,7 +105,18 @@ export const routes: Routes = [
     data: { expectedRole: 'OwnerVehicle' },
     children: [
       { path: "", component: OwnDashboardComponent },
-      { path: "own_Profile", component: OwnProfileComponent }
+      { path: "own_Profile", component: OwnProfileComponent },
+      {path:"own_Addvehicle",component:OwnAddvehicleComponent},
+      {path:"Myvehicle",component:MyVehicleComponent}
+    ]
+  },
+  {
+    path:'Driver-dashboard',component:DriverDashboardComponent,
+    canActivate:[authGuard],
+    data:{expectedRole:'Driver'},
+    children:[
+      {path:"driverProfile",component:DriverProfileComponent}
+      
     ]
   },
 
@@ -99,11 +125,16 @@ export const routes: Routes = [
     canActivate: [authGuard],
     data: { expectedRole: 'Admin' },
     children: [
-      { path: "", component: AdmiDashboardComponent },
+      // { path: "", component: AdmiDashboardComponent },
       { path: "a_addvehicle", component: AAddvehicleComponent },
-      { path: "manageVehicle", component: ManagevehicleComponent },
+      { path: "", component: ManagevehicleComponent },
       {path:'ContachMeaaage',component:ContactmessaegComponent},
-      {path:'bookingrequest',component:BookingRequestComponent}
+      {path:'bookingrequest',component:BookingRequestComponent},
+      {path:'Returnvehicle_check',component:ReturnVehicleComponent},
+      {path:"Damagecharges",component:FuelDamageReportComponent},
+      {path:"securitydepositrefaund",component:SecuritydepositRefaundAdminComponent},
+      {path:"Feesback",component:UserFeedbackbyadminComponent}
+     
     ]
   },
 ];

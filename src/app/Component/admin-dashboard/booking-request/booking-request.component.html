@@ -1,7 +1,7 @@
 <div class="bg-white shadow-md rounded-lg overflow-x-auto py-5 px-5 mt-5">
     <div class="flex justify-between items-center px-4 py-3 border-b">
         <h2 class="text-xl font-semibold text-gray-800 flex items-center">
-            <i class="fas fa-receipt text-gray-800  text-xl mr-2"></i> My Bookings
+            <i class="fas fa-receipt text-gray-800  text-xl mr-2"></i>Bookings Request
         </h2>
 
         <div class="relative filter-container" (clickOutside)="showFilterDropdown = false">
@@ -108,7 +108,7 @@
         <!-- Sticky Header -->
         <div
             class="sticky top-0 z-10 bg-white flex items-center justify-between px-6 py-4 border-b border-gray-200 shadow-sm">
-            <h2 class="text-2xl font-semibold text-gray-800">Booking Details</h2>
+            <h2 class="text-2xl font-semibold text-gray-800">User Vehicle Details</h2>
             <button (click)="closeModal()" class="cursor-pointer text-gray-500 hover:text-red-500 transition">
                 <i class="fas fa-times text-xl"></i>
             </button>
@@ -260,9 +260,105 @@
                 </div>
             </section>
 
+
+            <!-- User Document -->
+            <section>
+                <h3 class="text-xl font-semibold mb-3 border-b border-gray-300 pb-2">
+                    User Document
+                </h3>
+
+                <div class="px-2 md:px-10 py-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <!-- Age Proof -->
+                        <div class="border rounded-lg p-4 shadow-sm hover:shadow-md transition-all">
+                            <h3 class="text-lg font-semibold text-gray-700 mb-3">Age Proof</h3>
+                            <div class="bg-gray-100 rounded-lg h-40 flex items-center justify-center">
+                                <ng-container *ngIf="doc.ageProofPath; else notAvailable">
+                                    <ng-container *ngIf="isPdf(doc.ageProofPath); else showImage">
+                                        <div class="text-center">
+                                            <i class="fa fa-file-pdf text-red-600 text-5xl mb-2"></i>
+                                            <a [href]="'http://localhost:7188/' + doc.ageProofPath" target="_blank"
+                                                class="text-blue-600 underline">View PDF</a>
+                                        </div>
+                                    </ng-container>
+                                    <ng-template #showImage>
+                                        <img [src]="'http://localhost:7188/' + doc.ageProofPath" alt="Age Proof"
+                                            class="max-h-36 rounded-md cursor-pointer"
+                                            (click)="openImageModal(doc.ageProofPath)" />
+                                    </ng-template>
+                                </ng-container>
+                                <ng-template #notAvailable>
+                                    <p class="text-gray-500 italic">Not uploaded</p>
+                                </ng-template>
+                            </div>
+                        </div>
+
+                        <!-- Address Proof -->
+                        <div class="border rounded-lg p-4 shadow-sm hover:shadow-md transition-all">
+                            <h3 class="text-lg font-semibold text-gray-700 mb-3">Address Proof</h3>
+                            <div class="bg-gray-100 rounded-lg h-40 flex items-center justify-center">
+                                <ng-container *ngIf="doc.addressProofPath; else notAvailable2">
+                                    <ng-container *ngIf="isPdf(doc.addressProofPath); else showImage2">
+                                        <div class="text-center">
+                                            <i class="fa fa-file-pdf text-red-600 text-5xl mb-2"></i>
+                                            <a [href]="'http://localhost:7188/' + doc.addressProofPath" target="_blank"
+                                                class="text-blue-600 underline">View PDF</a>
+                                        </div>
+                                    </ng-container>
+                                    <ng-template #showImage2>
+                                        <img [src]="'http://localhost:7188/' + doc.addressProofPath" alt="Address Proof"
+                                            class="max-h-36 rounded-md cursor-pointer"
+                                            (click)="openImageModal(doc.addressProofPath)" />
+                                    </ng-template>
+                                </ng-container>
+                                <ng-template #notAvailable2>
+                                    <p class="text-gray-500 italic">Not uploaded</p>
+                                </ng-template>
+                            </div>
+                        </div>
+
+                        <!-- Driving Licence -->
+                        <div class="border rounded-lg p-4 shadow-sm hover:shadow-md transition-all">
+                            <h3 class="text-lg font-semibold text-gray-700 mb-3">
+                                Driving Licence
+                            </h3>
+                            <div class="bg-gray-100 rounded-lg h-40 flex items-center justify-center">
+                                <ng-container *ngIf="doc.dlImagePath; else notAvailable3">
+                                    <ng-container *ngIf="isPdf(doc.dlImagePath); else showImage3">
+                                        <div class="text-center">
+                                            <i class="fa fa-file-pdf text-red-600 text-5xl mb-2"></i>
+                                            <a [href]="'http://localhost:7188/' + doc.dlImagePath" target="_blank"
+                                                class="text-blue-600 underline">View PDF</a>
+                                        </div>
+                                    </ng-container>
+                                    <ng-template #showImage3>
+                                        <img [src]="'http://localhost:7188/' + doc.dlImagePath" alt="DL"
+                                            class="max-h-36 rounded-md cursor-pointer"
+                                            (click)="openImageModal(doc.dlImagePath)" />
+                                    </ng-template>
+                                </ng-container>
+                                <ng-template #notAvailable3>
+                                    <p class="text-gray-500 italic">Not uploaded</p>
+                                </ng-template>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Image Modal -->
+                <div *ngIf="modalImage"
+                    class="fixed inset-0 bg-black/50 bg-opacity-70 flex items-center justify-center z-50"
+                    (click)="closeImageModal()">
+                    <img [src]="'http://localhost:7188/' + modalImage"
+                        class="max-h-[90vh] max-w-[90vw] rounded-lg border-4 border-white shadow-lg" />
+                </div>
+            </section>
+
         </div>
 
-        <!-- Sticky Footer -->
+
+
+
         <!-- Footer Buttons -->
         <div class="sticky bottom-0 z-10 bg-white border-t border-gray-300 p-4 flex flex-col gap-3">
 
@@ -282,22 +378,59 @@
             <div class="flex justify-end gap-3" *ngIf="!showCancelReason">
                 <button (click)="showCancelReason = true"
                     class="px-5 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition cursor-pointer">
-                    Cancel
+                    Cancel Ride
                 </button>
 
-                <button (click)="handOverbutton(selectedBooking.bookingId)" class="px-5 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition cursor-pointer">
+                <button (click)="OTPopenModal(selectedBooking.bookingId,selectedBooking.email)"
+                    class="px-5 py-2  bg-blue-500 text-white rounded-md hover:bg-blue-600 transition cursor-pointer">
                     Handover
                 </button>
-                <!-- 
-    <button class="px-5 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition cursor-pointer">
-      Completed
-    </button> -->
+
             </div>
         </div>
         <span class="text-red-500 p-2 flex justify-center items-center">{{errormsg}}</span>
-           <span class="text-green-500 p-2 flex justify-center items-center">{{successfullmsg}}</span>
+        <span class="text-green-500 p-2 flex justify-center items-center">{{successfullmsg}}</span>
     </div>
 </div>
 
 
 
+<!-- Modal OTP -->
+<div *ngIf="isOTPModalOpen " class="fixed inset-0 bg-black/30 bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white rounded-lg shadow-xl max-w-md w-full p-6 relative">
+        <button (click)="OTPcloseModal()"
+            class="absolute top-4 right-4 cursor-pointer text-gray-500 hover:text-gray-700 focus:outline-none">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+        </button>
+
+        <h2 class="text-2xl font-semibold mb-6 text-gray-800 text-center">Vehicle Handover OTP Verification</h2>
+
+
+        <label for="emailInput" class="block text-sm font-medium text-gray-700">Admin Email</label>
+        <input type="email" id="emailInput" [(ngModel)]="email" placeholder="Enter admin email"
+            class="mt-1 mb-4 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+        <span *ngIf="otpSentMessage" class="text-green-500 flex justify-end p-0 m-0">{{ otpSentMessage }}</span>
+
+
+        <div class="flex items-center justify-between mb-6">
+            <button (click)="sendOtp()" [disabled]="isOtpButtonDisabled"
+                class="px-4 py-2 cursor-pointer bg-green-600 text-white rounded-md hover:bg-green-700 transition disabled:opacity-50 disabled:cursor-not-allowed">
+                Send OTP
+            </button>
+            <div class="text-gray-600 font-mono">{{ timerDisplay }}</div>
+        </div>
+
+        <label for="otpInput" class="block text-sm font-medium text-gray-700">Enter OTP</label>
+        <input type="text" id="otpInput" [(ngModel)]="otp" placeholder="Enter OTP here"
+            class="mt-1 mb-6 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+
+        <button (click)="submitOtp()"
+            class="w-full cursor-pointer bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 transition">
+            Submit
+        </button>
+        <span class="text-green-500 justify-center">{{suseccmsg}}</span>
+    </div>
+</div>

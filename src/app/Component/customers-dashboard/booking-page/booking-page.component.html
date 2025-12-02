@@ -23,8 +23,8 @@
             <div class="lg:col-span-1 space-y-4 mt-10">
                 <h1 class="text-2xl font-bold">{{ vehicleDetails?.carType }} {{ vehicleDetails?.yearOfManufacture }}
                 </h1>
-                <p class="text-sm text-gray-600">
-                    The BMW M2 is the high-performance version of the 2 Series 2-door coupé. The first generation of the
+                <p *ngIf="vehicleDetails?.type === 'Car'"  class="text-sm text-gray-600">
+                    The Car  is the high-performance version of the 2 Series 2-door coupé. The first generation of the
                     M2 is the F87 coupé and is powered by turbocharged.
                 </p>
 
@@ -107,14 +107,7 @@
                         </div>
                     </div>
                 </div>
-                <div *ngIf="vehicleDetails?.type === 'Car'">
-                    <h2 class="font-semibold text-lg mt-4">Features</h2>
-                    <ul class="list-disc list-inside text-sm space-y-1">
-                        <li>Bluetooth</li>
-                        <li>Multimedia Player</li>
-                        <li>Central Lock</li>
-                    </ul>
-                </div>
+                
             </div>
 
             <!-- Right: Booking Form & Share -->
@@ -298,17 +291,15 @@
                     </div>
                 </form>
 
-                <div class="bg-gray-200 p-4 rounded-xl shadow-sm">
-                    <p class="font-semibold text-sm mb-2">Connect</p>
-                    <div class="flex flex-wrap gap-3">
-                        <a href="#" class="bg-blue-500 text-white p-2 rounded-md"><i class="fab fa-twitter"></i></a>
-                        <a href="#" class="bg-red-600 text-white p-2 rounded-md"><i class="fab fa-reddit"></i></a>
-                        <a href="#" class="bg-orange-600 text-white p-2 rounded-md"><i
-                                class="fab fa-stumbleupon"></i></a>
-                        <a href="#" class="bg-blue-700 text-white p-2 rounded-md"><i class="fab fa-linkedin"></i></a>
-                        <a href="#" class="bg-pink-600 text-white p-2 rounded-md"><i class="fab fa-pinterest"></i></a>
-                        <a href="#" class="bg-green-600 text-white p-2 rounded-md"><i class="fas fa-envelope"></i></a>
-                    </div>
+               
+                   <div *ngIf="vehicleDetails?.type === 'Car'"   >
+                    <h2 class="font-semibold text-lg mt-4">Features</h2>
+                    <ul class="list-disc list-inside text-sm font-bold space-y-1 flex ml-3 ">
+                        <li  class="ml-2">Bluetooth</li>
+                        <li class="ml-2">Multimedia Player</li>
+                        <li class="ml-2">Central Lock</li>
+                    </ul>
+               
                 </div>
             </div>
         </div>

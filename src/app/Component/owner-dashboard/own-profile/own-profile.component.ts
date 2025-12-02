@@ -1,13 +1,14 @@
 import { CommonModule } from '@angular/common';
 import { Component, HostListener } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { MyServiceService } from '../../../../../my-service.service';
 import { jwtDecode } from 'jwt-decode';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-own-profile',
-  imports: [CommonModule,CommonModule,ReactiveFormsModule],
+  imports: [CommonModule,CommonModule,ReactiveFormsModule, FormsModule],
   templateUrl: './own-profile.component.html',
   styleUrl: './own-profile.component.css'
 })
@@ -17,6 +18,30 @@ export class OwnProfileComponent {
   isEditProfileModalOpen: boolean = false;
   selectedImage: File | null = null;
   imagePreviewUrl: string = '';
+errormessage:any;
+
+  
+   // Document related
+  documents: any[] = [];
+  isDocumentModalOpen: boolean = false;
+  documentForm: FormGroup = new FormGroup({
+    title: new FormControl('', [Validators.required]),
+    file: new FormControl(null, [Validators.required])
+  });
+  selectedDocumentFile: File | null = null;
+  editDocumentId: number | null = null;
+  isAddDocumentModalOpen = false;
+newDocumentType = '';
+newDocumentFile: File | null = null;
+
+// All possible document types
+allDocumentTypes: string[] = ["RCBook", "InsurancePaper", "AadharCard"];
+
+remainingDocumentTypes: string[] = [];
+
+isDeleteConfirmOpen = false;
+documentToDeleteId: number | null = null;
+
 
   updateUserForm: FormGroup = new FormGroup({
     firstname: new FormControl("", [Validators.required, Validators.pattern("[a-zA-Z]*")]),
@@ -30,10 +55,11 @@ export class OwnProfileComponent {
     address: new FormControl("", [Validators.required]),
   });
 
-  constructor(private services: MyServiceService ) {}
+  constructor(private services: MyServiceService,private sanitizer: DomSanitizer ) {}
 
   ngOnInit(): void {
     this.loadUserProfile();
+    this.loadDocuments();
   }
 
   loadUserProfile(): void {
@@ -150,18 +176,20 @@ export class OwnProfileComponent {
       });
     }
   }
-
-  @HostListener('document:keydown', ['$event'])
-  onKeyDown(event: KeyboardEvent): void {
-    if (event.key === 'Escape') {
-      this.closeModals();
-    }
+@HostListener('document:keydown', ['$event'])
+onKeyDown(event: KeyboardEvent): void {
+  if (event.key === 'Escape') {
+    this.closeModals();
   }
+}
 
-  closeModals(): void {
-    this.isImageUploadModalOpen = false;
-    this.isEditProfileModalOpen = false;
-  }
+closeModals(): void {
+  this.isImageUploadModalOpen = false;
+  this.isEditProfileModalOpen = false;
+  this.isDocumentModalOpen = false;
+  this.isAddDocumentModalOpen = false;
+  this.isDeleteConfirmOpen = false;
+}
 
   onImageSelected(event: Event): void {
   const input = event.target as HTMLInputElement;
@@ -175,7 +203,106 @@ export class OwnProfileComponent {
     };
     reader.readAsDataURL(this.selectedImage);
   }
+  
 }
+loadDocuments(): void {
+  this.services.getDocuments().subscribe({
+    next: (res) => {
+      this.documents = res;
+
+
+      const uploadedTypes = this.documents.map(d => d.documentType);
+
+      this.remainingDocumentTypes = this.allDocumentTypes.filter(type => !uploadedTypes.includes(type));
+
+      console.log("Remaining Types:", this.remainingDocumentTypes);
+    },
+    error: (err) => {
+      console.error("Failed to load documents", err);
+    }
+  });
+}
+
+// Only one needed for PDF opening
+openPdf(url: string) {
+  window.open(url, '_blank');
+}
+
+openDeleteConfirm(id: number) {
+  this.documentToDeleteId = id;
+  this.isDeleteConfirmOpen = true;
+}
+
+confirmDeleteDocument() {
+  if (!this.documentToDeleteId) return;
+
+  this.services.deleteDocument(this.documentToDeleteId).subscribe({
+    next: () => {
+      this.loadDocuments();
+      this.isDeleteConfirmOpen = false;
+      this.documentToDeleteId = null;
+    },
+    error: (err) => {
+      console.error("Delete failed:", err);
+     this.errormessage = "Failed to delete document!";
+    }
+  });
+}
+
+cancelDelete() {
+  this.isDeleteConfirmOpen = false;
+  this.documentToDeleteId = null;
+}
+
+
+
+// Adddocumnet   Modal Methods
+openAddDocumentModal() {
+    this.isAddDocumentModalOpen = true;
+  }
+
+  closeAddDocumentModal() {
+    this.isAddDocumentModalOpen = false;
+    this.newDocumentType = '';
+    this.newDocumentFile = null;
+  }
+
+  onDocumentFileSelected(event: any) {
+    if (event.target.files.length > 0) {
+      this.newDocumentFile = event.target.files[0];
+    }
+  }
+
+  submitNewDocument() {
+    if (!this.newDocumentType || !this.newDocumentFile) {
+      this.errormessage = "Please enter document type & choose file.";
+      return;
+    }
+
+    const token = sessionStorage.getItem('token');
+    const decode: any = jwtDecode(token!);
+    const userId = decode.UserId || decode.userId;
+
+    const formData = new FormData();
+  formData.append("UserId", userId.toString());
+  formData.append("DocumentType", this.newDocumentType);
+  formData.append("DocumentFile", this.newDocumentFile);
+
+
+    this.services.addDocument(formData).subscribe({
+      next: () => {
+        this.closeAddDocumentModal();
+        this.loadDocuments();
+      },
+      error: (err) => console.error("Document Upload Failed:", err)
+    });
+  }
+
+
+
+
+
+
   // Form Getters
   get firstname() { return this.updateUserForm.get("firstname") as FormControl; }
   get middleName() { return this.updateUserForm.get("middleName") as FormControl; }

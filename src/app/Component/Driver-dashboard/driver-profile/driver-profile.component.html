@@ -1,0 +1,470 @@
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+
+<section *ngIf="profiledata" class="flex items-center justify-center md:p-6 p-2 ">
+    <!-- Profile Section -->
+    <div class="bg-white rounded-lg shadow-xl w-full">
+        <!-- Background Header -->
+        <div class="bg-gradient-to-r from-gray-600 to-gray-800 text-white p-6 rounded-t-lg">
+            <div class="text-center text-2xl font-bold">
+                <p>{{ profiledata?.firstname }} {{ profiledata?.middlename }} {{ profiledata?.lastname}}</p>
+            </div>
+        </div>
+
+        <!-- Profile Info Section -->
+        <div class="flex justify-center items-center md:p-8 p-0">
+            <div class="bg-white shadow-lg rounded-lg p-8 w-full space-y-6">
+                <!-- Header -->
+                <div class="flex flex-col md:flex-row items-start space-x-6 md:space-x-12">
+                    <div class="relative group mb-4 md:mb-0">
+                        <img [src]="'http://localhost:7188' + profiledata.image" alt="Profile Picture"
+                            (error)="onImageError($event)"
+                            class="md:w-52 md:h-52 w-44 h-44 md:rounded-sm rounded-full md: ml-12 border-4 border-gray-600 transition-all duration-300 ease-in-out group-hover:blur-[1px]" />
+                        <div
+                            class="absolute inset-0 left-18 flex items-center justify-center opacity-0 group-hover:opacity-100 group-hover:bg-none transition-all duration-300">
+                            <button type="button" (click)="openImageUploadModal()"
+                                class="bg-gray-500 text-white  px-2 py-1 text-2xl rounded-full">
+                                <i class="fa fa-pencil-alt cursor-pointer"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="text-center mb-6 w-full">
+                        <!-- <h1 class="md:text-3xl text-2xl font-extrabold text-gray-800">
+                            User Name 
+                        </h1> -->
+                        <!-- Company Details -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 text-left mx-4 mt-10">
+                            <div class="space-y-2">
+                                <p class="text-gray-800 font-semibold">Full Name:- <span class="text-gray-600"> {{
+                                        profiledata.firstname }} {{ profiledata.middlename }} {{ profiledata.lastname
+                                        }}</span>
+                                </p>
+                            </div>
+                            <div class="space-y-2">
+                                <p class="text-gray-800 font-semibold">Age:- <span
+                                        class="text-gray-600">{{profiledata.age}}</span></p>
+                            </div>
+                            <div class="space-y-2">
+                                <p class="text-gray-800 font-semibold">Gender:- <span
+                                        class="text-gray-600">{{profiledata.gender}}</span>
+                                </p>
+                            </div>
+                            <div class="space-y-2">
+                                <p class="text-gray-800 font-semibold">Phone No:- <span
+                                        class="text-gray-600">{{profiledata.phone}}</span></p>
+                            </div>
+                            <div class="space-y-2">
+                                <p class="text-gray-800 font-semibold">State:- <span
+                                        class="text-gray-600">{{profiledata.state}}</span>
+                                </p>
+                            </div>
+                            <div class="space-y-2">
+                                <p class="text-gray-800 font-semibold">City:- <span
+                                        class="text-gray-600">{{profiledata.city}}</span>
+                                </p>
+                            </div>
+                            <div class="space-y-2">
+                                <p class="text-gray-800 font-semibold">Email:- <span
+                                        class="text-gray-600">{{profiledata.email}}</span></p>
+                            </div>
+                            <div class="space-y-2">
+                                <p class="text-gray-800 font-semibold">Address:- <span
+                                        class="text-gray-600">{{profiledata.address}}</span></p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+
+                <!-- Modal for File Upload -->
+                <div *ngIf="isImageUploadModalOpen"
+                    class="modal fixed inset-0 z-50 bg-black/30 flex justify-center items-center transition-all duration-300 ease-in-out">
+                    <div
+                        class="bg-white p-6 rounded-lg w-96 relative shadow-2xl scale-105 transition-transform duration-300 ease-in-out">
+                        <button type="button" (click)="closeImageUploadModal()"
+                            class="absolute top-2 right-2 text-gray-600 hover:text-gray-900 transition-colors duration-200">
+                            <i class="fa fa-times cursor-pointer"></i>
+                        </button>
+
+                        <h2 class="text-2xl font-semibold text-gray-800 mb-6 text-center">Upload New Image</h2>
+                        <form enctype="multipart/form-data" class="space-y-4">
+                            <div>
+                                <label for="uploadedFile" class="block text-gray-700 font-medium mb-2">Select
+                                    Image</label>
+                                <input type="file" id="uploadedFile" accept="image/*" (change)="onImageSelected($event)"
+                                    class="w-full border-2 border-gray-300 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500 transition-all duration-200" />
+                            </div>
+                            <div class="flex justify-center items-center mt-6">
+                                <button type="button" (click)="submitImageUpload()"
+                                    class="cursor-pointer bg-gray-600 text-white py-3 px-6 rounded-lg hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-all duration-300">
+                                    Upload Image
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+
+                <div class="bg-white mt-6 rounded-lg shadow-lg p-6 w-full">
+
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+                        <h2 class="text-xl font-semibold text-gray-800">Uploaded Documents</h2>
+                        <button type="button" (click)="UploadModalOpen()"
+                            class="text-sm bg-gray-700 text-white px-4 py-2 cursor-pointer rounded hover:bg-gray-800 transition">
+                            <i class="fas fa-upload mr-2"></i> Upload Documents
+                        </button>
+                    </div>
+
+                    <!-- Document Grid -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                        <!--  AGE PROOF -->
+                        <div class="relative border rounded-lg p-4 shadow-sm hover:shadow-md transition">
+                            <span class="block font-semibold mb-2 text-gray-700">Age Proof</span>
+                            <ng-container *ngIf="uploadedDocData?.ageProofPath; else noAgeProof">
+                                <ng-container [ngSwitch]="getFileType(uploadedDocData.ageProofPath)">
+                                    <!-- Image -->
+                                    <img *ngSwitchCase="'image'"
+                                        [src]="'http://localhost:7188/' + uploadedDocData.ageProofPath"
+                                        class="w-full h-52 object-cover rounded" alt="Age Proof" />
+
+
+                                    <!-- PDF -->
+                                    <div *ngSwitchCase="'pdf'"
+                                        class="w-full h-52 flex flex-col items-center justify-center bg-gray-100 rounded">
+                                        <i class="fas fa-file-pdf text-red-600 text-4xl mb-2 cursor-pointer"
+                                            (click)="deleteDocumentField('ageproof')"></i>
+                                        <a [href]="'http://localhost:7188/' + uploadedDocData.ageProofPath"
+                                            target="_blank" class="text-sm text-blue-600 underline">View PDF</a>
+                                    </div>
+                                </ng-container>
+                                <!--  Close -->
+                                <button
+                                    class="absolute top-0 right-0 text-white bg-black/60 hover:bg-black p-1 rounded-sm text-xs">
+                                    <i class="fas fa-times cursor-pointer text-lg hover:text-red-500"
+                                        (click)="deleteDocumentField('ageproof')"></i>
+                                </button>
+                            </ng-container>
+                            <ng-template #noAgeProof>
+                                <div
+                                    class="w-full h-52 flex items-center justify-center bg-gray-100 rounded text-gray-500 text-sm text-center">
+                                    <i class="fas fa-image text-2xl mr-2"></i> No document uploaded
+                                </div>
+                            </ng-template>
+                        </div>
+
+                        <!-- ADDRESS PROOF -->
+                        <div class="relative border rounded-lg p-4 shadow-sm hover:shadow-md transition">
+                            <span class="block font-semibold mb-2 text-gray-700">Address Proof</span>
+                            <ng-container *ngIf="uploadedDocData?.addressProofPath; else noAddressProof">
+                                <ng-container [ngSwitch]="getFileType(uploadedDocData.addressProofPath)">
+                                    <img *ngSwitchCase="'image'"
+                                        [src]="'http://localhost:7188/' + uploadedDocData.addressProofPath"
+                                        class="w-full h-52 object-cover rounded" alt="Address Proof" />
+                                    
+
+                                    <div *ngSwitchCase="'pdf'"
+                                        class="w-full h-52 flex flex-col items-center justify-center bg-gray-100 rounded">
+                                        <i class="fas fa-file-pdf text-red-600 text-4xl mb-2 cursor-pointer"
+                                            (click)="deleteDocumentField('addressproof')"></i>
+                                        <a [href]="'http://localhost:7188/' + uploadedDocData.addressProofPath"
+                                            target="_blank" class="text-sm text-blue-600 underline">View PDF</a>
+                                    </div>
+                                </ng-container>
+                                <button
+                                    class="absolute top-0 right-0 text-white bg-black/60 hover:bg-black p-1 rounded-sm text-xs">
+                                    <i class="fas fa-times cursor-pointer text-lg hover:text-red-500"
+                                        (click)="deleteDocumentField('addressproof')"></i>
+                                </button>
+                            </ng-container>
+                            <ng-template #noAddressProof>
+                                <div
+                                    class="w-full h-52 flex items-center justify-center bg-gray-100 rounded text-gray-500 text-sm text-center">
+                                    <i class="fas fa-image text-2xl mr-2"></i> No document uploaded
+                                </div>
+                            </ng-template>
+                        </div>
+
+                        <!--  DRIVING LICENSE -->
+                        <div class="relative border rounded-lg p-4 shadow-sm hover:shadow-md transition">
+                            <span class="block font-semibold mb-2 text-gray-700">Driving Licence</span>
+                            <ng-container *ngIf="uploadedDocData?.dlImagePath; else noDLProof">
+                                <ng-container [ngSwitch]="getFileType(uploadedDocData.dlImagePath)">
+                                    <img *ngSwitchCase="'image'"
+                                        [src]="'http://localhost:7188/' + uploadedDocData.dlImagePath"
+                                        class="w-full h-52 object-cover rounded" alt="DL Proof" />
+                                    <div *ngSwitchCase="'pdf'"
+                                        class="w-full h-52 flex flex-col items-center justify-center bg-gray-100 rounded">
+                                        <i class="fas fa-file-pdf text-red-600 text-4xl mb-2 cursor-pointer"
+                                            (click)="deleteDocumentField('dlimage')"></i>
+                                        <a [href]="'http://localhost:7188/' + uploadedDocData.dlImagePath"
+                                            target="_blank" class="text-sm text-blue-600 underline">View PDF</a>
+                                    </div>
+                                </ng-container>
+                                <button
+                                    class="absolute top-0 right-0 text-white bg-black/60 hover:bg-black p-1 rounded-sm text-xs">
+                                    <i class="fas fa-times cursor-pointer text-lg hover:text-red-500"
+                                        (click)="deleteDocumentField('dlimage')"></i>
+                                </button>
+                            </ng-container>
+                            <ng-template #noDLProof>
+                                <div
+                                    class="w-full h-52 flex items-center justify-center bg-gray-100 rounded text-gray-500 text-sm text-center">
+                                    <i class="fas fa-image text-2xl mr-2"></i> No document uploaded
+                                </div>
+                            </ng-template>
+                        </div>
+                    </div>
+                    <!--  Footer Info -->
+                    <p class="text-md text-gray-500 mt-6 text-center">
+                        <span class="text-xl">📎</span> Supported formats: JPG, PNG, PDF. Max size 5 MB per file.
+                    </p>
+                </div>
+
+            </div>
+        </div>
+
+
+
+
+        <!-- Edit Profile Section -->
+        <div class="border-t-2 border-gray-300 w-full"></div>
+        <div class="bg-white rounded-lg shadow-lg w-full p-6">
+            <div class=" flex justify-between items-center space-x-4">
+                <h2 class="text-xl font-semibold text-gray-800">Edit User Profile</h2>
+                <button type="button" (click)="openEditProfileModal()"
+                    class="cursor-pointer text-gray-600 hover:text-gray-800 text-xl">
+                    <i class="fas fa-edit"></i> Edit
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for User Profile Edit -->
+    <div *ngIf="isEditProfileModalOpen" class="fixed inset-0  bg-black/50 top-10  z-50 overflow-auto">
+        <div class="flex items-start justify-center min-h-screen pt-10 px-4">
+            <div class="bg-white text-gray-800 rounded-lg w-full max-w-2xl p-4 sm:p-6 md:p-8 shadow-lg relative">
+                <button type="button" (click)="closeEditProfileModal()"
+                    class="cursor-pointer absolute top-2 right-2 text-gray-600 hover:text-gray-800 text-2xl">
+                    <i class="fas fa-times cursor-pointer"></i>
+                </button>
+                <h2 class="text-2xl font-bold mb-6 text-gray-800">Edit User Profile</h2>
+
+                <!-- Form Grid -->
+                <form [formGroup]="updateUserForm" (ngSubmit)="submitProfileUpdate()"
+                    class="w-full max-w-3xl mx-auto bg-white p-8 rounded-md shadow-md relative z-10">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                        <div>
+                            <label class="block text-gray-700 text-sm font-bold mb-2" for="fname">First Name</label>
+                            <input
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500"
+                                type="text" id="fname" name="fname" placeholder="Enter First Name"
+                                formControlName="firstname">
+                            <span class="text-red-500"
+                                *ngIf="firstname.errors?.['required'] && (firstname.touched || firstname.dirty)">Please
+                                Enter
+                                firstname</span>
+                            <span class="text-red-500"
+                                *ngIf="firstname.errors?.['pattern'] && (firstname.touched || firstname.dirty)">Invalid
+                                Name</span>
+                        </div>
+
+                        <div>
+                            <label class="block text-gray-700 text-sm font-bold mb-2" for="mname">Middle Name</label>
+                            <input
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500"
+                                type="text" id="mname" name="mname" placeholder="Middle Name"
+                                formControlName="middleName">
+                            <span class="text-red-500"
+                                *ngIf="middleName.errors?.['pattern'] && (middleName.touched || middleName.dirty)">Invalid
+                                Name</span>
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 text-sm font-bold mb-2" for="lname">Last Name</label>
+                            <input
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500"
+                                type="text" id="lname" name="lname" placeholder="Last Name" formControlName="lastName">
+                            <span class="text-red-500"
+                                *ngIf="lastName.errors?.['required'] && (lastName.touched || lastName.dirty)">Please
+                                Enter lastName</span>
+                            <span class="text-red-500"
+                                *ngIf="lastName.errors?.['pattern'] && (lastName.touched || lastName.dirty)">Invalid
+                                Name</span>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                        <div>
+                            <label class="block text-gray-700 text-sm font-bold mb-2" for="age">Age</label>
+                            <input
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500"
+                                type="text" id="age" name="age" placeholder="Enter Your Age" formControlName="age">
+                            <span class="text-red-500"
+                                *ngIf="age.errors?.['required'] && (age.touched || age.dirty)">Please Enter Your
+                                Age</span>
+                            <span class="text-red-500"
+                                *ngIf="age.errors?.['pattern'] && (age.touched || age.dirty)">Enter Only
+                                Digit</span>
+
+                        </div>
+
+                        <div>
+                            <label class="block text-gray-700 text-sm font-bold mb-2" for="gender">Gender</label>
+                            <select
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500"
+                                id="gender" name="gender" formControlName="gender">
+                                <option selected disabled>Select your Gender</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                                <option value="Other">Other</option>
+                            </select>
+                            <span class="text-red-500"
+                                *ngIf="gender.errors?.['required'] && (gender.touched || gender.dirty)">Please
+                                Select Your Gender</span>
+
+                        </div>
+
+                        <div>
+                            <label class="block text-gray-700 text-sm font-bold mb-2" for="phone">Phone No</label>
+                            <input type="text"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500"
+                                id="phone" name="phone" placeholder="Enter Phone" formControlName="phone">
+                            <span class="text-red-500"
+                                *ngIf="phone.errors?.['required'] && (phone.touched || phone.dirty)">Please
+                                Enter
+                                phone_Number</span>
+                            <span class="text-red-500"
+                                *ngIf="phone.errors?.['pattern'] && (phone.touched || phone.dirty)">Enter
+                                only Digit</span>
+                            <span class="text-red-500"
+                                *ngIf="phone.errors?.['minlength'] && (phone.touched || phone.dirty)">Mobile
+                                Number Is Short</span>
+                            <span class="text-red-500"
+                                *ngIf="phone.errors?.['maxlength'] && (phone.touched || phone.dirty)">maximum
+                                10 Digit</span>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div>
+                            <label class="block text-gray-700 text-sm font-bold mb-2" for="state">State</label>
+                            <input
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500"
+                                id="state" name="state" placeholder="Select State" formControlName="state">
+                            <span class="text-red-500"
+                                *ngIf="state.errors?.['required'] && (state.touched || state.dirty)">Please Select
+                                Your State</span>
+
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 text-sm font-bold mb-2" for="city">City</label>
+                            <input
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500"
+                                type="text" id="city" name="city" placeholder="City" formControlName="city">
+                            <span class="text-red-500"
+                                *ngIf="city.errors?.['required'] && (city.touched || city.dirty)">Please Select
+                                Your City</span>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-1 gap-6 mb-6">
+                        <div>
+                            <label class="block text-gray-700 text-sm font-bold mb-2" for="address">Address</label>
+                            <textarea
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500"
+                                id="address" name="address" placeholder="Enter Address"
+                                formControlName="address"></textarea>
+                            <span class="text-red-500" *ngIf="address.errors?.['required'] && address.touched">Please
+                                Enter Address</span>
+                        </div>
+                    </div>
+                    <button
+                        class="cursor-pointer bg-gray-600 w-full text-white py-3 px-6 rounded-lg hover:bg-gray-700 text-sm font-bold  transition duration-300"
+                        type="submit" name="sign">Update Profile</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Upload Document Modal -->
+    <div *ngIf="isUploadModalOpen" class="fixed inset-0 bg-black/50 flex justify-center items-center z-50 px-4">
+        <div class="bg-white p-6 rounded-lg w-full max-w-md relative shadow-xl">
+            <!-- Close Button -->
+            <button type="button" (click)="UploadModalClose()"
+                class="absolute top-2 right-2 text-gray-600 hover:text-gray-900 transition-colors duration-200">
+                <i class="fa fa-times cursor-pointer"></i>
+            </button>
+
+
+            <h2 class="text-xl font-semibold text-gray-800 mb-4 text-center">Upload Documents</h2>
+            <div>
+                <!-- Upload Form -->
+                <form *ngIf="!isUploaded" [formGroup]="uploaddocumnet" (ngSubmit)="onUpload()"
+                    enctype="multipart/form-data" class="space-y-4">
+                    <!-- Driving  licence -->
+                    <div>
+                        <label class="block text-gray-700 font-medium mb-2">Driving licence</label>
+                        <input type="file" (change)="onFileChange($event, 'DLProof')" accept=".pdf,.jpg,.jpeg,.png"
+                            formControlName="DLProof"
+                            class="w-full border-2 border-gray-300 p-2 rounded-md cursor-pointer" />
+                        <small class="text-green-500" *ngIf="uploadedFileNames.DLProof">
+                            Previously uploaded: {{ uploadedFileNames.DLProof }}
+                        </small>
+                    </div>
+                    <!-- <span class="text-red-500"
+                        *ngIf="DLProof.errors?.['required'] && (DLProof.touched || DLProof.dirty)">Please
+                        Upload Driving licence</span> -->
+                    <!-- Address Proof -->
+                    <div>
+                        <label class="block text-gray-700 font-medium mb-2">Address Proof</label>
+                        <input type="file" (change)="onFileChange($event, 'AddressProof')" accept=".pdf,.jpg,.jpeg,.png"
+                            formControlName="AddressProof"
+                            class="w-full border-2 border-gray-300 p-2 rounded-md cursor-pointer" />
+                            <small class="text-green-500" *ngIf="uploadedFileNames.AddressProof">
+                            Previously uploaded: {{ uploadedFileNames.AddressProof }}
+                        </small>
+                    </div>
+                    <!-- <span class="text-red-500"
+                        *ngIf="AddressProof.errors?.['required'] && (AddressProof.touched || AddressProof.dirty)">Please
+                        Upload Current Address Proof </span> -->
+                    <!-- Age Proof -->
+                    <div>
+                        <label class="block text-gray-700 font-medium mb-2">Age Proof</label>
+                        <input type="file" (change)="onFileChange($event, 'AgeProof')" accept=".pdf,.jpg,.jpeg,.png"
+                            formControlName="AgeProof"
+                            class="w-full border-2 border-gray-300 p-2 rounded-md cursor-pointer" />
+                            <small class="text-green-500  " *ngIf="uploadedFileNames.AgeProof">
+                            Previously uploaded: {{ uploadedFileNames.AgeProof }}
+                        </small>
+                    </div>
+                    <!-- <span class="text-red-500"
+                        *ngIf="AgeProof.errors?.['required'] && (AgeProof.touched || AgeProof.dirty)">Please
+                        Upload Age Proof</span> -->
+                    <!-- Upload Button -->
+                    <div class="flex justify-center mt-6">
+                        <button type="submit"
+                            class="bg-gray-700 text-white px-4 py-2 rounded hover:bg-gray-800 transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+                            Upload
+                        </button>
+                    </div>
+                    <div class="flex justify-center items-center">
+                        <span class="text-md text-red-500">{{erromessage}}</span>
+                        <span class="text-md text-green-500">{{successmessage}}</span>
+                    </div>
+                    <p class="text-md flex justify-center text-gray-700 mt-1">Supported formats: PDF, JPG, PNG</p>
+                </form>
+                <!-- Success message after upload -->
+                <div *ngIf="isUploaded" class="text-center mt-4 p-10">
+                    <p class="text-green-600 text-lg font-semibold animate-fade-in">📁 You've already uploaded all
+                        required documents.
+                        To upload new ones, please delete the existing documents first.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</section>~

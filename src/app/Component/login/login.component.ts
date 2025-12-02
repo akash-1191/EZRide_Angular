@@ -99,7 +99,10 @@ export class LoginComponent implements OnInit {
       this.router.navigate(['/OwnerVehicle-dashboard']);
     } else if (role === 'Customer') {
       this.router.navigate(['/customer-dashboard']);
-    } else {
+    }else if(role==='Driver'){
+      this.router.navigate(['/Driver-dashboard'])
+    } 
+    else {
       this.roleError = "Something went wrong! Unknown role.";
     }
   }

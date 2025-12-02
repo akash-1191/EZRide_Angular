@@ -1,0 +1,93 @@
+<div class="bg-white shadow-md rounded-lg overflow-x-auto mt-5">
+    <div class="flex flex-col md:flex-row items-start md:items-center justify-between px-4 py-3 border-b">
+        <h2 class="text-xl font-semibold text-gray-800 mb-2 md:mb-0">
+            User Review Message
+        </h2>
+
+        <div class="flex items-center">
+            <label class="text-sm font-medium text-gray-700 mr-2">Filter by Type:</label>
+            <select [(ngModel)]="selectedType"
+                class="bg-gradient-to-r from-indigo-100 via-purple-100 to-pink-100 text-gray-800 border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300">
+                <option value="">All</option>
+                <option *ngFor="let type of messageTypes" [value]="type">{{ type }}</option>
+            </select>
+        </div>
+    </div>
+
+
+
+    <div class="w-full overflow-auto">
+        <table class="min-w-full text-sm text-left text-gray-700 table-auto">
+            <thead class="bg-gray-100 text-gray-600 uppercase text-xs">
+                <tr>
+                    <th class="px-4 py-3 whitespace-nowrap">Types Of Message</th>
+                    <th class="px-4 py-3 whitespace-nowrap">Contact No.</th>
+                    <th class="px-4 py-3 whitespace-nowrap">Email ID</th>
+                    <th class="px-4 py-3 whitespace-nowrap">Message</th>
+                    <th class="px-4 py-3 whitespace-nowrap">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- <tr *ngFor="let message of Contactdetails | paginate: { itemsPerPage: 10, currentPage: currentPage }" class="border-t"> -->
+                <tr *ngFor="let message of filteredMessages() | paginate: { itemsPerPage: 10, currentPage: currentPage }"
+                    class="border-t">
+
+                    <td class="px-4 py-3">{{ message.feedbackType }}</td>
+                    <td class="px-4 py-3">{{ message.user?.phone }}</td>
+                    <td class="px-4 py-3">{{ message.user?.email }}</td>
+                    <td class="px-4 py-3 max-w-xs break-words">{{ message.message }}</td>
+                    <td class="px-4 py-3">
+                        <button class="bg-gradient-to-r cursor-pointer from-indigo-500 via-purple-500 to-pink-500
+            hover:from-pink-600 hover:to-red-600 text-white font-semibold text-xs px-4 py-2 rounded-md
+            shadow-md transition duration-300 ease-in-out" (click)="openWhatsAppForm(message.user?.phone)">
+                            Respond
+                        </button>
+                    </td>
+                </tr>
+
+            </tbody>
+        </table>
+        <!-- Pagination Controls -->
+        <div class="px-4 py-4 border-t flex justify-center">
+            <pagination-controls (pageChange)="currentPage = $event" previousLabel="‹" nextLabel="›" [maxSize]="7"
+                [directionLinks]="true" [autoHide]="true">
+            </pagination-controls>
+        </div>
+    </div>
+
+    <!-- WhatsApp Modal -->
+    <div *ngIf="showForm" class="fixed inset-0 bg-black/70 bg-opacity-40 flex items-center justify-center z-50">
+        <div class="bg-white rounded-lg p-6 w-96 shadow-lg relative">
+            <h3 class="text-lg font-bold mb-4">Send WhatsApp Message</h3>
+
+            <label class="block mb-2 text-sm font-medium text-gray-700">Phone Number</label>
+            <input type="text" [(ngModel)]="phone"
+                class="w-full border rounded px-3 py-2 mb-4 bg-gray-100 text-gray-700 "
+                placeholder="Enter phone number"  />
+<!-- cursor-not-allowed
+[disabled]="true" -->
+            <label class="block mb-2 text-sm font-medium text-gray-700">Message</label>
+            <textarea [(ngModel)]="message" rows="4" class="w-full border rounded px-3 py-2 mb-4"
+                placeholder="Type your message here..."></textarea>
+
+
+            <div class="flex justify-end space-x-2">
+                <button type="button" [disabled]="isSending" (click)="sendMessage()"
+                    class="bg-blue-600 cursor-pointer text-white px-4 py-2 rounded hover:bg-blue-700">
+                    {{ isSending ? 'Sending message... ⏳' : 'Send' }}
+                </button>
+                <button [disabled]="isSending" (click)="closeForm()"
+                    class="bg-gray-300 px-4 cursor-pointer py-2 rounded hover:bg-gray-400">
+                    Cancel
+                </button>
+            </div>
+
+            <p class="text-sm mt-2"
+                [ngClass]="{ 'text-green-600': responseMessage.includes('success'), 'text-red-600': responseMessage.includes('wrong') }"
+                *ngIf="responseMessage">{{ responseMessage }}</p>
+
+            <div *ngIf="isSending" class="text-sm text-blue-600 mb-2">Sending message... ⏳</div>
+
+        </div>
+    </div>
+</div>

@@ -13,7 +13,7 @@ export const authGuard: CanActivateFn = (route: ActivatedRouteSnapshot, state) =
   const expectedRole = route.data['expectedRole'];
 
   if (token && role === expectedRole) {
-
+    
     return true;
     
   } else {

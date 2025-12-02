@@ -1,0 +1,166 @@
+<section>
+    <div class="min-h-screen flex flex-col flex-auto flex-shrink-0 antialiased">
+
+        <!-- Header -->
+        <div class="fixed w-full flex items-center justify-between h-14 bg-gray-800 text-white z-10">
+            <div class="flex items-center justify-start md:justify-center pl-3 w-14 md:w-64 h-14 ml-10 border-none">
+                <!-- <img class="w-10 h-10 md:w-10 md:h-10 mr-2 rounded-md overflow-hidden" src="#" /> -->
+                <p class="hidden md:block mr-12 text-xl">Driver Dashboard</p>
+            </div>
+            <div class="flex justify-between items-center h-14 bg-gray-800 header-right"></div>
+            <ul class="flex items-center">
+                <li>
+                    <div class="block w-px h-6 mx-3 bg-gray-400 "></div>
+                </li>
+                <li>
+                    <p (click)="logout()" class="flex cursor-pointer items-center mr-4 hover:text-blue-100">
+                        <span class="inline-flex mr-1">
+                            <i class="fa-solid fa-right-from-bracket"></i>
+                        </span>
+                        Logout
+                    </p>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Sidebar -->
+        <div
+            class="fixed flex flex-col top-14 left-0 w-14 hover:w-64 md:w-64 bg-gray-900 h-full text-white transition-all duration-300 border-none z-10 sidebar">
+            <div class="flex flex-col justify-between flex-grow">
+
+                <ul class="flex flex-col py-4 space-y-1">
+
+                    <!-- Dashboard Home -->
+                    <a routerLink="/Driver-dashboard" routerLinkActive="bg-gray-700 text-indigo-300 border-indigo-500"
+                        [routerLinkActiveOptions]="{ exact: true }" class="cursor-pointer">
+                        <span class=" relative flex flex-row items-center h-11 hover:bg-gray-600 hover:text-indigo-300 
+        border-l-4 border-transparent hover:border-indigo-500 pr-6 px-4">
+                            <i class="fa-solid fa-gauge w-5 text-sm "></i>
+                            <button class="ml-3 text-sm tracking-wide truncate cursor-pointer">Dashboard</button>
+                        </span>
+                    </a>
+
+                    <!-- Booking Trip -->
+                    <a routerLink="/Driver-dashboard/vehicleavaliblebooking"
+                        routerLinkActive="bg-gray-700 text-indigo-300 border-indigo-500"
+                        [routerLinkActiveOptions]="{ exact: true }" class="cursor-pointer">
+                        <span class="relative flex flex-row items-center h-11 hover:bg-gray-600 hover:text-indigo-300 
+        border-l-4 border-transparent hover:border-indigo-500 pr-6 px-4">
+                            <i class="fa-solid fa-car w-5 text-sm"></i>
+                            <button class="ml-3 text-sm tracking-wide truncate cursor-pointer">Booking Trip</button>
+                        </span>
+                    </a>
+
+                    <!-- My Bookings -->
+                    <a routerLink="/Driver-dashboard/MyBooking"
+                        routerLinkActive="bg-gray-700 text-indigo-300 border-indigo-500"
+                        [routerLinkActiveOptions]="{ exact: true }" class="cursor-pointer">
+                        <span class="relative flex flex-row items-center h-11 hover:bg-gray-600 hover:text-indigo-300 
+        border-l-4 border-transparent hover:border-indigo-500 pr-6 px-4">
+                            <i class="fa-solid fa-calendar-check w-5 text-sm"></i>
+                            <button class="ml-3 text-sm tracking-wide truncate cursor-pointer">My Bookings</button>
+                        </span>
+                    </a>
+
+                    <!-- Payments -->
+                    <a routerLink="/Driver-dashboard/paymentDetails"
+                        routerLinkActive="bg-gray-700 text-indigo-300 border-indigo-500"
+                        [routerLinkActiveOptions]="{ exact: true }" class="cursor-pointer">
+                        <span class="relative flex flex-row items-center h-11 hover:bg-gray-600 hover:text-indigo-300 
+        border-l-4 border-transparent hover:border-indigo-500 pr-6 px-4">
+                            <i class="fa-solid fa-wallet w-5 text-sm"></i>
+                            <button class="ml-3 text-sm tracking-wide truncate cursor-pointer">Payments</button>
+                        </span>
+                    </a>
+
+                    <!-- Trip History -->
+                    <!-- <a routerLink="/Driver-dashboard/trip-history" class="cursor-pointer">
+                        <span class="relative flex flex-row items-center h-11 hover:bg-gray-600 hover:text-indigo-300 
+        border-l-4 border-transparent hover:border-indigo-500 pr-6 px-4">
+                            <i class="fa-solid fa-clock-rotate-left w-5 text-sm"></i>
+                            <button class="ml-3 text-sm tracking-wide truncate cursor-pointer">Trip History</button>
+                        </span>
+                    </a> -->
+
+                    <!-- Return Vehicle -->
+                    <!-- <a routerLink="/Driver-dashboard/return-vehicle" class="cursor-pointer">
+                        <span class="relative flex flex-row items-center h-11 hover:bg-gray-600 hover:text-indigo-300 
+        border-l-4 border-transparent hover:border-indigo-500 pr-6 px-4">
+                            <i class="fa-solid fa-rotate-left w-5 text-sm"></i>
+                            <button class="ml-3 text-sm tracking-wide truncate cursor-pointer">Return Vehicle</button>
+                        </span>
+                    </a> -->
+
+                    <!-- Security Refund -->
+                    <a routerLink="/Driver-dashboard/security-refund"
+                        routerLinkActive="bg-gray-700 text-indigo-300 border-indigo-500"
+                        [routerLinkActiveOptions]="{ exact: true }" class="cursor-pointer">
+                        <span class="relative flex flex-row items-center h-11 hover:bg-gray-600 hover:text-indigo-300 
+        border-l-4 border-transparent hover:border-indigo-500 pr-6 px-4">
+                            <i class="fa-solid fa-sack-dollar w-5 text-sm"></i>
+                            <button class="ml-3 text-sm tracking-wide truncate cursor-pointer">Security Refund</button>
+                        </span>
+                    </a>
+                    <a routerLink="/Driver-dashboard/driverProfile"
+                        routerLinkActive="bg-gray-700 text-indigo-300 border-indigo-500"
+                        [routerLinkActiveOptions]="{ exact: true }" class="cursor-pointer">
+                        <span class="relative flex flex-row items-center h-11 hover:bg-gray-600 hover:text-indigo-300 
+        border-l-4 border-transparent hover:border-indigo-500 pr-6 px-4">
+                            <i class="fa-solid fa-user w-5 text-sm"></i>
+                            <button class="ml-3 text-sm tracking-wide truncate cursor-pointer">Profile</button>
+                        </span>
+                    </a>
+                    <!-- Feedback -->
+                    <a routerLink="/Driver-dashboard/feedback"
+                        routerLinkActive="bg-gray-700 text-indigo-300 border-indigo-500"
+                        [routerLinkActiveOptions]="{ exact: true }" class="cursor-pointer">
+                        <span class="relative flex flex-row items-center h-11 hover:bg-gray-600 hover:text-indigo-300 
+        border-l-4 border-transparent hover:border-indigo-500 pr-6 px-4">
+                            <i class="fa-solid fa-comment-dots w-5 text-sm"></i>
+                            <button class="ml-3 text-sm tracking-wide truncate cursor-pointer">Feedback</button>
+                        </span>
+                    </a>
+
+                    <a routerLink="/Driver-dashboard/Rejected_Bookings"
+                        routerLinkActive="bg-gray-700 text-indigo-300 border-indigo-500"
+                        [routerLinkActiveOptions]="{ exact: true }" class="cursor-pointer">
+                        <span class="relative flex flex-row items-center h-11 hover:bg-gray-600 hover:text-indigo-300 
+        border-l-4 border-transparent hover:border-indigo-500 pr-6 px-4">
+                            <i class="fa-solid fa-circle-xmark w-5 text-sm"></i>
+                            <button class="ml-3 text-sm tracking-wide truncate cursor-pointer">Rejected
+                                Bookings</button>
+                        </span>
+                    </a>
+
+                    <a routerLink="/Driver-dashboard/Current_Rides"
+                        routerLinkActive="bg-gray-700 text-indigo-300 border-indigo-500"
+                        [routerLinkActiveOptions]="{ exact: true }" class="cursor-pointer">
+                        <span class="relative flex flex-row items-center h-11 hover:bg-gray-600 hover:text-indigo-300 
+        border-l-4 border-transparent hover:border-indigo-500 pr-6 px-4">
+                            <i class="fa-solid fa-route w-5 text-sm"></i>
+                            <button class="ml-3 text-sm tracking-wide truncate cursor-pointer">Current Rides</button>
+                        </span>
+                    </a>
+                    
+                    <a routerLink="/Driver-dashboard/Helpcustomer"
+                        routerLinkActive="bg-gray-700 text-indigo-300 border-indigo-500"
+                        [routerLinkActiveOptions]="{ exact: true }" class="cursor-pointer">
+                        <span class="relative flex flex-row items-center h-11 hover:bg-gray-600 hover:text-indigo-300 
+        border-l-4 border-transparent hover:border-indigo-500 pr-6 px-4">
+                            <i class="fa-solid fa-route w-5 text-sm"></i>
+                            <button class="ml-3 text-sm tracking-wide truncate cursor-pointer">Help</button>
+                        </span>
+                    </a>
+                </ul>
+                <p class="mb-14 px-5 py-3 hidden md:block text-center text-xs text-slate-400">
+                    Copyright EZRide 2025
+                </p>
+            </div>
+        </div>
+        <!-- Page Content -->
+        <!-- <div class="content ml-14 mt-14 mb-10 md:ml-64 p-4 "> -->
+        <div class="content overflow-y-scroll md:ml-64 ml-14 h-screen pt-14 hide-scrollbar">
+            <router-outlet></router-outlet>
+        </div>
+    </div>
+</section>

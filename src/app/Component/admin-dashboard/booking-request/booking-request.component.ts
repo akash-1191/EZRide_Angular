@@ -27,24 +27,55 @@ export class BookingRequestComponent implements OnInit {
   filterLabel: string = 'All Bookings';
   showFilterDropdown: boolean = false;
   successfullmsg: string = "";
+  doc: any = {};
+  modalImage: string | null = null;
 
+
+  isOTPModalOpen = false;
+  timerDisplay = '02:00';
+  private timerInterval: any;
+  private timeLeft = 120;
+  email: string = '';
+  otp: string = '';
+  bookingId: any;
+  otpErrorMessage: any;
+  otpSentMessage: any;
+
+  isPreFilledEmail: boolean = false;
+  isOtpButtonDisabled: boolean = false;
+  suseccmsg: any;
   constructor(private services: MyServiceService) { }
+
 
   ngOnInit(): void {
     this.loadAllData();
   }
 
+  LoadUserDocument(): void {
+    this.services.getCustomerDocument(this.selectedBooking.userId).subscribe({
+      next: (res) => {
+        // console.log("Document data is the ",res);
+        this.doc = res;
+      }, error(err) {
+        console.log("Somthing Went to wrong");
+      },
+    })
+  }
+
   loadAllData(): void {
     this.services.getAllDataOftheUser().subscribe({
       next: (res) => {
-        this.bookingdetails = res;
+        const allBookings = res;
+        this.bookingdetails = allBookings.filter((booking: any) => booking.bookingStatus === 'Confirmed'); // ✅ filter by status
         this.filteredBookings = [...this.bookingdetails];
-        console.log(res);
-      }, error(err) {
-        console.log("somthig  went to wrong");
+        console.log(this.bookingdetails);
       },
+      error: (err) => {
+        console.log("Something went wrong");
+      }
     });
   }
+
 
   applyDateFilter(type: 'nearest' | 'other'): void {
     const today = new Date();
@@ -94,6 +125,8 @@ export class BookingRequestComponent implements OnInit {
   openModal(booking: any): void {
     this.selectedBooking = booking;
     this.showModal = true;
+    console.log("booking data is:", this.selectedBooking.userId);
+    this.LoadUserDocument();
     this.images = booking.vehicleImages || [];
     this.currentImageIndex = 0;
     this.startAutoSlide();
@@ -183,8 +216,120 @@ export class BookingRequestComponent implements OnInit {
 
   }
 
+  isPdf(path: string): boolean {
+    return path?.toLowerCase().endsWith('.pdf');
+  }
+
+  openImageModal(path: string) {
+    this.modalImage = path;
+  }
+
+  closeImageModal() {
+    this.modalImage = null;
+  }
+
+
+
+  OTPopenModal(bookingId: number, existingEmail?: string) {
+    this.resetTimer();
+    this.bookingId = bookingId;
+
+    if (existingEmail) {
+      this.email = existingEmail;
+      this.isPreFilledEmail = true;
+    } else {
+      this.email = '';
+      this.isPreFilledEmail = false;
+    }
+
+    this.otpSentMessage = '';
+    this.otpErrorMessage = '';
+    this.isOTPModalOpen = true;
+    this.isOTPModalOpen = true;
+    this.clearTimer();
+    this.suseccmsg = "";
+  }
+
+  OTPcloseModal() {
+    this.isOTPModalOpen = false;
+    this.clearTimer();
+    this.isOtpButtonDisabled = false;
+  }
+
+  resetTimer() {
+    this.timeLeft = 120;
+    this.timerDisplay = '02:00';
+  }
+
+  startTimer() {
+    this.clearTimer();
+    this.timerInterval = setInterval(() => {
+      if (this.timeLeft > 0) {
+        this.timeLeft--;
+        const minutes = Math.floor(this.timeLeft / 60).toString().padStart(2, '0');
+        const seconds = (this.timeLeft % 60).toString().padStart(2, '0');
+        this.timerDisplay = `${minutes}:${seconds}`;
+      } else {
+        this.clearTimer();
+        this.isOtpButtonDisabled = false; // Re-enable after timer ends
+      }
+    }, 1000);
+  }
+
+  clearTimer() {
+    if (this.timerInterval) {
+      clearInterval(this.timerInterval);
+      this.timerInterval = null;
+    }
+  }
+
+  sendOtp() {
+    if (!this.email || !this.bookingId) {
+      console.warn("Email or Booking ID missing");
+      return;
+    }
+    this.isOtpButtonDisabled = true;
+    this.services.sendOtp(this.bookingId, this.email).subscribe({
+      next: (res) => {
+        console.log('OTP Sent:', res);
+        this.otpSentMessage = res.message;
+        this.otpErrorMessage = '';
+        this.resetTimer();
+        this.startTimer();
+      },
+      error: (err) => {
+        console.error('Error sending OTP', err);
+        this.otpErrorMessage = err.error?.message || 'Failed to send OTP.';
+        this.otpSentMessage = '';
+        this.isOtpButtonDisabled = false;
+      }
+    });
+  }
+
+  submitOtp() {
+    if (!this.otp || !this.bookingId) {
+      alert("Please enter OTP and make sure booking is selected!");
+      return;
+    }
+
+    this.services.verifyOtp(this.bookingId, this.otp).subscribe({
+      next: (res) => {
+        this.suseccmsg = res.message;
+        // alert(res.message || 'OTP verified successfully!');  
+        this.clearTimer();
+      },
+      error: (err) => {
+        console.error('OTP verification failed', err);
+      }
+    });
+  }
+
+  ngOnDestroy() {
+    this.clearTimer();
+  }
+
+
 
 }
-
 
 

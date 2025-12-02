@@ -1,41 +1,105 @@
-<section class="w-full mx-auto py-10 bg-gray-50 text-black ">
-    <!-- Title -->
-    <div
-      (click)="OnclickRdirectPage()" class="w-fit pb-1 px-2 mx-4 rounded-md text-2xl font-semibold border-b-2 bg-gray-700 text-white cursor-pointer hover:dark:border-yellow-600">
-      About</div>
-  
-    <div class="w-full h-full flex flex-col items-center md:py-4 py-10">
-      <!-- Col - 2 -->
-      <div
-        class="xl:w-[80%] sm:w-[85%] w-[90%] mx-auto flex md:flex-row flex-col lg:gap-4 gap-2 justify-center lg:items-stretch md:items-center mt-4">
-        <!--  -->
-        <img class="md:w-[50%] w-full md:rounded-t-lg rounded-sm" src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NzEyNjZ8MHwxfHNlYXJjaHw1fHxob21lfGVufDB8MHx8fDE3MTA0OTAwNjl8MA&ixlib=rb-4.0.3&q=80&w=1080" alt="billboard image" />
-  
-        <div class="md:w-[50%] w-full bg-gray-100  text-black md:p-4 p-0 rounded-md">
-          <h2 class="text-3xl font-semibold text-black ">Lorem ipsum dolor sit amet consectetur</h2>
-          <p class="text-md mt-4">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Tempore placeat assumenda nam
-            veritatis, magni doloremque pariatur quos fugit ipsa id voluptatibus deleniti officiis cum ratione eligendi
-            sed necessitatibus aliquam error laborum delectus quaerat. Delectus hic error eligendi sed repellat natus fuga
-            nobis tempora possimus ullam!</p>
+<!-- Services Page - EZRide Vehicle Rentals -->
+<div class="bg-gradient-to-b from-blue-50 via-white to-purple-50 py-12 px-4 sm:px-8 md:px-16">
+
+  <!-- Top Intro Card -->
+  <div class="max-w-5xl mx-auto bg-white rounded-2xl shadow-xl p-8 border border-blue-100 mb-12 text-center">
+    <h2 class="text-3xl font-bold text-purple-600 mb-4">Welcome to EZRide</h2>
+    <p class="text-gray-700 text-lg leading-relaxed">
+      EZRide is your trusted vehicle rental companion — offering affordable, flexible, and quality rides for every journey. Whether you're heading to work or planning a trip, our bikes and cars are ready 24/7.
+    </p>
+    <div class="mt-6 flex justify-center gap-4 flex-wrap text-sm text-gray-600">
+      <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full">Verified Vehicles</span>
+      <span class="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full">24/7 Customer Support</span>
+      <span class="bg-purple-100 text-purple-700 px-3 py-1 rounded-full">No Hidden Charges</span>
+      <span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full">Real-Time Booking</span>
+    </div>
+  </div>
+
+  <!-- Services Grid -->
+  <div class="grid md:grid-cols-2 gap-12">
+    <!-- Bike Rental -->
+    <div class="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition p-6 border border-blue-100">
+      <img src="https://www.cyclenews.com/wp-content/uploads/2023/06/2023-Royal-Enfield-Hunter-350-Cycle-News-review.jpg" alt="Bike" class="rounded-xl mb-4 w-full h-60 object-cover" />
+      <h2 class="text-2xl font-bold text-blue-600 mb-2">Premium Bike Rentals</h2>
+      <p class="text-gray-700 text-sm leading-relaxed">
+        Whether you need a city ride or a weekend getaway, EZRide offers top-tier bikes like Royal Enfield, Honda Activa, and more. Our fleet is well-maintained and always ready to roll. Choose hourly, daily, or weekly plans with helmet & insurance included.
+      </p>
+    </div>
+
+    <!-- Car Rental -->
+    <div class="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition p-6 border border-purple-100">
+      <img src="https://img.autocarindia.com/ExtraImages/20201021033916_hyundai-i20-front.jpg?w=700&c=1" alt="Car" class="rounded-xl mb-4 w-full h-60 object-cover" />
+      <h2 class="text-2xl font-bold text-purple-600 mb-2">Reliable Car Rentals</h2>
+      <p class="text-gray-700 text-sm leading-relaxed">
+        From hatchbacks to premium sedans, EZRide gives you access to safe, comfortable cars at the tap of a button. Ideal for family trips, business travel, or daily commute — with AC, GPS, and 24/7 support included. Fuel options & delivery available.
+      </p>
+    </div>
+
+    <!-- Doorstep Delivery -->
+    <div class="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition p-6 border border-green-100">
+      <img src="https://www.car24cargo.com/wp-content/uploads/2024/08/769ee6c857396901d1ea1f9b4933ffc2.jpg" alt="Delivery" class="rounded-xl mb-4 w-full h-60 object-cover" />
+      <h2 class="text-2xl font-bold text-green-600 mb-2">Doorstep Vehicle Delivery</h2>
+      <p class="text-gray-700 text-sm leading-relaxed">
+        Don’t have time to pick up the vehicle? We’ll deliver your selected bike or car right at your location and pick it up post-ride. Just schedule and relax — EZRide brings mobility to your doorstep, anytime, anywhere.
+      </p>
+    </div>
+
+    <!-- Monthly Plans -->
+    <div class="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition p-6 border border-yellow-100">
+      <img src="https://www.dialcabs.com/assets/images/monthly-car-rental.jpg" alt="Monthly" class="rounded-xl mb-4 w-full h-60 object-cover" />
+      <h2 class="text-2xl font-bold text-yellow-500 mb-2">Monthly & Corporate Plans</h2>
+      <p class="text-gray-700 text-sm leading-relaxed">
+        Need a vehicle for a month or more? We offer custom subscription packages for students, professionals, and companies. Get discounted rates, priority support, and zero paperwork. The smarter way to ride long term.
+      </p>
+    </div>
+  </div>
+
+  <!-- Why Choose EZRide -->
+  <div class="mt-20 bg-white rounded-2xl shadow-lg p-10 border border-gray-200">
+    <h2 class="text-3xl font-bold text-center text-blue-700 mb-6">Why Choose <span class="text-purple-600">EZRide?</span></h2>
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div class="flex items-start gap-4">
+        <div class="bg-blue-100 p-3 rounded-full text-xl">🚗</div>
+        <div>
+          <h3 class="font-bold text-gray-800">Diverse Fleet</h3>
+          <p class="text-gray-600 text-sm">Choose from bikes, scooters, hatchbacks, sedans & more.</p>
         </div>
-  
       </div>
-      <!-- Col - 3 -->
-      <div
-        class="xl:w-[80%] sm:w-[85%] w-[90%] mx-auto flex md:flex-row flex-col  lg:gap-4 gap-2 justify-center lg:items-stretch md:items-center mt-6">
-        <!--  -->
-        <div class="md:w-[50%] w-full bg-gray-100  dark:text-black md:p-4 p-0 rounded-md">
-          <h2 class="text-3xl font-semibold text-black ">Lorem ipsum dolor sit amet consectetur</h2>
-  
-          <p class="text-md mt-4">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Tempore placeat assumenda nam
-            veritatis, magni doloremque pariatur quos fugit ipsa id voluptatibus deleniti officiis cum ratione eligendi
-            sed necessitatibus aliquam error laborum delectus quaerat. Delectus hic error eligendi sed repellat natus fuga
-            nobis tempora possimus ullam!</p>
+      <div class="flex items-start gap-4">
+        <div class="bg-green-100 p-3 rounded-full text-xl">⏱️</div>
+        <div>
+          <h3 class="font-bold text-gray-800">Instant Booking</h3>
+          <p class="text-gray-600 text-sm">Book anytime, anywhere with real-time availability.</p>
         </div>
-        <!--  -->
-        <img class="md:w-[50%] w-full md:rounded-t-lg rounded-sm" src="https://images.unsplash.com/photo-1516455590571-18256e5bb9ff?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NzEyNjZ8MHwxfHNlYXJjaHwxMXx8aG9tZXxlbnwwfDB8fHwxNzEwNDkwMDcwfDA&ixlib=rb-4.0.3&q=80&w=1080" alt="billboard image" />
-  
+      </div>
+      <div class="flex items-start gap-4">
+        <div class="bg-yellow-100 p-3 rounded-full text-xl">💬</div>
+        <div>
+          <h3 class="font-bold text-gray-800">24/7 Support</h3>
+          <p class="text-gray-600 text-sm">Our support team is always a call/text away.</p>
+        </div>
+      </div>
+      <div class="flex items-start gap-4">
+        <div class="bg-purple-100 p-3 rounded-full text-xl">🔒</div>
+        <div>
+          <h3 class="font-bold text-gray-800">Safe & Verified</h3>
+          <p class="text-gray-600 text-sm">All vehicles are checked, insured, and sanitized.</p>
+        </div>
+      </div>
+      <div class="flex items-start gap-4">
+        <div class="bg-pink-100 p-3 rounded-full text-xl">📦</div>
+        <div>
+          <h3 class="font-bold text-gray-800">Flexible Plans</h3>
+          <p class="text-gray-600 text-sm">Hourly, daily, weekly & monthly rentals as per your need.</p>
+        </div>
+      </div>
+      <div class="flex items-start gap-4">
+        <div class="bg-red-100 p-3 rounded-full text-xl">💳</div>
+        <div>
+          <h3 class="font-bold text-gray-800">Easy Payments</h3>
+          <p class="text-gray-600 text-sm">Cashless checkout via UPI, cards, and wallets.</p>
+        </div>
       </div>
     </div>
-  </section>
-  
+  </div>
+</div>

@@ -29,13 +29,13 @@
         <ul class="flex flex-col py-4 space-y-1">
 
           <!-- Dashboard -->
-          <a routerLink="/admin-dashboard/" class="cursor-pointer">
+          <!-- <a routerLink="/admin-dashboard/" class="cursor-pointer">
             <span class="relative flex flex-row items-center h-11 hover:bg-gray-600 hover:text-indigo-300  
               border-l-4 border-transparent hover:border-indigo-500 pr-6 px-4">
               <i class="fa-solid fa-gauge w-5 text-sm"></i>
               <button class="ml-3 text-sm tracking-wide truncate">Dashboard</button>
             </span>
-          </a>
+          </a> -->
 
           <!-- Add Vehicle -->
           <a routerLink="/admin-dashboard/a_addvehicle" class="cursor-pointer">
@@ -47,7 +47,7 @@
           </a>
 
           <!-- Manage Vehicles -->
-          <a routerLink="/admin-dashboard/manageVehicle" class="cursor-pointer">
+          <a routerLink="/admin-dashboard/" class="cursor-pointer">
             <span class="relative flex flex-row items-center h-11 hover:bg-gray-600 hover:text-indigo-300  
               border-l-4 border-transparent hover:border-indigo-500 pr-6 px-4">
               <i class="fa-solid fa-car w-5 text-sm"></i>
@@ -79,19 +79,19 @@
             <ul *ngIf="userPanelOpen" class="pl-10 py-1 text-sm space-y-1 text-gray-300">
               <li><a routerLink="/admin-dashboard/bookingrequest" class="flex items-center p-2 hover:text-indigo-300 hover:bg-gray-700">
                 <i class="fa-solid fa-calendar-check mr-2"></i> Booking Requests</a></li>
-              <li><a routerLink="/admin-dashboard/return-checks" class="flex items-center p-2 hover:text-indigo-300 hover:bg-gray-700">
+              <li><a routerLink="/admin-dashboard/Returnvehicle_check" class="flex items-center p-2 hover:text-indigo-300 hover:bg-gray-700">
                 <i class="fa-solid fa-clipboard-check mr-2"></i> Return Vehicle Check</a></li>
-              <li><a routerLink="/admin-dashboard/charges" class="flex items-center p-2 hover:text-indigo-300 hover:bg-gray-700">
+              <li><a routerLink="/admin-dashboard/Damagecharges" class="flex items-center p-2 hover:text-indigo-300 hover:bg-gray-700">
                 <i class="fa-solid fa-gas-pump mr-2"></i> Fuel & Damage Charges</a></li>
-              <li><a routerLink="/admin-dashboard/security-refunds" class="flex items-center p-2 hover:text-indigo-300 hover:bg-gray-700">
+              <li><a routerLink="/admin-dashboard/securitydepositrefaund" class="flex items-center p-2 hover:text-indigo-300 hover:bg-gray-700">
                 <i class="fa-solid fa-sack-dollar mr-2"></i> Security Refunds</a></li>
-              <li><a routerLink="/admin-dashboard/user-feedback" class="flex items-center p-2 hover:text-indigo-300 hover:bg-gray-700">
+              <li><a routerLink="/admin-dashboard/Feesback" class="flex items-center p-2 hover:text-indigo-300 hover:bg-gray-700">
                 <i class="fa-solid fa-comments mr-2"></i> User Feedback</a></li>
             </ul>
           </li>
 
           <!-- OWNER PANEL -->
-          <li>
+           <li>
             <div (click)="ownerPanelOpen = !ownerPanelOpen" class="flex items-center justify-between cursor-pointer h-11 px-4 hover:bg-gray-600 hover:text-indigo-300  
                 border-l-4 border-transparent hover:border-indigo-500 transition-all duration-300">
               <div class="flex items-center">
@@ -114,17 +114,17 @@
               <li><a routerLink="/admin-dashboard/owner-conversations" class="flex items-center p-2 hover:text-indigo-300 hover:bg-gray-700">
                 <i class="fa-solid fa-comments-dollar mr-2"></i> Owner Conversations</a></li>
             </ul>
-          </li>
+          </li> 
         </ul>
 
         <p class="mb-14 px-5 py-3 hidden md:block text-center text-xs text-slate-400">
-          Copyright BDCS 2024
+          Copyright BDCS 2025
         </p>
       </div>
     </div>
 
     <!-- Main Content -->
-    <div class="content overflow-y-scroll px-5  md:ml-64 ml-14 h-screen pt-14 hide-scrollbar">
+    <div class="content overflow-y-scroll px-5  md:ml-64 h-screen pt-14 hide-scrollbar">
       <router-outlet></router-outlet>
     </div>
   </div>

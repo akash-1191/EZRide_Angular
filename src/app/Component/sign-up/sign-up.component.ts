@@ -28,6 +28,13 @@ export class SignUpComponent {
   constructor(private services: MyServiceService) {
   }
 
+   roleMap: { [key: string]: string } = {
+    'Admin': '1',
+    'Owner_Vehicle': '2',
+    'Customer': '3',
+    'Driver': '4'
+  };
+
   onFileSelected(event: any) {
     this.selectedFile = event.target.files[0];
   }
@@ -35,7 +42,7 @@ export class SignUpComponent {
   Signup() {
 
     if (this.SignupForm.invalid) {
-      alert("⚠ Form is invalid, please fill all required fields!");
+      alert("Form is invalid, please fill all required fields!");
       return;
     }
 
@@ -61,7 +68,11 @@ export class SignUpComponent {
     formData.append('Gender', this.SignupForm.value.Gender);
     formData.append('City', this.SignupForm.value.city);
     formData.append('State', this.SignupForm.value.State);
-    formData.append('RoleId', this.SignupForm.value.Role === "Owner_Vehicle" ? '2' : '3');
+    // formData.append('RoleId', this.SignupForm.value.Role === "Owner_Vehicle" ? '2' : '3');
+
+    const selectedRole = this.SignupForm.value.Role;
+    const roleId = this.roleMap[selectedRole] || '3'; 
+    formData.append('RoleId', roleId);
 
     if (this.selectedFile) {
       formData.append('Image', this.selectedFile);

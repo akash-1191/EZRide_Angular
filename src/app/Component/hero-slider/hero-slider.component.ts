@@ -30,11 +30,7 @@ export class HeroSliderComponent implements OnInit {
       title: 'Comfort Meets Convenience 🛣️',
       description: 'Your journey starts here, stress-free and smooth.'
     },
-    {
-      image: 'assets/image/car5.jpg',
-      title: 'Comfort Meets Convenience 🛣️',
-      description: 'Your journey starts here, stress-free and smooth.'
-    }
+   
   ];
 
 

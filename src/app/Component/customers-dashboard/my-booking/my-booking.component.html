@@ -69,10 +69,13 @@
                         <button title="View Details" (click)="openModal(booking)">
                             <i class="fas fa-eye text-blue-500 text-lg cursor-pointer"></i>
                         </button>
-                        <button title="Cancel Booking" (click)="openCancelModal(booking)"
-                            class="px-3 py-1 text-sm font-semibold text-white bg-red-600 hover:bg-red-700 rounded">
-                            Cancel
-                        </button>
+                        <ng-container
+                            *ngIf="booking.bookingStatus?.toLowerCase() !== 'completed' && booking.bookingStatus?.toLowerCase() !== 'inprogress'">
+                            <button title="Cancel Booking" (click)="openCancelModal(booking)"
+                                class="px-3 py-1 text-sm font-semibold text-white bg-red-600 hover:bg-red-700 rounded">
+                                Cancel
+                            </button>
+                        </ng-container>
                     </td>
                 </tr>
             </tbody>

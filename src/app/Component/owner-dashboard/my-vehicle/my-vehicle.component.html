@@ -1,0 +1,495 @@
+<div class="container mx-auto p-4 space-y-10">
+  <div *ngIf="selectedImageModalOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+    <div class="relative bg-white rounded-lg shadow-lg max-w-3xl w-full p-6 space-y-4">
+      <button (click)="closeImageModal()"
+        class="absolute top-2 right-3 text-gray-700 rounded-full p-2 hover:text-gray-900">
+        <i class="fas fa-times text-lg hover:text-xl"></i>
+      </button>
+      <div *ngIf="!noImagesFound">
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+          <ng-container *ngIf="selectedImages.length < 3">
+            <div
+              class="relative p-2 flex items-center justify-center h-40 w-full border-2 border-dashed border-green-400 rounded shadow text-green-600 cursor-pointer hover:bg-green-50 transition"
+              (click)="fileInput.click()">
+              <i class="fas fa-plus text-4xl"></i>
+              <input type="file" #fileInput (change)="onImageSelected($event)" hidden />
+            </div>
+          </ng-container>
+
+          <ng-container *ngFor="let img of selectedImages">
+            <div class="relative w-full h-44 group overflow-hidden rounded shadow border ">
+              <img [src]="img.imageUrl" alt="Preview"
+                class="w-full h-44  object-cover transition-transform duration-300 group-hover:scale-105" />
+              <button (click)="deleteVehicleImage(typeof img === 'string' ? 0 : img.vehicleImageId)"
+                class="absolute top-0 right-0 bg-black bg-opacity-60 text-white rounded-sm p-1 hover:text-red-400 transition">
+                <i class="fas fa-times text-md "></i>
+              </button>
+            </div>
+          </ng-container>
+        </div>
+
+        <p *ngIf="errormessageinsertimage" class="text-red-600 text-sm mt-2">{{ errormessageinsertimage }}</p>
+      </div>
+
+      <div *ngIf="noImagesFound" class="text-center text-gray-600 text-lg font-medium py-10">
+        <i class="fas fa-image-slash text-4xl text-red-400 mb-4"></i><br />
+        <div *ngIf="selectedImages.length < 3"
+          class="mt-4 mx-auto w-40 h-40 border-2 border-dashed border-green-400 rounded shadow flex items-center justify-center text-green-600 cursor-pointer hover:bg-green-50"
+          (click)="fileInput.click()">
+          <i class="fas fa-plus text-4xl"></i>
+          <input type="file" #fileInput (change)="onImageSelected($event)" hidden />
+        </div>
+        <p class="text-sm mt-2 text-gray-500">Upload Image</p>
+        <p *ngIf="errormessageinsertimage" class="text-red-600 text-sm mt-2">{{ errormessageinsertimage }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bike Vehicles Table -->
+  <div class="bg-white shadow-md rounded-lg overflow-x-auto">
+    <h2 class="text-xl font-semibold text-gray-800 px-4 py-3 border-b">
+      <i class="fas fa-motorcycle text-red-600 text-xl"></i> Bike Vehicles
+    </h2>
+    <table class="min-w-full text-sm text-left text-gray-700">
+      <thead class="bg-gray-100 text-gray-600 uppercase text-xs">
+        <tr>
+          <th class="px-4 py-3">Bike Name</th>
+          <th class="px-4 py-3">Registration No</th>
+          <th class="px-4 py-3">Mileage</th>
+          <th class="px-4 py-3">Fuel Type</th>
+          <th class="px-4 py-3">Year</th>
+          <th class="px-4 py-3">Color</th>
+          <th class="px-4 py-3 text-center">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let bike of bikeVehicles" class="border-t">
+          <td class="px-4 py-3 flex items-center gap-2">
+            <div class="relative group w-10 h-8">
+
+              <img *ngIf="vehicleImages[bike.vehicleId]; else noImgBike" [src]="vehicleImages[bike.vehicleId]"
+                class="w-full h-full object-cover rounded" />
+              <ng-template #noImgBike>
+                <div class="w-full h-full bg-gray-100 flex items-center justify-center rounded border">
+                  <i class="fas fa-plus text-blue-500 text-sm"></i>
+                </div>
+              </ng-template>
+
+              <button (click)="openImageModal(bike.vehicleId)" title="AddImage"
+                class="absolute inset-0 flex items-center justify-center bg-black/50 bg-opacity-40 opacity-0 group-hover:opacity-100 hover:cursor-pointer transition-opacity">
+                <i class="fas fa-eye text-white text-sm"></i>
+              </button>
+            </div>
+            {{ bike.bikeName }}
+          </td>
+          <td class="px-4 py-3">{{ bike.registrationNo }}</td>
+          <td class="px-4 py-3">{{ bike.mileage }} km/l</td>
+          <td class="px-4 py-3">{{ bike.fuelType }}</td>
+          <td class="px-4 py-3">{{ bike.yearOfManufacture }}</td>
+          <td class="px-4 py-3">{{ bike.color }}</td>
+        
+          <td class="px-4 md:px-2 py-3 text-center space-x-2">
+            <button title="Edit" (click)="openModal(bike)">
+              <i class="fas fa-edit text-green-500 text-lg cursor-pointer"></i>
+            </button>
+            <button title="Delete" (click)="deleteVehicle(bike.vehicleId)">
+              <i class="fas fa-trash text-red-600 text-lg cursor-pointer"></i>
+            </button>
+                  <button title="View" (click)="openViewModal(bike)">
+    <i class="fas fa-eye text-blue-600 text-lg cursor-pointer"></i>
+  </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <!-- Car Vehicles Table -->
+  <div class="bg-white shadow-md rounded-lg overflow-x-auto">
+    <h2 class="text-xl font-semibold text-gray-800 px-4 py-3 border-b">
+      <i class="fas fa-car text-green-600 text-xl"></i> Car Vehicles
+    </h2>
+    <table class="min-w-full text-sm text-left text-gray-700">
+      <thead class="bg-gray-100 text-gray-600 uppercase text-xs">
+        <tr>
+          <th class="px-4 py-3">Car Name</th>
+          <th class="px-4 py-3">Registration No</th>
+          <th class="px-4 py-3">Mileage</th>
+          <th class="px-4 py-3">Seating</th>
+          <th class="px-4 py-3">AC</th>
+          <th class="px-4 py-3">Fuel</th>
+          <th class="px-4 py-3">Year</th>
+         
+          <th class="px-4 py-3 text-center">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let car of carVehicles" class="border-t">
+          <td class="px-4 py-3 flex items-center gap-2">
+            <div class="relative group w-10 h-8">
+              <img *ngIf="vehicleImages[car.vehicleId]; else noImgCar" [src]="vehicleImages[car.vehicleId]"
+                class="w-full h-full object-cover rounded" />
+
+              <ng-template #noImgCar>
+                <div class="w-full h-full bg-gray-100 flex items-center justify-center rounded border">
+                  <i class="fas fa-plus text-blue-500 text-sm"></i>
+                </div>
+              </ng-template>
+
+              <button (click)="openImageModal(car.vehicleId)" title="AddImage"
+                class="absolute inset-0 flex items-center justify-center bg-black/50 bg-opacity-40 opacity-0 group-hover:opacity-100 hover:cursor-pointer transition-opacity">
+                <i class="fas fa-eye text-white text-sm"></i>
+              </button>
+            </div>
+            {{ car.carName }}
+          </td>
+          <td class="px-4 py-3">{{ car.registrationNo }}</td>
+          <td class="px-4 py-3">{{ car.mileage}} km/l</td>
+          <td class="px-4 py-3">{{ car.seatingCapacity }}</td>
+          <td class="px-4 py-3">{{ car.acAvailability || 'No' }}</td>
+          <td class="px-4 py-3">{{ car.fuelType }}</td>
+          <td class="px-4 py-3">{{ car.yearOfManufacture }}</td>
+         
+          <td class="px-4 md:px-2 py-3 text-center space-x-2">
+            <button title="Edit" (click)="openModal(car)"><i
+                class="fas fa-edit text-green-500 text-lg cursor-pointer"></i></button>
+            <button title="Delete" (click)="deleteVehicle(car.vehicleId)"><i
+                class="fas fa-trash text-red-600 text-lg cursor-pointer"></i></button>
+
+                 <button title="View" (click)="openViewModal(car)">
+    <i class="fas fa-eye text-blue-600 text-lg cursor-pointer"></i>
+  </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
+
+<!-- Delete Confirmation Modal -->
+<div *ngIf="showDeleteModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+  <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 w-full max-w-md animate-fade-in">
+    <h2 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">Delete Image</h2>
+    <p class="text-gray-600 dark:text-gray-300 mb-6">Are you sure you want to delete this image? This action cannot be
+      undone.</p>
+    <div class="flex justify-end space-x-3">
+      <button (click)="cancelDelete()"
+        class="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 text-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-white transition">
+        Cancel
+      </button>
+      <button (click)="confirmDelete()"
+        class="cursor-pointer px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white transition">
+        Yes, Delete
+      </button>
+    </div>
+  
+  </div>
+</div>
+
+
+<!-- Vehicle Delete Modal -->
+<div *ngIf="showVehicleDeleteModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+  <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 w-full max-w-md animate-fade-in">
+    <h2 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">Delete Vehicle</h2>
+    <p class="text-gray-600 dark:text-gray-300 mb-6">Are you sure you want to delete this vehicle? This action cannot
+      be undone.</p>
+    <div class="flex justify-end space-x-3">
+      <button (click)="closeVehicleModal()"
+        class="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 text-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-white transition">
+        Cancel
+      </button>
+      <button (click)="confirmVehicleDelete()"
+        class="px-4 py-2 cursor-pointer  rounded-lg bg-red-600 hover:bg-red-700 text-white transition">
+        Yes, Delete
+      </button>
+      
+    </div>
+    <p class="text-red-500 text-center">{{ errormessage }} </p>
+  </div>
+</div>
+
+
+<div *ngIf="isModalOpen"
+  class="fixed p-4 h-full ml-14 mt-14 mb-10 md:ml-64 inset-0 bg-black/60 flex items-center justify-center z-50 ">
+  <div
+    class="bg-white rounded-lg  shadow-lg w-full  max-w-4xl p-6 relative max-h-screen overflow-y-auto scrollbar-hidden">
+
+    <button class="absolute top-2 right-4 text-2xl text-gray-600 hover:text-black cursor-pointer"
+      (click)="closeModal()"><i class="fas fa-times text-xl cursor-pointer"></i></button>
+
+    <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">Update Vehicle Information</h2>
+
+   
+    <form class="grid grid-cols-1 md:grid-cols-2 gap-6" [formGroup]="vehicleForm" (ngSubmit)="updateSelectedVehicle()">
+      <!-- Vehicle Type -->
+      <div class="md:col-span-2">
+        <label class="block text-sm font-medium text-gray-700 mb-2">Vehicle Type</label>
+        <div class="flex gap-8">
+          <label class="inline-flex items-center text-gray-600">
+            <input type="radio" formControlName="vehicleType" [value]="'Bike'"
+              class=" text-gray-600 focus:ring-gray-500" />
+            <span class="ml-2">Bike</span>
+          </label>
+          <label class="inline-flex items-center text-gray-600">
+            <input type="radio" formControlName="vehicleType" [value]="'Car'"
+              class="text-gray-600 focus:ring-gray-500" />
+            <span class="ml-2">Car</span>
+          </label>
+        </div>
+        <span class="text-red-500 text-sm"
+          *ngIf="vehicleType.errors?.['required'] && (vehicleType.touched || vehicleType.dirty)">
+          Please select vehicle type.
+        </span>
+      </div>
+
+      <!-- Registration No -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Registration No</label>
+        <input type="text" placeholder="MH12AB1234" formControlName="registrationNo"
+          class="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-gray-500" />
+        <span class="text-red-500 text-sm"
+          *ngIf="registrationNo.errors?.['required'] && (registrationNo.touched || registrationNo.dirty)">
+          Registration number is required.
+        </span>
+      </div>
+
+      <!-- Availability -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Availability</label>
+        <select formControlName="availability"
+          class="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-gray-500">
+          <option value="">Select</option>
+          <option>Available</option>
+          <option>Booked</option>
+          <option>Disabled</option>
+        </select>
+        <span class="text-red-500 text-sm"
+          *ngIf="availability.errors?.['required'] && (availability.touched || availability.dirty)">
+          Availability is required.
+        </span>
+      </div>
+
+      <!-- Fuel Type -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Fuel Type</label>
+        <select formControlName="fuelType"
+          class="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-gray-500">
+          <option value="">Select</option>
+          <option>Petrol</option>
+          <option>Diesel</option>
+          <option>Electric</option>
+          <option>CNG</option>
+        </select>
+        <span class="text-red-500 text-sm"
+          *ngIf="fuelType.errors?.['required'] && (fuelType.touched || fuelType.dirty)">
+          Fuel type is required.
+        </span>
+      </div>
+
+      <!-- Seating Capacity -->
+      <div *ngIf="vehicleTypes === 'Car'">
+        <label class="block text-sm font-medium text-gray-700 mb-1">Seating Capacity</label>
+        <input type="number" formControlName="seatingCapacity"
+          class="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-gray-500" />
+        <span class="text-red-500 text-sm"
+          *ngIf="seatingCapacity.errors?.['required'] && (seatingCapacity.touched || seatingCapacity.dirty)">
+          Seating capacity is required.
+        </span>
+        <span class="text-red-500 text-sm"
+          *ngIf="seatingCapacity.errors?.['min'] && (seatingCapacity.touched || seatingCapacity.dirty)">
+          Minimum 1 seat required.
+        </span>
+      </div>
+
+      <!-- Mileage -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Mileage (km/l)</label>
+        <input type="number" step="0.01" formControlName="mileage"
+          class="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-gray-500" />
+        <span class="text-red-500 text-sm" *ngIf="mileage.errors?.['required'] && (mileage.touched || mileage.dirty)">
+          Mileage is required.
+        </span>
+        <span class="text-red-500 text-sm" *ngIf="mileage.errors?.['min'] && (mileage.touched || mileage.dirty)">
+          Mileage must be 0 or more.
+        </span>
+      </div>
+
+      <!-- Color -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Color</label>
+        <input type="text" placeholder="Vehicle Color" formControlName="color"
+          class="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-gray-500" />
+        <span class="text-red-500 text-sm" *ngIf="color.errors?.['required'] && (color.touched || color.dirty)">
+          Color is required.
+        </span>
+      </div>
+
+      <!-- Year of Manufacture -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Year of Manufacture</label>
+        <input type="number" formControlName="yearOfManufacture"
+          class="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-gray-500" />
+        <span class="text-red-500 text-sm"
+          *ngIf="yearOfManufacture.errors?.['required'] && (yearOfManufacture.touched || yearOfManufacture.dirty)">
+          Year is required.
+        </span>
+        <span class="text-red-500 text-sm"
+          *ngIf="yearOfManufacture.errors?.['min'] && (yearOfManufacture.touched || yearOfManufacture.dirty)">
+          Year can't be less than 1900.
+        </span>
+        <span class="text-red-500 text-sm"
+          *ngIf="yearOfManufacture.errors?.['max'] && (yearOfManufacture.touched || yearOfManufacture.dirty)">
+          Year can't be more than {{ currentYear }}.
+        </span>
+      </div>
+
+      <!-- Insurance Status -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Insurance Status</label>
+        <select formControlName="insuranceStatus"
+          class="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-gray-500">
+          <option value="">Select</option>
+          <option>Active</option>
+          <option>Expired</option>
+        </select>
+        <span class="text-red-500 text-sm"
+          *ngIf="insuranceStatus.errors?.['required'] && (insuranceStatus.touched || insuranceStatus.dirty)">
+          Insurance status is required.
+        </span>
+      </div>
+
+      <!-- RC Status -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">RC Status</label>
+        <select formControlName="rcStatus"
+          class="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-gray-500">
+          <option value="">Select</option>
+          <option>Active</option>
+          <option>Expired</option>
+        </select>
+        <span class="text-red-500 text-sm"
+          *ngIf="rcStatus.errors?.['required'] && (rcStatus.touched || rcStatus.dirty)">
+          RC status is required.
+        </span>
+      </div>
+
+      <!-- AC Availability -->
+      <div *ngIf="vehicleTypes === 'Car'">
+        <label class="block text-sm font-medium text-gray-700 mb-1">AC Availability</label>
+        <select formControlName="acAvailability"
+          class="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-gray-500">
+          <option value="">Select</option>
+          <option>Yes</option>
+          <option>No</option>
+        </select>
+        <span class="text-red-500 text-sm"
+          *ngIf="acAvailability.errors?.['required'] && (acAvailability.touched || acAvailability.dirty)">
+          AC availability is required.
+        </span>
+      </div>
+
+      <!-- Fuel Tank Capacity -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Fuel Tank Capacity (L)</label>
+        <input type="number" step="0.01" formControlName="fuelTankCapacity"
+          class="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-gray-500" />
+        <span class="text-red-500 text-sm"
+          *ngIf="fuelTankCapacity.errors?.['required'] && (fuelTankCapacity.touched || fuelTankCapacity.dirty)">
+          Fuel tank capacity is required.
+        </span>
+        <span class="text-red-500 text-sm"
+          *ngIf="fuelTankCapacity.errors?.['min'] && (fuelTankCapacity.touched || fuelTankCapacity.dirty)">
+          Fuel tank capacity must be 0 or more.
+        </span>
+      </div>
+
+      <!-- Car Name -->
+      <div *ngIf="vehicleTypes === 'Car'">
+        <label class="block text-sm font-medium text-gray-700 mb-1">Car Name</label>
+        <input type="text" formControlName="carName"
+          class="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-gray-500" />
+        <span class="text-red-500 text-sm" *ngIf="carName.errors?.['required'] && (carName.touched || carName.dirty)">
+          Car name is required.
+        </span>
+      </div>
+
+      <!-- Engine Capacity -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Engine Capacity (cc)</label>
+        <input type="number" formControlName="engineCapacity"
+          class="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-gray-500" />
+        <span class="text-red-500 text-sm"
+          *ngIf="engineCapacity.errors?.['required'] && (engineCapacity.touched || engineCapacity.dirty)">
+          Engine capacity is required.
+        </span>
+      </div>
+
+      <!-- Bike Name -->
+      <div *ngIf="vehicleTypes === 'Bike'">
+        <label class="block text-sm font-medium text-gray-700 mb-1">Bike Name</label>
+        <input type="text" formControlName="bikeName"
+          class="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-gray-500" />
+        <span class="text-red-500 text-sm"
+          *ngIf="bikeName.errors?.['required'] && (bikeName.touched || bikeName.dirty)">
+          Bike name is required.
+        </span>
+      </div>
+    
+      <!-- Submit -->
+        <p class="text-red-500 text-center">{{ errormessage }}</p>
+      <div class="md:col-span-2">
+        <button type="submit" [disabled]="vehicleForm.invalid" [ngClass]="{
+    'bg-gray-300 cursor-not-allowed': vehicleForm.invalid,
+    'bg-gray-800 hover:bg-gray-900 cursor-pointer': vehicleForm.valid
+  }" class="w-full text-white font-medium py-3 rounded-md transition duration-300 ease-in-out">Update Vehicle
+        </button>
+        <div class="text-center flex justify-center w-full h-full text-xl">
+          <span class="text-red-500 text-md text-center "> </span>
+          <span class="text-green-500 text-md text-center "></span>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+<!-- Vehicle View Modal -->
+<div *ngIf="isViewModalOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+  <div class="bg-white rounded-lg shadow-lg max-w-3xl w-full p-6 relative max-h-[80vh] overflow-y-auto">
+
+    <button (click)="closeViewModal()"
+      class="absolute top-3 right-3 text-gray-700 rounded-full p-2 hover:text-gray-900">
+      <i class="fas fa-times text-lg cursor-pointer"></i>
+    </button>
+
+    <h2 class="text-2xl font-semibold mb-4 text-center text-gray-800">Vehicle Details</h2>
+
+    <div *ngIf="selectedVehicleForView">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-gray-700">
+
+        <div><strong>Type:</strong> {{ selectedVehicleForView.vehicleType || (selectedVehicleForView.bikeName ? 'Bike' : 'Car') }}</div>
+        <div><strong>Bike Name:</strong> {{ selectedVehicleForView.bikeName || '-' }}</div>
+        <div><strong>Car Name:</strong> {{ selectedVehicleForView.carName || '-' }}</div>
+        <div><strong>Registration No:</strong> {{ selectedVehicleForView.registrationNo }}</div>
+        <div><strong>Mileage:</strong> {{ selectedVehicleForView.mileage }} km/l</div>
+        <div><strong>Fuel Type:</strong> {{ selectedVehicleForView.fuelType }}</div>
+        <div><strong>Year of Manufacture:</strong> {{ selectedVehicleForView.yearOfManufacture }}</div>
+        <div><strong>Color:</strong> {{ selectedVehicleForView.color }}</div>
+        <div *ngIf="selectedVehicleForView.vehicleType === 'Car' || selectedVehicleForView.carName">
+          <strong>Seating Capacity:</strong> {{ selectedVehicleForView.seatingCapacity || '-' }}
+        </div>
+        <div *ngIf="selectedVehicleForView.vehicleType === 'Car' || selectedVehicleForView.carName">
+          <strong>AC Availability:</strong> {{ selectedVehicleForView.acAvailability || '-' }}
+        </div>
+        <div><strong>Fuel Tank Capacity:</strong> {{ selectedVehicleForView.fuelTankCapacity || '-' }} L</div>
+        <div><strong>Insurance Status:</strong> {{ selectedVehicleForView.insuranceStatus || '-' }}</div>
+        <div><strong>RC Status:</strong> {{ selectedVehicleForView.rcStatus || '-' }}</div>
+        <div><strong>Engine Capacity (cc):</strong> {{ selectedVehicleForView.engineCapacity || '-' }}</div>
+        <div><strong>status :</strong> {{ selectedVehicleForView.status || '-' }}</div>
+
+      </div>
+    </div>
+
+  </div>
+</div>

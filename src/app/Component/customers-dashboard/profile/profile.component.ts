@@ -387,7 +387,7 @@ export class ProfileComponent implements OnInit {
     });
   }
     @HostListener('document:keydown.escape', ['$event'])
-  onEscapePress(event: KeyboardEvent) {
+  onEscapePress(event: any) {
     this.UploadModalClose();
   }
 }

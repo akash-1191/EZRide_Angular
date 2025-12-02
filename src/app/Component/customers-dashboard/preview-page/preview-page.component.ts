@@ -17,8 +17,11 @@ export class PreviewPageComponent {
   errormessage: string = '';
   sucsessmessage: string = '';
 
+  
+
   // declare var Razorpay: any;
   constructor(private router: Router, private services: MyServiceService) { }
+
 
   ngOnInit(): void {
     this.bookingData = history.state.bookingData;
@@ -64,7 +67,7 @@ export class PreviewPageComponent {
     const payload = {
       userId: this.bookingData.userId,
       vehicleId: this.bookingData.vehicleDetails?.vehicleId,
-      startTime: pickupDate.toISOString(),   // ✅ ISO format string
+      startTime: pickupDate.toISOString(),   //  ISO format string
       endTime: dropoffDate.toISOString(),
       totalDistance: 0,
       totalAmount: this.bookingData.totalAmount,
@@ -120,10 +123,13 @@ export class PreviewPageComponent {
   submitPayment(): void {
     this.services.createOrder({ amount: this.bookingData.totalAmount }).subscribe({
       next: (res) => {
-        const orderId = res.orderId;
+        
+        console.log('Order Response:', res);
+        console.log('Amount Type:', typeof res.amount, 'Currency:', res.currency);
+        const orderId = res.orderId || res.id || res.order_id;
         const options: any = {
-          key: 'rzp_test_icoOUo8PN7viYp', // Razorpay test key
-          amount: this.bookingData.totalAmount * 100,
+          key: 'rzp_test_RlH2yK1IJryhJo', // Razorpay test key
+          amount: res.amount,
           currency: 'INR',
           name: 'EZRide Payment',
           description: 'Booking Payment',
@@ -149,6 +155,7 @@ export class PreviewPageComponent {
                   bookingId: this.bookingData.bookingId,
                   amount: this.bookingData.vehicleDetails.securityDepositAmount
                 };
+                console.log(' next Razorpay order response:', res);
                 // console.log(this.bookingData);
                 this.services.addSecurityDeposit(depositData).subscribe({
                   next: (res2) => {
@@ -172,7 +179,7 @@ export class PreviewPageComponent {
           prefill: {
             name: 'Akash',
             email: 'ezride123@gmail.com',
-            contact: '6355923492'
+            contact: '+91 6355923492'
           },
           theme: {
             color: '#528FF0'
