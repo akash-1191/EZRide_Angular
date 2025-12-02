@@ -4,8 +4,8 @@ import { Observable } from 'rxjs';
 import { observableToBeFn } from 'rxjs/internal/testing/TestScheduler';
 // import { DateAvailabilityDTO } from './date-availability.model';
 export interface AvailabilitySlot {
-  startDateTime: string; // ISO format string, e.g. "2025-06-03T12:00:00"
-  endDateTime: string;   // ISO format string
+  startDateTime: string;
+  endDateTime: string;   
   isAvailable: boolean;
 }
 @Injectable({
@@ -52,7 +52,6 @@ export class MyServiceService {
   }
 
   // UpdateProfile Image of the user
-
   updateUserImage(formData: FormData): Observable<any> {
     const token = sessionStorage.getItem('token');
     const headers = new HttpHeaders({
@@ -65,7 +64,7 @@ export class MyServiceService {
 
   // Add Vehicle
   addVehicle(vehicleData: any): Observable<any> {
-    const token = sessionStorage.getItem('token');  // If auth required
+    const token = sessionStorage.getItem('token');  
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json'
@@ -528,7 +527,28 @@ export class MyServiceService {
     return this.http.get<any>(userdataurl, { headers });
   }
 
+  //admin get all use that is security or not vehiclde 
+  getAllSecurityrefaund(): Observable<any> {
+    const token = sessionStorage.getItem('token');
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
+    const userdataurl = `http://localhost:7188/api/ReturnSecurityAmount`;
+    return this.http.get<any>(userdataurl, { headers });
+  }
 
+/// all charges
+
+   getAlldamagecharges(): Observable<any> {
+    const token = sessionStorage.getItem('token');
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
+    const userdataurl = `http://localhost:7188/api/ShowDamageChargi`;
+    return this.http.get<any>(userdataurl, { headers });
+  }
   //cancel resion display  to the user by the admin
   getallCancelResion(): Observable<any> {
     const token = sessionStorage.getItem('token');
@@ -538,7 +558,7 @@ export class MyServiceService {
     const userdataurl = `http://localhost:7188/api/CancelledBookings`;
     return this.http.get<any>(userdataurl, { headers });
   }
-  
+
   //current ride to be  display to the user by the admin
   getCurrentRide(): Observable<any> {
     const token = sessionStorage.getItem('token');
@@ -578,6 +598,171 @@ export class MyServiceService {
   }
 
 
+  //send otp click button
+  sendOtp(bookingId: number, AdminEmail: string): Observable<any> {
+    const token = sessionStorage.getItem('token');
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
+    const body = {
+      bookingId: bookingId,
+      adminEmail: AdminEmail
+    };
+    return this.http.post<any>('http://localhost:7188/api/StatusChangewithOTP/send-otp', body, { headers });
+  }
+
+
+  verifyOtp(bookingId: number, otp: string): Observable<any> {
+    const token = sessionStorage.getItem('token');
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
+    const verifyOtp = 'http://localhost:7188/api/StatusChangewithOTP/verify-otp';
+    return this.http.post<any>(verifyOtp, { bookingId, otp }, { headers });
+  }
+
+
+  //add fuiel data is 
+  createFuelLog(fuelLog: any): Observable<any> {
+    const token = sessionStorage.getItem('token');
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
+    const url = `http://localhost:7188/api/Fuelogpostdata`;
+    return this.http.post<any>(url, fuelLog, { headers });
+  }
+
+
+  //add damage data is 
+  createdamagedetails(damagedata: any): Observable<any> {
+    const token = sessionStorage.getItem('token');
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
+    const url = `http://localhost:7188/api/DamageReportPostData`;
+    return this.http.post<any>(url, damagedata, { headers });
+  }
+
+  //complet bookg by admin
+
+  setBookingToCompleted(bookingId: number): Observable<any> {
+    const token = sessionStorage.getItem('token');
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
+
+    const body = { bookingId };
+    const url = 'http://localhost:7188/api/status/completed';
+
+    return this.http.put(url, body, { headers });
+  }
+
+  //dopayment security deposit return
+  // createSecurityDepositOrder(amount: number): Observable<any> {
+  //   return this.http.post('http://localhost:7188/api/create-security-deposit-order', amount);
+  // }
+  createSecurityDepositOrder(amount: number): Observable<any> {
+  return this.http.post('http://localhost:7188/api/create-security-deposit-order', { amount });
+}
+
+
+//after payment change the status of th esecurity deposit table 
+
+ refundSecurityDeposit(bookingId: number): Observable<any> {
+    const url = `http://localhost:7188/api/refund-security-deposit-changestatus/${bookingId}`;
+    return this.http.put(url, null); // null because we don’t send a body
+  }
+
+    getallfeedbackmessage(): Observable<any> {
+    const token = sessionStorage.getItem('token');
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+    const userdataurl = `http://localhost:7188/api/AdminShowFeedBackApi`;
+    return this.http.get<any>(userdataurl, { headers });
+  }
+
+  
+
+    // Get All Vehicles (for vehicle owner)
+  getAllVehiclesbyowner(): Observable<any> {
+    const token = sessionStorage.getItem('token');
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
+    const url = `http://localhost:7188/api/Vehicle_Owner_/get-owner-vehicles`;
+    return this.http.get<any>(url, { headers });
+  }
+
+  // Update Vehicle Data by owner
+  updateVehiclebyowner(vehicleData: any): Observable<any> {
+    const token = sessionStorage.getItem('token');
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
+    const updateApiUrl = `http://localhost:7188/api/Vehicle_Owner_/update-owner-vehicle`;
+    return this.http.put<any>(updateApiUrl, vehicleData, { headers });
+  }
+
+
+   //Delete data vehicle by owner
+  deleteVehicleByOwner(vehicleId: number): Observable<any> {
+    const token = sessionStorage.getItem('token');
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+
+    const url = `http://localhost:7188/api/Vehicle_Owner_/delete-owner-vehicle/${vehicleId}`;
+    return this.http.delete<any>(url, { headers });
+  }
+
+
+
+  private baseApiUrl = "http://localhost:7188/api/OwnerDocument";
+
+
+  // Add document
+  addDocument(formData: FormData): Observable<any> {
+    const token = sessionStorage.getItem('token');
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+    return this.http.post<any>(`${this.baseApiUrl}/add`, formData, { headers });
+  }
+
+  // Get all documents
+  getDocuments(): Observable<any> {
+    const token = sessionStorage.getItem('token');
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+    return this.http.get<any>(`${this.baseApiUrl}/get`, { headers });
+  }
+
+  // Update document
+  updateDocument(formData: FormData): Observable<any> {
+    const token = sessionStorage.getItem('token');
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+    return this.http.put<any>(`${this.baseApiUrl}/update`, formData, { headers });
+  }
+
+  // Delete document
+  deleteDocument(id: number): Observable<any> {
+    const token = sessionStorage.getItem('token');
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+    return this.http.delete<any>(`${this.baseApiUrl}/delete/${id}`, { headers });
+  }
 }
 
 
