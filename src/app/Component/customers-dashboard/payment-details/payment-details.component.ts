@@ -5,7 +5,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgxPaginationModule } from 'ngx-pagination';
-
+import {environment } from '../../.../../../../environments/environment'
 declare var Razorpay: any;
 @Component({
   selector: 'app-payment-details',
@@ -116,7 +116,7 @@ export class PaymentDetailsComponent implements OnInit {
         const orderId = res.orderId;
 
         const options: any = {
-          key: 'rzp_test_RlH2yK1IJryhJo',
+          key: environment.SECRET_KEY_Razorpay,
           amount: bookingData.securityDepositAmount,
           currency: 'INR',
           name: 'EZRide Payment',
@@ -127,10 +127,10 @@ export class PaymentDetailsComponent implements OnInit {
           handler: (response: any) => {
             const paymentDetails = {
               bookingId: bookingData.bookingid,
-              amount: bookingData.securityDepositAmount,
+              amount:Number(bookingData.securityDepositAmount),
               transactionId: response.razorpay_payment_id,
               orderId: response.razorpay_order_id,
-              signature: response.razorpay_signature,
+              signature: response.razorpay_signature?.toLowerCase(),
               status: 'Success',
               paymentMethod: 'Online',
               createdAt: new Date()
@@ -139,7 +139,7 @@ export class PaymentDetailsComponent implements OnInit {
             this.services.verifyAndSavePayment(paymentDetails).subscribe({
               next: (res) => {
                 const depositData = {
-                  bookingId: bookingData.bookingid,
+                  bookingId: bookingData.BookingId,
                   amount: bookingData.securityDepositAmount
                 };
 

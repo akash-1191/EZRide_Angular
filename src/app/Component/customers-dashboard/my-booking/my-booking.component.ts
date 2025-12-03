@@ -220,7 +220,7 @@ export class MyBookingComponent implements OnInit {
     }
   }
   @HostListener('document:keydown.escape', ['$event'])
-  onEscapePress(event: KeyboardEvent) {
+  onEscapePress(event: any) {
     this.closeCancelModal();
     this.closeModal()
     this.showFilterDropdown = false;

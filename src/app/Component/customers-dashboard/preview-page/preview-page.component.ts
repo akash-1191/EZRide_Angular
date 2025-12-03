@@ -3,6 +3,8 @@ import { Component, Inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { MyServiceService } from '../../../../../my-service.service';
 import { jwtDecode } from 'jwt-decode';
+import {environment } from '../../.../../../../environments/environment'
+
 declare var Razorpay: any;
 @Component({
   selector: 'app-preview-page',
@@ -126,10 +128,10 @@ export class PreviewPageComponent {
         
         console.log('Order Response:', res);
         console.log('Amount Type:', typeof res.amount, 'Currency:', res.currency);
-        const orderId = res.orderId || res.id || res.order_id;
+        const orderId = res.orderId;
         const options: any = {
-          key: 'rzp_test_RlH2yK1IJryhJo', // Razorpay test key
-          amount: res.amount,
+          key: environment.SECRET_KEY_Razorpay, // Razorpay test key
+          amount: Number(res.amount),
           currency: 'INR',
           name: 'EZRide Payment',
           description: 'Booking Payment',
@@ -143,7 +145,7 @@ export class PreviewPageComponent {
               amount: this.bookingData.totalAmount,
               transactionId: response.razorpay_payment_id,
               orderId: response.razorpay_order_id,
-              signature: response.razorpay_signature,
+              signature: response.razorpay_signature?.toLowerCase(),
               status: 'Success',
               paymentMethod: 'Online',
               createdAt: new Date()
