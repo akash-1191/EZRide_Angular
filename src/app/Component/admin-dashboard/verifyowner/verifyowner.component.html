@@ -1,0 +1,188 @@
+<div class="bg-white shadow-md rounded-lg overflow-x-auto mt-5">
+
+    <!-- ==========================
+         HEADER + FILTER
+    =========================== -->
+    <div class="flex flex-col md:flex-row items-start md:items-center justify-between px-4 py-3 border-b">
+        <h2 class="text-xl font-semibold text-gray-800 mb-2 md:mb-0">
+            Owner Approval Requests
+        </h2>
+
+        <div class="flex items-center">
+            <label class="text-sm font-medium  text-gray-700 mr-2">Filter by Status:</label>
+
+            <select [(ngModel)]="selectedFilter" (change)="applyFilter()" class="bg-gradient-to-r from-indigo-100 via-purple-100 to-pink-100 
+                text-gray-800 border border-gray-300 rounded-md px-3 py-2 text-sm 
+                focus:outline-none focus:ring-2 focus:ring-indigo-300">
+                <option value="">All</option>
+                <option value="Pending">Pending</option>
+                <option value="Active">Verified</option>
+                <option value="Disabled">Rejected</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- ==========================
+         TABLE
+    =========================== -->
+    <div class="w-full overflow-auto">
+
+        <table class="min-w-full text-sm text-left text-gray-700 table-auto">
+            <thead class="bg-gray-100 text-gray-600 uppercase text-xs">
+                <tr>
+                    <th class="px-4 py-3 whitespace-nowrap">Full Name</th>
+                    <th class="px-4 py-3 whitespace-nowrap">Email</th>
+                    <th class="px-4 py-3 whitespace-nowrap">Phone</th>
+                    <th class="px-4 py-3 whitespace-nowrap">createdAt</th>
+                    <th class="px-4 py-3 whitespace-nowrap">Status</th>
+                    <th class="px-4 py-3 whitespace-nowrap">Action</th>
+
+                </tr>
+            </thead>
+
+            <tbody>
+                <tr *ngFor="let o of filteredOwners | paginate: { itemsPerPage: 10, currentPage: currentPage }"
+                    class="border-t ">
+
+                    <td class="px-4 py-3">{{ o.firstname }} {{ o.lastname }}</td>
+                    <td class="px-4 py-3">{{ o.email }}</td>
+                    <td class="px-4 py-3">{{ o.phone }}</td>
+                    <td class="px-4 py-3">{{ o.createdAt | date:'short' }}</td>
+
+
+                    <!-- STATUS BADGE -->
+                    <td class="px-4 py-3">
+                        <span class="px-2 py-1 rounded text-white text-xs" [ngClass]="{
+            'bg-yellow-500': o.status === 'Pending',
+            'bg-green-600': o.status === 'Active',
+            'bg-red-500': o.status === 'Rejected' || o.status === 'Disabled'
+        }">
+
+                            {{
+                            o.status === 'Disabled' ? 'Rejected' :
+                            o.status
+                            }}
+
+                        </span>
+                    </td>
+
+                  
+                    <!-- ACTION BUTTONS -->
+                    <td class="px-4 py-3 flex gap-2">
+
+                        <!-- APPROVE BUTTON -->
+                        <button (click)="approveOwner(o.ownerId)" [disabled]="o.status === 'Active'" class="p-2 rounded-md text-white
+        transition
+        bg-green-500 hover:bg-green-600
+        disabled:bg-gray-400 disabled:text-gray-200 disabled:cursor-not-allowed">
+                            Approval
+                        </button>
+
+                        <!-- REJECT BUTTON -->
+                        <button (click)="openRejectModal(o.ownerId)" [disabled]="o.status === 'Disabled'" class="p-2 rounded-md text-white
+        transition
+        bg-red-500 hover:bg-red-600
+        disabled:bg-gray-400 disabled:text-gray-200 disabled:cursor-not-allowed">
+                            Reject
+                        </button>
+
+                        <!-- VIEW BUTTON (Always enabled) -->
+                        <button (click)="openViewModal(o)"
+                            class="p-2 rounded-md text-white bg-gray-500 hover:bg-gray-600 cursor-pointer">
+                            👁
+                        </button>
+
+                    </td>
+
+
+
+
+
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- PAGINATION -->
+        <div class="px-4 py-4 border-t flex justify-center custom-pagination">
+            <pagination-controls (pageChange)="currentPage = $event" previousLabel="‹" nextLabel="›" [maxSize]="7">
+            </pagination-controls>
+        </div>
+
+    </div>
+</div>
+
+
+<!-- =====================================================
+     VIEW MODAL (TAILWIND)
+===================================================== -->
+<!-- VIEW MODAL -->
+<div *ngIf="showViewModal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-3">
+    <div class="bg-white w-full max-w-md rounded-lg p-6 shadow-xl relative">
+        
+        <!-- Modal Header -->
+        <h3 class="text-xl font-bold mb-4 text-gray-800">Owner Details</h3>
+        
+        <!-- Owner Info -->
+        <div class="space-y-2 text-gray-700 text-sm">
+            <p><strong>Name:</strong> {{ selectedOwner.firstname }} {{ selectedOwner.lastname }}</p>
+            <p><strong>Email:</strong> {{ selectedOwner.email }}</p>
+            <p><strong>Phone:</strong> {{ selectedOwner.phone }}</p>
+            <p><strong>Address:</strong> {{ selectedOwner.address }}</p>
+        </div>
+
+        <!-- Documents Section -->
+        <h4 class="text-lg mt-4 font-semibold text-gray-800">Documents</h4>
+        <div class="mt-2 space-y-2">
+            <div *ngIf="selectedOwner.rcBook">
+                <p class="font-medium">RC Book:</p>
+                <a [href]="'http://localhost:7188/' + selectedOwner.rcBook" target="_blank" 
+                   class="text-indigo-600 hover:text-indigo-800 underline transition">View RC Book</a>
+            </div>
+            <div *ngIf="selectedOwner.insurancePaper">
+                <p class="font-medium">Insurance:</p>
+                <a [href]="'http://localhost:7188/' + selectedOwner.insurancePaper" target="_blank"
+                   class="text-indigo-600 hover:text-indigo-800 underline transition">View Insurance</a>
+            </div>
+            <div *ngIf="selectedOwner.aadharCard">
+                <p class="font-medium">Aadhar Card:</p>
+                <a [href]="'http://localhost:7188/' + selectedOwner.aadharCard" target="_blank"
+                   class="text-indigo-600 hover:text-indigo-800 underline transition">View Aadhar</a>
+            </div>
+        </div>
+
+        <!-- Close Button -->
+        <button (click)="closeViewModal()" 
+                class="mt-5 w-full cursor-pointer bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded-lg transition">
+            Close
+        </button>
+
+    </div>
+</div>
+
+
+<!-- =====================================================
+     REJECT MODAL (TAILWIND)
+===================================================== -->
+<div *ngIf="showRejectModal" class="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+
+    <div class="bg-white w-[400px] rounded-lg p-6 shadow-lg">
+
+        <h3 class="text-lg font-bold mb-4 text-red-600">Reject Owner</h3>
+
+        <textarea [(ngModel)]="rejectionReason" class="w-full border rounded px-3 py-2 h-28"
+            placeholder="Enter rejection reason..."></textarea>
+
+        <div class="flex justify-end mt-4 gap-2">
+            <button (click)="rejectOwner()" class="bg-red-500 cursor-pointer hover:bg-red-600 text-white px-4 py-2 rounded">
+                Submit
+            </button>
+
+            <button (click)="closeRejectModal()" class="bg-gray- cursor-pointer hover:bg-gray-400 px-4 py-2 rounded">
+                Cancel
+            </button>
+            <br>
+            <p>{{errormessage}}</p>
+        </div>
+
+    </div>
+</div>

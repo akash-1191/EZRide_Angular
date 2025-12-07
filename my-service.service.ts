@@ -763,6 +763,130 @@ export class MyServiceService {
     });
     return this.http.delete<any>(`${this.baseApiUrl}/delete/${id}`, { headers });
   }
+
+
+
+  //  1) GET all  owners
+  getallownervehicle(): Observable<any> {
+    const token = sessionStorage.getItem('token');
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+
+    const url = 'http://localhost:7188/api/AdminOwners/GetPendingOwners';
+    return this.http.get<any>(url, { headers });
+  }
+
+  //  APPROVE owner
+  approveOwner(ownerId: number): Observable<any> {
+    const token = sessionStorage.getItem('token');
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+
+    const url = `http://localhost:7188/api/AdminOwners/approve/${ownerId}`;
+    return this.http.put<any>(url, {}, { headers });
+  }
+
+  //  REJECT owner with Reason
+  rejectOwner(ownerId: number, reason: string): Observable<any> {
+    const token = sessionStorage.getItem('token');
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
+    const body = { reason: reason };
+    const url = `http://localhost:7188/api/AdminOwners/reject/${ownerId}`;
+    return this.http.put<any>(url, body, { headers });
+  }
+
+
+
+  //  1) GET all  Aproved owners
+  getallActiveownervehicle(): Observable<any> {
+    const token = sessionStorage.getItem('token');
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+
+    const url = 'http://localhost:7188/api/AdminOwners/getAllActiveOwners';
+    return this.http.get<any>(url, { headers });
+  }
+
+
+  //get uploaded vehicle of the owner for admin
+  getAllOwnerVehicles(ownerId: number): Observable<any> {
+    const token = sessionStorage.getItem('token');
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
+    const url = `http://localhost:7188/api/AdminOwners/getOwnerVehicles/${ownerId}`;
+    return this.http.get<any>(url, { headers });
+  }
+
+
+  //add or update the security amount 
+   addOrUpdateDeposit(vehicleId: number, amount: number): Observable<any> {
+   const token = sessionStorage.getItem('token');
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
+
+    const url = 'http://localhost:7188/api/AdminOwners/addOrUpdateSecurityDeposit';
+    const body = { vehicleId, amount };
+    return this.http.post<any>(url, body, { headers });
+  }
+
+
+  // Add Vehicle Availability (Owner)
+addAvailabilityDays(data: any): Observable<any> {
+  const token = sessionStorage.getItem('token');
+
+  const headers = new HttpHeaders({
+    'Authorization': `Bearer ${token}`,
+    'Content-Type': 'application/json'
+  });
+
+  const url = 'http://localhost:7188/api/Vehicle_Owner_/addAvalibilityDays';
+
+  return this.http.post<any>(url, data, { headers, responseType: 'text' as 'json' });
+}
+
+
+//admin give the aproval of owners vehicles
+ approveOwnerVehicle(vehicleId: number): Observable<any> {
+    const token = sessionStorage.getItem('token');
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+
+    const url = `http://localhost:7188/api/AdminOwners/approve`;
+    const body={
+      vehicleId:vehicleId
+    }
+    return this.http.put<any>(url, body, { headers });
+  }
+
+  //admin give the aproval of owners vehicles
+ //admin reject owner vehicle
+RejectOwnerVehicle(vehicleId: number, reason: string): Observable<any> {
+  const token = sessionStorage.getItem('token');
+  const headers = new HttpHeaders({
+    'Authorization': `Bearer ${token}`
+  });
+  const body = {
+    vehicleId: vehicleId,
+    rejectReason: reason
+  };
+
+  return this.http.put<any>(`http://localhost:7188/api/AdminOwners/rejectVehicle`,body,{ headers });
+}
+
+
+  
+
 }
 
 

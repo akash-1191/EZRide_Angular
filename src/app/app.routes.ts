@@ -37,6 +37,9 @@ import { DriverProfileComponent } from './Component/Driver-dashboard/driver-prof
 import { DriverDashboardComponent } from './Component/Driver-dashboard/driver-dashboard.component';
 import { OwnAddvehicleComponent } from './Component/owner-dashboard/own-addvehicle/own-addvehicle.component';
 import { MyVehicleComponent } from './Component/owner-dashboard/my-vehicle/my-vehicle.component';
+import { VerifyownerComponent } from './Component/admin-dashboard/verifyowner/verifyowner.component';
+import { AprovedOwnerComponent } from './Component/admin-dashboard/aproved-owner/aproved-owner.component';
+import { SetRentComponent } from './Component/admin-dashboard/set-rent/set-rent.component';
 
 
 
@@ -133,8 +136,10 @@ export const routes: Routes = [
       {path:'Returnvehicle_check',component:ReturnVehicleComponent},
       {path:"Damagecharges",component:FuelDamageReportComponent},
       {path:"securitydepositrefaund",component:SecuritydepositRefaundAdminComponent},
-      {path:"Feesback",component:UserFeedbackbyadminComponent}
-     
+      {path:"Feesback",component:UserFeedbackbyadminComponent},
+      {path:"verify-owners",component:VerifyownerComponent},
+      {path:'approve-owner',component:AprovedOwnerComponent},
+      {path:"set-rents/:id",component:SetRentComponent}
     ]
   },
 ];

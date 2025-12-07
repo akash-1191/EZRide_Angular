@@ -1,0 +1,465 @@
+<div class="container mx-auto p-4 space-y-10">
+    <h2 class="text-2xl flex justify-center items-center p-2 font-bold mb-4">Owner Vehicle Price Management</h2>
+
+    <!-- RIGHT SIDE -->
+    <span class="text-green-600  p-0 m-0 font-medium flex justify-end">
+        {{ successMessage }}
+    </span>
+
+    <div *ngIf="selectedImageModalOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+        <div class="relative bg-white rounded-lg shadow-lg max-w-3xl w-full p-6 space-y-4">
+
+            <button (click)="closeImageModal()"
+                class="absolute top-2 right-3 text-gray-700 rounded-full p-2 hover:text-gray-900">
+                <i class="fas fa-times text-lg hover:text-xl"></i>
+            </button>
+
+
+            <div *ngIf="!noImagesFound">
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                    <ng-container *ngIf="selectedImages.length < 3">
+                        <div class="relative p-2 flex items-center justify-center h-40 w-full border-2 border-dashed border-green-400 rounded shadow text-green-600 cursor-pointer hover:bg-green-50 transition"
+                            (click)="fileInput.click()">
+                            <i class="fas fa-plus text-4xl"></i>
+                            <input type="file" #fileInput (change)="onImageSelected($event)" hidden />
+                        </div>
+                    </ng-container>
+
+                    <ng-container *ngFor="let img of selectedImages">
+                        <div class="relative w-full h-44 group overflow-hidden rounded shadow border ">
+                            <img [src]="img.imageUrl" alt="Preview"
+                                class="w-full h-44  object-cover transition-transform duration-300 group-hover:scale-105" />
+                            <button (click)="deleteVehicleImage(typeof img === 'string' ? 0 : img.vehicleImageId)"
+                                class="absolute top-0 right-0 bg-black bg-opacity-60 text-white rounded-sm p-1 hover:text-red-400 transition">
+                                <i class="fas fa-times text-md "></i>
+                            </button>
+                        </div>
+                    </ng-container>
+                </div>
+
+                <p *ngIf="errormessageinsertimage" class="text-red-600 text-sm mt-2">{{ errormessageinsertimage }}</p>
+            </div>
+
+            <div *ngIf="noImagesFound" class="text-center text-gray-600 text-lg font-medium py-10">
+                <i class="fas fa-image-slash text-4xl text-red-400 mb-4"></i><br />
+                <div *ngIf="selectedImages.length < 3"
+                    class="mt-4 mx-auto w-40 h-40 border-2 border-dashed border-green-400 rounded shadow flex items-center justify-center text-green-600 cursor-pointer hover:bg-green-50"
+                    (click)="fileInput.click()">
+                    <i class="fas fa-plus text-4xl"></i>
+                    <input type="file" #fileInput (change)="onImageSelected($event)" hidden />
+                </div>
+                <p class="text-sm mt-2 text-gray-500">Upload Image</p>
+                <p *ngIf="errormessageinsertimage" class="text-red-600 text-sm mt-2">{{ errormessageinsertimage }}</p>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- Bike Vehicles Table -->
+
+    <div class="bg-white shadow-md rounded-lg overflow-x-auto">
+
+        <h2 class="text-xl font-semibold text-gray-800 px-4 py-3 border-b flex justify-between items-center">
+
+            <!-- LEFT SIDE -->
+            <span class="flex items-center gap-2">
+                <i class="fas fa-motorcycle text-red-600 text-xl"></i> Bike Vehicles
+            </span>
+
+
+        </h2>
+
+        <table class="min-w-full text-sm text-left text-gray-700">
+            <thead class="bg-gray-100 text-gray-600 uppercase text-xs">
+                <tr>
+                    <th class="px-4 py-3">Bike Name</th>
+                    <th class="px-4 py-3">Registration No</th>
+                    <th class="px-4 py-3">Mileage</th>
+                    <th class="px-4 py-3">Fuel Type</th>
+                    <th class="px-4 py-3">Year</th>
+                    <th class="px-4 py-3">Color</th>
+                    <th class="px-4 py-3">Price</th>
+                    <th class="px-4 py-3">S_Amount</th>
+                    <th class="px-4 py-3 text-center">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let bike of bikeVehicles" class="border-t">
+                    <td class="px-4 py-3 flex items-center gap-2">
+                        <div class="relative group w-10 h-8">
+
+                            <img *ngIf="vehicleImages[bike.vehicleId]; else noImgBike"
+                                [src]="vehicleImages[bike.vehicleId]" class="w-full h-full object-cover rounded" />
+                            <ng-template #noImgBike>
+                                <div class="w-full h-full bg-gray-100 flex items-center justify-center rounded border">
+                                    <i class="fas fa-plus text-blue-500 text-sm"></i>
+                                </div>
+                            </ng-template>
+
+                            <button (click)="openImageModal(bike.vehicleId)" title="AddImage"
+                                class="absolute inset-0 flex items-center justify-center bg-black/50 bg-opacity-40 opacity-0 group-hover:opacity-100 hover:cursor-pointer transition-opacity">
+                                <i class="fas fa-eye text-white text-sm"></i>
+                            </button>
+                        </div>
+                        {{ bike.bikeName }}
+                    </td>
+                    <td class="px-4 py-3">{{ bike.registrationNo }}</td>
+                    <td class="px-4 py-3">{{ bike.mileage }} km/l</td>
+                    <td class="px-4 py-3">{{ bike.fuelType }}</td>
+                    <td class="px-4 py-3">{{ bike.yearOfManufacture }}</td>
+                    <td class="px-4 py-3">{{ bike.color }}</td>
+                    <td class="px-1 py-3 group relative">
+                        <!-- Price text agar already set hai toh show karo -->
+                        <span class="text-sm text-gray-700">
+                            <ng-container *ngIf="pricesMap[bike.vehicleId] as price; else noPrice">
+                                <span *ngIf="price.pricePerKm">₹{{ price.pricePerKm }} / km</span>
+                                <span *ngIf="price.pricePerHour">₹{{ price.pricePerHour }} / hour</span>
+                                <span *ngIf="price.pricePerDay">₹{{ price.pricePerDay }} / day</span>
+                            </ng-container>
+                            <ng-template #noPrice>
+                                N/A
+                            </ng-template>
+                        </span>
+                        <!-- + icon hover pe dikhega -->
+                        <button (click)="setpriceopenmodal(bike.vehicleId)" title="Set Price"
+                            class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/10 rounded">
+                            <i class="fas fa-plus text-blue-600 text-2xl cursor-pointer"></i>
+                        </button>
+                    </td>
+                    <!-- <td class="px-4 py-3">{{ bike.securityDepositAmount }}</td> -->
+
+                    <td (mouseenter)="bike.showDepositIcon = true" (mouseleave)="bike.showDepositIcon = false"
+                        class="relative hover:bg-gray-500/10">
+
+                        {{ bike.securityDepositAmount || 'N/A' }}
+
+                        <i *ngIf="bike.showDepositIcon" class="fas fa-plus text-blue-600 text-xl cursor-pointer"
+                            (click)="openSecurityModal(bike)" title="Add/Edit Security Deposit">
+                        </i>
+
+                    </td>
+                    <!-- <td class="px-4 md:px-2 py-3 text-center space-x-2">
+
+                        <button title="Delete" (click)="deleteVehicle(bike.vehicleId)">
+                            <i class="fas fa-trash text-red-600 text-lg cursor-pointer"></i>
+                        </button>
+                    </td> -->
+
+                    <td class="px-4 md:px-2 py-3 text-center space-x-3">
+
+                        <!-- DELETE BUTTON -->
+                        <button title="Delete" (click)="deleteVehicle(bike.vehicleId)"
+                            class="cursor-pointer text-red-600 text-lg">
+                            <i class="fas fa-trash"></i>
+                        </button>
+
+                        <!-- APPROVE BUTTON -->
+                        <button title="Approve" (click)="approveVehicle(bike.vehicleId)" [disabled]="bike.isApproved"
+                            [ngClass]="{
+            'opacity-40 cursor-not-allowed': bike.isApproved,
+            'opacity-100 cursor-pointer': !bike.isApproved
+        }" class="text-green-600 text-lg">
+
+                            <i class="fas fa-check-circle"></i>
+                        </button>
+
+                        <!-- REJECT BUTTON -->
+                        <button title="Reject" (click)="openRejectModal(bike.vehicleId)" [disabled]="bike.rejectReason"
+                            [ngClass]="{
+            'opacity-40 cursor-not-allowed': bike.rejectReason,
+            'opacity-100 cursor-pointer': !bike.rejectReason
+        }" class="text-red-500 text-lg">
+
+                            <i class="fas fa-times-circle"></i>
+                        </button>
+
+                    </td>
+
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <!-- Car Vehicles Table -->
+    <div class="bg-white shadow-md rounded-lg overflow-x-auto">
+        <h2 class="text-xl font-semibold text-gray-800 px-4 py-3 border-b flex justify-between items-center">
+
+            <!-- LEFT SIDE -->
+            <span class="flex items-center gap-2">
+                <i class="fas fa-car text-green-600 text-xl"></i>
+                Car Vehicles
+            </span>
+
+        </h2>
+
+        <table class="min-w-full text-sm text-left text-gray-700">
+            <thead class="bg-gray-100 text-gray-600 uppercase text-xs">
+                <tr>
+                    <th class="px-4 py-3">Car Name</th>
+                    <th class="px-4 py-3">Registration No</th>
+                    <th class="px-4 py-3">Mileage</th>
+                    <th class="px-4 py-3">Seating</th>
+                    <th class="px-4 py-3">AC</th>
+                    <th class="px-4 py-3">Fuel</th>
+                    <th class="px-4 py-3">Year</th>
+                    <th class="px-4 py-3">Price</th>
+                    <th class="px-4 py-3">S_Amount</th>
+                    <th class="px-4 py-3 text-center">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let car of carVehicles" class="border-t">
+                    <td class="px-4 py-3 flex items-center gap-2">
+                        <div class="relative group w-10 h-8">
+                            <img *ngIf="vehicleImages[car.vehicleId]; else noImgCar"
+                                [src]="vehicleImages[car.vehicleId]" class="w-full h-full object-cover rounded" />
+
+                            <ng-template #noImgCar>
+                                <div class="w-full h-full bg-gray-100 flex items-center justify-center rounded border">
+                                    <i class="fas fa-plus text-blue-500 text-sm"></i>
+                                </div>
+                            </ng-template>
+
+                            <button (click)="openImageModal(car.vehicleId)" title="AddImage"
+                                class="absolute inset-0 flex items-center justify-center bg-black/50 bg-opacity-40 opacity-0 group-hover:opacity-100 hover:cursor-pointer transition-opacity">
+                                <i class="fas fa-eye text-white text-sm"></i>
+                            </button>
+                        </div>
+                        {{ car.carName }}
+                    </td>
+                    <td class="px-4 py-3">{{ car.registrationNo }}</td>
+                    <td class="px-4 py-3">{{ car.mileage}} km/l</td>
+                    <td class="px-4 py-3">{{ car.seatingCapacity }}</td>
+                    <td class="px-4 py-3">{{ car.acAvailability || 'No' }}</td>
+                    <td class="px-4 py-3">{{ car.fuelType }}</td>
+                    <td class="px-4 py-3">{{ car.yearOfManufacture }}</td>
+                    <td class="px-1 py-3 group relative">
+                        <!-- Price text agar already set hai toh show karo -->
+                        <span class="text-sm text-gray-700">
+                            <ng-container *ngIf="pricesMap[car.vehicleId] as price; else noPrice">
+                                <span *ngIf="price.pricePerKm">₹{{ price.pricePerKm }} / km</span>
+                                <span *ngIf="price.pricePerHour">₹{{ price.pricePerHour }} / hour</span>
+                                <span *ngIf="price.pricePerDay">₹{{ price.pricePerDay }} / day</span>
+                            </ng-container>
+                            <ng-template #noPrice>
+                                N/A
+                            </ng-template>
+                        </span>
+                        <!-- + icon hover pe dikhega -->
+                        <button (click)="setpriceopenmodal(car.vehicleId)" title="Set Price"
+                            class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/10 rounded">
+                            <i class="fas fa-plus text-blue-600 text-2xl cursor-pointer"></i>
+                        </button>
+                    </td>
+                    <!-- <td class="px-4 py-3">{{ car.securityDepositAmount }}</td> -->
+
+                    <td (mouseenter)="car.showDepositIcon = true" (mouseleave)="car.showDepositIcon = false"
+                        class="relative hover:bg-gray-500/10">
+
+                        {{ car.securityDepositAmount || 'N/A' }}
+
+                        <i *ngIf="car.showDepositIcon" class="fas fa-plus text-blue-600 text-xl cursor-pointer"
+                            (click)="openSecurityModal(car)" title="Add/Edit Security Deposit">
+                        </i>
+
+                    </td>
+                    <!-- <td class="px-4 md:px-2 py-3 text-center space-x-2">
+
+                        <button title="Delete" (click)="deleteVehicle(car.vehicleId)"><i
+                                class="fas fa-trash text-red-600 text-lg cursor-pointer"></i></button>
+                    </td> -->
+                    <td class="px-4 md:px-2 py-3 text-center space-x-3">
+
+                        <!-- DELETE BUTTON -->
+                        <button title="Delete" (click)="deleteVehicle(car.vehicleId)"
+                            class="cursor-pointer text-red-600 text-lg">
+                            <i class="fas fa-trash"></i>
+                        </button>
+
+                        <!-- APPROVE BUTTON -->
+                        <button title="Approve" (click)="approveVehicle(car.vehicleId)" [disabled]="car.isApproved"
+                            [ngClass]="{
+            'opacity-40 cursor-not-allowed': car.isApproved,
+            'opacity-100 cursor-pointer': !car.isApproved
+        }" class="text-green-600 text-lg">
+
+                            <i class="fas fa-check-circle"></i>
+                        </button>
+
+                        <!-- REJECT BUTTON -->
+                        <button title="Reject" (click)="openRejectModal(car.vehicleId)" [disabled]="car.rejectReason"
+                            [ngClass]="{
+            'opacity-40 cursor-not-allowed': car.rejectReason,
+            'opacity-100 cursor-pointer': !car.rejectReason
+        }" class="text-red-500 text-lg">
+
+                            <i class="fas fa-times-circle"></i>
+                        </button>
+
+                    </td>
+
+
+
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- set price for vehicle modal -->
+<div *ngIf="isPriceModalOpen" class="fixed inset-0 bg-black/50  flex items-center justify-center z-50">
+    <div class="bg-white rounded-xl shadow-lg w-full max-w-md p-6 relative animate-fadeIn">
+        <h3 class="text-xl font-semibold text-gray-800 mb-4">Set Vehicle Price</h3>
+        <form [formGroup]="priceForm" (ngSubmit)="submitPrice()">
+            <!-- Price Per KM -->
+            <label class="block text-sm font-medium text-gray-700 mb-1">Price Per KM</label>
+            <input type="number" formControlName="pricePerKm" placeholder="Enter Price Per KM"
+                class="w-full mb-4 px-4 py-2 border rounded focus:outline-none" />
+            <div *ngIf="pricePerKm.invalid && (pricePerKm.dirty || pricePerKm.touched)"
+                class="text-red-600 text-sm mb-2">
+                <div *ngIf="pricePerKm.errors?.['min']">Value must be ≥ 0.</div>
+            </div>
+
+            <!-- Price Per Hour -->
+            <label class="block text-sm font-medium text-gray-700 mb-1">Price Per Hour</label>
+            <input type="number" formControlName="pricePerHour" placeholder="Enter Price Per Hour"
+                class="w-full mb-4 px-4 py-2 border rounded focus:outline-none" />
+            <div *ngIf="pricePerHour.invalid && (pricePerHour.dirty || pricePerHour.touched)"
+                class="text-red-600 text-sm mb-2">
+                <div *ngIf="pricePerHour.errors?.['min']">Value must be ≥ 0.</div>
+            </div>
+
+            <!-- Price Per Day -->
+            <label class="block text-sm font-medium text-gray-700 mb-1">Price Per Day</label>
+            <input type="number" formControlName="pricePerDay" placeholder="Enter Price Per Day"
+                class="w-full mb-4 px-4 py-2 border rounded focus:outline-none" />
+            <div *ngIf="pricePerDay.invalid && (pricePerDay.dirty || pricePerDay.touched)"
+                class="text-red-600 text-sm mb-2">
+                <div *ngIf="pricePerDay.errors?.['min']">Value must be ≥ 0.</div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="flex justify-end gap-2 mt-4">
+                <button type="button" (click)="closesetpricemodal()"
+                    class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">
+                    Cancel
+                </button>
+                <button type="submit" [disabled]="priceForm.invalid" [ngClass]="{
+      'bg-gray-300 cursor-not-allowed': priceForm.invalid,
+      'bg-gray-800 hover:bg-gray-900 cursor-pointer': priceForm.valid
+    }" class="w-full text-white font-medium py-3 rounded-md transition duration-300 ease-in-out">
+                    Set Price
+                </button>
+            </div>
+
+            <div class="text-center flex justify-center w-full h-full text-xl">
+                <span class="text-red-500 text-md text-center">{{errormessage}}</span>
+                <span class="text-green-500 text-md text-center">{{Successmessage}}</span>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<!-- Delete Confirmation Modal -->
+<div *ngIf="showDeleteModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 w-full max-w-md animate-fade-in">
+        <h2 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">Delete Image</h2>
+        <p class="text-gray-600 dark:text-gray-300 mb-6">Are you sure you want to delete this image? This action cannot
+            be
+            undone.</p>
+        <div class="flex justify-end space-x-3">
+            <button (click)="cancelDelete()"
+                class="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 text-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-white transition">
+                Cancel
+            </button>
+            <button (click)="confirmDelete()"
+                class="cursor-pointer px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white transition">
+                Yes, Delete
+            </button>
+        </div>
+    </div>
+</div>
+
+
+<!-- REJECT MODAL -->
+<div *ngIf="isRejectModalOpen" class="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+
+    <div class="bg-white w-full max-w-md p-6 rounded-lg shadow-lg animate__animated animate__fadeInDown">
+
+        <h2 class="text-xl font-semibold mb-4 text-red-600">Reject Vehicle</h2>
+
+        <label class="font-medium">Reason for Rejection</label>
+        <textarea [(ngModel)]="rejectReason" rows="4" class="w-full p-2 border rounded mt-2"></textarea>
+
+        <!-- BUTTONS -->
+        <div class="mt-5 flex justify-end gap-3">
+            <button (click)="closeRejectModal()" class="px-4 py-2 bg-gray-300 hover:bg-gray-400 rounded">
+                Cancel
+            </button>
+
+            <button (click)="rejectVehicle()" class="px-4 py-2 bg-red-600 text-white hover:bg-red-700 rounded">
+                Submit
+            </button>
+        </div>
+    </div>
+
+</div>
+
+
+<!-- Vehicle Delete Modal -->
+<div *ngIf="showVehicleDeleteModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 w-full max-w-md animate-fade-in">
+        <h2 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">Delete Vehicle</h2>
+        <p class="text-gray-600 dark:text-gray-300 mb-6">Are you sure you want to delete this vehicle? This action
+            cannot
+            be undone.</p>
+        <div class="flex justify-end space-x-3">
+            <button (click)="closeVehicleModal()"
+                class="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 text-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-white transition">
+                Cancel
+            </button>
+            <button (click)="confirmVehicleDelete()"
+                class="px-4 py-2 cursor-pointer  rounded-lg bg-red-600 hover:bg-red-700 text-white transition">
+                Yes, Delete
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Security Deposit Modal -->
+<div *ngIf="isSecurityModalOpen" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+    <div class="bg-white rounded-xl shadow-lg w-full max-w-md p-6 relative animate-fadeIn">
+
+        <h3 class="text-xl font-semibold text-gray-800 mb-4">Set Security Deposit</h3>
+
+        <form (ngSubmit)="submitSecurity()">
+
+            <!-- Security Amount -->
+            <label class="block text-sm font-medium text-gray-700 mb-1">Security Amount</label>
+            <input type="number" [(ngModel)]="securityAmount" name="securityAmount" placeholder="Enter security amount"
+                class="w-full mb-4 px-4 py-2 border rounded focus:outline-none" required min="0" />
+
+            <!-- Buttons -->
+            <div class="flex justify-end gap-2 mt-4">
+                <button type="button" (click)="closeSecurityModal()"
+                    class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">
+                    Cancel
+                </button>
+
+                <button type="submit" [ngClass]="{
+            'bg-gray-300 cursor-not-allowed': !securityAmount,
+            'bg-gray-800 hover:bg-gray-900 cursor-pointer': securityAmount
+          }" class="w-full text-white font-medium py-3 rounded-md transition duration-300 ease-in-out">
+                    Save
+                </button>
+            </div>
+
+            <!-- Messages -->
+            <div class="text-center w-full mt-2 text-md">
+                <span class="text-red-500">{{errorMessage}}</span>
+                <span class="text-green-500">{{successMessage}}</span>
+            </div>
+        </form>
+    </div>
+</div>

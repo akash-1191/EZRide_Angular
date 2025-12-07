@@ -3,9 +3,9 @@
 
         <!-- Header -->
         <div class="fixed w-full flex items-center justify-between h-14 bg-gray-800 text-white z-10">
-            <div class="flex items-center justify-start md:justify-center pl-3 w-14 md:w-64 h-14 ml-10 border-none">
-                <img class="w-10 h-10 md:w-10 md:h-10 mr-2 rounded-md overflow-hidden" src="#" />
-                <span class="hidden md:block">Vehicle_Owner Dashboard</span>
+            <div class="flex  items-center justify-start md:justify-center  w-14 md:w-64 h-14 ml-10 border-none">
+                <!-- <img class="w-10 h-10 md:w-10 md:h-10 mr-2 rounded-md overflow-hidden" src="#" /> -->
+                <span class="font-semibold text-lg hidden md:block">Vehicle_Owner Dashboard</span>
             </div>
             <div class="flex justify-between items-center h-14 bg-gray-800 header-right"></div>
             <ul class="flex items-center">
@@ -38,6 +38,16 @@
                         </span>
                     </a>
 
+                    
+                    <!-- Add New Vehicle -->
+                    <a routerLink="/OwnerVehicle-dashboard/own_Addvehicle" class="cursor-pointer">
+                        <span class="relative flex flex-row items-center h-11 hover:bg-gray-600 hover:text-indigo-300 
+                        border-l-4 border-transparent hover:border-indigo-500 pr-6 px-4">
+                            <i class="fa-solid fa-circle-plus w-5 text-sm"></i>
+                            <button class="ml-3 text-sm tracking-wide truncate">Add New Vehicle</button>
+                        </span>
+                    </a>
+
                     <!-- My Vehicles -->
                     <a routerLink="/OwnerVehicle-dashboard/Myvehicle" class="cursor-pointer">
                         <span class="relative flex flex-row items-center h-11 hover:bg-gray-600 hover:text-indigo-300 
@@ -46,16 +56,6 @@
                             <button class="ml-3 text-sm tracking-wide truncate">My Vehicles</button>
                         </span>
                     </a>
-
-                    <!-- Add New Vehicle -->
-                    <a routerLink="/OwnerVehicle-dashboard/own_Addvehicle" class="cursor-pointer">
-                        <span class="relative flex flex-row items-center h-11 hover:bg-gray-600 hover:text-indigo-300 
-        border-l-4 border-transparent hover:border-indigo-500 pr-6 px-4">
-                            <i class="fa-solid fa-circle-plus w-5 text-sm"></i>
-                            <button class="ml-3 text-sm tracking-wide truncate">Add New Vehicle</button>
-                        </span>
-                    </a>
-
                     <!-- Booking Requests -->
                     <a routerLink="/OwnerVehicle-dashboard/booking-requests" class="cursor-pointer">
                         <span class="relative flex flex-row items-center h-11 hover:bg-gray-600 hover:text-indigo-300 

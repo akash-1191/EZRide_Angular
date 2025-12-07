@@ -1,0 +1,19 @@
+.pagination li.current a {
+  background-color: #4b5563 !important; /* Tailwind Gray-600 */
+  color: white !important;
+  border-radius: 6px !important;
+}
+
+.pagination li a {
+  padding: 6px 12px;
+  border-radius: 6px !important;
+  color: #4b5563 !important; /* gray text */
+}
+
+.pagination li a:hover {
+  background-color: #e5e7eb !important; /* Gray-200 */
+}
+
+.pagination li.disabled a {
+  color: #9ca3af !important; /* Gray-400 */
+}

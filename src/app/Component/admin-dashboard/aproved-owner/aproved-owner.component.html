@@ -1,0 +1,57 @@
+<div class="bg-white shadow-md rounded-lg overflow-x-auto mt-5">
+
+    <!-- HEADER -->
+    <div class="flex flex-col md:flex-row items-start md:items-center justify-between px-4 py-3 border-b">
+        <h2 class="text-xl font-semibold text-gray-800 mb-2 md:mb-0">
+            Approved Vehicle Owners
+        </h2>
+    </div>
+
+    <!-- TABLE -->
+    <div class="w-full overflow-auto">
+        <table class="min-w-full text-sm text-left text-gray-700 table-auto">
+            <thead class="bg-gray-100 text-gray-600 uppercase text-xs">
+                <tr>
+                    <th class="px-4 py-3 whitespace-nowrap">Full Name</th>
+                    <th class="px-4 py-3 whitespace-nowrap">Email</th>
+                    <th class="px-4 py-3 whitespace-nowrap">Phone</th>
+                    <th class="px-4 py-3 whitespace-nowrap">Created At</th>
+                    <th class="px-4 py-3 whitespace-nowrap">Status</th>
+                    <th class="px-4 py-3 whitespace-nowrap">Actions</th>
+
+                </tr>
+            </thead>
+
+            <tbody>
+                <tr *ngFor="let owner of allOwners | paginate: { itemsPerPage: 10, currentPage: currentPage }"
+                    class="border-t">
+                    <td class="px-4 py-3">{{ owner.firstname }} {{ owner.lastname }}</td>
+                    <td class="px-4 py-3">{{ owner.email }}</td>
+                    <td class="px-4 py-3">{{ owner.phone }}</td>
+                    <td class="px-4 py-3">{{ owner.createdAt | date:'short' }}</td>
+
+                    <!-- STATUS BADGE -->
+                    <td class="px-4 py-3">
+                        <span class="px-2 py-1 rounded text-white text-xs bg-green-600">{{ owner.status }}</span>
+                    </td>
+
+                    <!-- ACTIONS: Arrow Icon -->
+                    <td class="px-4 py-3 flex justify-center">
+                        <button (click)="goToOwnerDetails(owner.userId)"
+                            class="text-blue-500 cursor-pointer hover:text-blue-700 transition">
+                            <i class="fas fa-arrow-right fa-lg"></i>
+                        </button>
+                    </td>
+                  
+                </tr>
+            </tbody>
+
+        </table>
+
+        <!-- PAGINATION -->
+        <div class="px-4 py-4 border-t flex justify-center custom-pagination">
+            <pagination-controls (pageChange)="currentPage = $event" previousLabel="‹" nextLabel="›" [maxSize]="7">
+            </pagination-controls>
+        </div>
+    </div>
+</div>

@@ -1,16 +1,16 @@
-import { Component, HostListener, OnInit } from '@angular/core';
-import { MyServiceService } from '../../../../../my-service.service';
-import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { jwtDecode } from 'jwt-decode';
 import { CommonModule } from '@angular/common';
+import { Component, HostListener, OnInit } from '@angular/core';
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MyServiceService } from '../../../../../my-service.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
-  selector: 'app-my-vehicle',
-  imports: [CommonModule, ReactiveFormsModule, FormsModule],
-  templateUrl: './my-vehicle.component.html',
-  styleUrl: './my-vehicle.component.css'
+  selector: 'app-set-rent',
+  imports: [CommonModule,ReactiveFormsModule,FormsModule],
+  templateUrl: './set-rent.component.html',
+  styleUrl: './set-rent.component.css'
 })
-export class MyVehicleComponent implements OnInit {
+export class SetRentComponent implements OnInit {
 
   allVehicles: any[] = [];
   bikeVehicles: any[] = [];
@@ -21,7 +21,6 @@ export class MyVehicleComponent implements OnInit {
   Successmessage: string = '';
   errormessage: string = '';
   currentYear: number = new Date().getFullYear();
-  // selected: string[] = [];
   selectedImageModalOpen: boolean = false;
   noImagesFound: boolean = false;
   selectedImages: { imageUrl: string, vehicleImageId: number }[] = [];
@@ -35,22 +34,23 @@ export class MyVehicleComponent implements OnInit {
   selectedVehicleId: number | null = null;
   pricesList: any[] = [];
   pricesMap: { [vehicleId: number]: any } = {};
+ownerId:number=0;
+isSecurityModalOpen = false;
+selectedVehicleForSecurity: any = null;
+securityAmount: number | null = null;
 
-  isAvailabilityModalOpen: boolean = false;
-  selectedCarForAvailability: any = null;
-
-  availabilityForm: any = {
-    vehicleId: 0,
-    availableDays: null,
-    effectiveFrom: '',
-    effectiveTo: ''
-  };
+isRejectModalOpen = false;
+rejectReason = "";
+selectedVehicleForReject: number = 0;
 
 
+errorMessage = "";
+successMessage = "";
 
-  constructor(private service: MyServiceService) { }
+  constructor(private service: MyServiceService,private route:ActivatedRoute) { }
 
   ngOnInit(): void {
+     this.ownerId = Number(this.route.snapshot.paramMap.get('id'));
     this.loadPrices();
     this.getAllVehicles();
     this.fetchFirstImageForEachVehicle();
@@ -71,17 +71,16 @@ export class MyVehicleComponent implements OnInit {
 
   // display the vehicle data
   getAllVehicles() {
-    this.service.getAllVehiclesbyowner().subscribe({
+    this.service.getAllOwnerVehicles(this.ownerId).subscribe({
       next: (res) => {
         this.allVehicles = res;
+        console.log("Fetched Vehicles:", this.allVehicles );
         this.bikeVehicles = this.allVehicles.filter(v => v.vehicletype === 'Bike');
         this.carVehicles = this.allVehicles.filter(v => v.vehicletype === 'Car');
         this.fetchFirstImageForEachVehicle();
         this.loadPrices();
-        console.log("res[onsefjasgsjk", res);
       },
       error: (err) => {
-
       }
     });
   }
@@ -132,173 +131,59 @@ export class MyVehicleComponent implements OnInit {
     acAvailability: new FormControl(''),
     bikeName: new FormControl(''),
     engineCapacity: new FormControl('', Validators.required),
+    securityDepositAmount: new FormControl('', Validators.required),
     fuelTankCapacity: new FormControl('', [Validators.required, Validators.min(0)])
   });
 
 
+openSecurityModal(vehicle: any) {
+  this.selectedVehicleForSecurity = vehicle;
+  this.selectedVehicleId=vehicle.vehicleId;
+  this.securityAmount = vehicle.securityAmount || null;
+  this.isSecurityModalOpen = true;
+}
 
-  updateSelectedVehicle() {
-    if (!this.vehicleForm.valid) {
-      this.errormessage = 'Please fill all required fields.';
-      return;
-    }
+closeSecurityModal() {
+  this.isSecurityModalOpen = false;
+  this.securityAmount = null;
+  this.errorMessage = "";
+  this.successMessage = "";
+}
 
-    const updatedData = this.vehicleForm.getRawValue();
+submitSecurity() {
 
-    if (!updatedData.vehicleId) {
-      this.errormessage = "Vehicle ID is missing.";
-      return;
-    }
-
-    const token = sessionStorage.getItem('token');
-    if (!token) {
-      this.errormessage = 'Token not found. Please log in.';
-      return;
-    }
-
-    const decoded: any = jwtDecode(token);
-    updatedData.userId = decoded.UserId;
-
-    // Nullify unused fields
-    if (updatedData.vehicleType === 'Bike') {
-      updatedData.carName = null;
-      updatedData.acAvailability = null;
-      updatedData.seatingCapacity = 0;
-    } else if (updatedData.vehicleType === 'Car') {
-      updatedData.bikeName = null;
-    }
-    //updaet data of the vehicle
-    this.service.updateVehiclebyowner(updatedData).subscribe({
-      next: (res) => {
-        this.Successmessage = "Vehicle updated successfully!";
-        this.getAllVehicles();
-        this.closeModal();
-      },
-      error: (err) => {
-        if (err.error && typeof err.error === 'string') {
-          this.errormessage = err.error;
-        }
-        else if (err.error?.message) {
-          this.errormessage = err.error.message;
-        }
-        else if (err.message) {
-          this.errormessage = err.message;
-        }
-        else {
-          this.errormessage = "Something went wrong!";
-        }
-      }
-    });
-  }
-
-  openModal(vehicle: any) {
-    this.isModalOpen = true;
-    this.selectedVehicle = vehicle;
-    if (vehicle) {
-
-      this.vehicleForm.patchValue({
-        vehicleId: vehicle.vehicleId,
-        vehicleType: vehicle.vehicletype,
-        registrationNo: vehicle.registrationNo,
-        fuelType: vehicle.fuelType,
-        availability: vehicle.availability,
-        color: vehicle.color,
-        yearOfManufacture: vehicle.yearOfManufacture,
-        insuranceStatus: vehicle.insuranceStatus,
-        rcStatus: vehicle.rcStatus,
-        fuelTankCapacity: vehicle.fuelTankCapacity,
-        engineCapacity: vehicle.engineCapacity,
-        seatingCapacity: vehicle.seatingCapacity,
-        mileage: vehicle.mileage,
-        bikeName: vehicle.bikeName, // For bike
-        carName: vehicle.carName,
-        acAvailability: vehicle.acAvailability
-      });
-
-      this.vehicleTypes = vehicle.vehicletype;
-    } else {
-      this.vehicleForm.reset({
-        vehicleType: 'Car',
-      });
-    }
-  }
-
-  openAvailabilityModal(car: any) {
-    this.isAvailabilityModalOpen = true;
-    this.selectedCarForAvailability = car;
-
-    this.availabilityForm = {
-      vehicleId: car.vehicleId,
-      availableDays: null,
-      effectiveFrom: '',
-      effectiveTo: ''
-    };
-  }
-
-  closeAvailabilityModal() {
-    this.isAvailabilityModalOpen = false;
-    this.availabilityForm = {
-      vehicleId: 0,
-      availableDays: null,
-      effectiveFrom: '',
-      effectiveTo: ''
-    };
-    this.Successmessage= '';
-    this.errormessage= '';
-
-    this.selectedCarForAvailability = null;
-  }
-
- submitAvailability() {
-  if (this.availabilityForm.availableDays <= 0) {
-    this.errormessage = "Available days must be positive!";
-    this.Successmessage = '';
+  // Validation: empty, null, undefined
+  if (this.securityAmount == null || this.securityAmount === undefined) {
+    this.errorMessage = "Please enter a valid amount.";
     return;
   }
 
-  // Convert EffectiveFrom to ISO string
-  const effectiveFromISO = new Date(this.availabilityForm.effectiveFrom).toISOString();
-  const effectiveToISO = new Date(this.availabilityForm.effectiveTo).toISOString();
+  // Validation: negative OR zero
+  if (this.securityAmount <= 0) {
+    this.errorMessage = "Amount must be greater than 0.";
+    return;
+  }
 
-  const data = {
-    vehicleId: this.availabilityForm.vehicleId,
-    availableDays: this.availabilityForm.availableDays,
-    effectiveFrom: effectiveFromISO,
-    effectiveTo: effectiveToISO
-  };
+  if (!this.selectedVehicleId) {
+    this.errorMessage = "Vehicle ID missing!";
+    return;
+  }
 
-  console.log("click data", data);
+  const vehicleId = this.selectedVehicleId;
 
-  this.service.addAvailabilityDays(data).subscribe({
+  this.service.addOrUpdateDeposit(vehicleId, this.securityAmount).subscribe({
     next: (res) => {
-      this.Successmessage = res; 
-      this.errormessage = '';
-      // this.closeAvailabilityModal();
+      this.successMessage = "Security deposit updated successfully!";
       this.getAllVehicles();
+
+      setTimeout(() => {
+        this.closeSecurityModal();
+      }, 1000);
     },
-    error: (err) => {
-      console.log("click data error", err);
-      this.errormessage = err.error || err.message || "Something went wrong";
-      this.Successmessage = '';
+    error: () => {
+      this.errorMessage = "Failed to update security deposit!";
     }
   });
-}
-
-// Function to update Effective To automatically
-updateEffectiveTo() {
-  if (!this.availabilityForm.effectiveFrom || !this.availabilityForm.availableDays) return;
-
-  const fromDate = new Date(this.availabilityForm.effectiveFrom);
-  const days = Number(this.availabilityForm.availableDays);
-
-  if (days > 0) {
-    const toDate = new Date(fromDate);
-    toDate.setDate(toDate.getDate() + days);
-    const isoStr = toDate.toISOString();
-    this.availabilityForm.effectiveTo = isoStr.substring(0, 16);
-  } else {
-    this.availabilityForm.effectiveTo = '';
-  }
 }
 
 
@@ -312,29 +197,88 @@ updateEffectiveTo() {
 
   confirmVehicleDelete() {
     if (this.vehicleToDeleteId !== null) {
-      this.service.deleteVehicleByOwner(this.vehicleToDeleteId).subscribe({
+      this.service.deleteVehicle(this.vehicleToDeleteId).subscribe({
         next: (res) => {
-          this.Successmessage = res.message || "Vehicle deleted successfully!";
-          this.getAllVehicles();
+          this.Successmessage = 'Vehicle deleted successfully!';
+          this.getAllVehicles(); 
           this.closeVehicleModal();
         },
-
         error: (err) => {
-          this.errormessage =
-            err.error?.message ||
-            err.error ||
-            err.message ||
-            "Something went wrong!";
+          this.errormessage = err?.error?.message || 'Failed to delete vehicle.';
+          this.closeVehicleModal();
         }
       });
     }
   }
 
-
   closeVehicleModal() {
     this.showVehicleDeleteModal = false;
     this.vehicleToDeleteId = null;
   }
+
+
+
+  openRejectModal(vehicleId: number) {
+  this.selectedVehicleForReject = vehicleId;
+  this.rejectReason = "";
+  this.isRejectModalOpen = true;
+}
+
+closeRejectModal() {
+  this.isRejectModalOpen = false;
+  this.rejectReason = "";
+  this.selectedVehicleForReject = 0;
+}
+
+// APPROVE VEHICLE
+
+approveVehicle(vehicleId: number) {
+
+  this.service.approveOwnerVehicle(vehicleId).subscribe({
+    next: (res) => {
+      console.log("API Success:", res);
+      this.successMessage = "Vehicle approved successfully!";
+      setTimeout(() => {
+        this.successMessage = "";
+      }, 5000);
+      this.getAllVehicles();
+    },
+    error: (err) => {
+      console.log("API Error:", err);
+      this.errorMessage = err.error?.message || "Something went wrong";
+      setTimeout(() => {
+        this.errorMessage = "";
+      }, 5000);
+    }
+  });
+}
+
+
+
+
+// REJECT VEHICLE
+rejectVehicle() {
+
+  console.log("Rejected Vehicle:", this.selectedVehicleForReject);
+  console.log("Reason:", this.rejectReason);
+
+  this.service.RejectOwnerVehicle(this.selectedVehicleForReject, this.rejectReason)
+    .subscribe({
+      next: (res) => {
+        console.log("API Success:", res);
+        this.successMessage = "Vehicle rejected successfully!";
+        this.closeRejectModal();
+       this.getAllVehicles();
+      },
+      error: (err) => {
+        console.log("API Error:", err);
+        this.errorMessage = err.error?.message || "Something went wrong";
+      }
+    });
+}
+
+
+
 
   //  Form Control Getters
   get vehicleType(): FormControl { return this.vehicleForm.get('vehicleType') as FormControl; }
@@ -367,8 +311,8 @@ updateEffectiveTo() {
       this.closeVehicleModal();
       this.closeDeleteModalImage();
       this.closesetpricemodal();
-      this.closeViewModal();
-      this.closeAvailabilityModal();
+      this.closeSecurityModal();
+      this.closeRejectModal();
     }
   }
 
@@ -562,6 +506,36 @@ updateEffectiveTo() {
     this.errormessage = '';
   }
 
+  // Submit pricing
+  submitPrice() {
+    if (this.priceForm.invalid) {
+      this.priceForm.markAllAsTouched();
+      return;
+    }
+
+    if (!this.selectedVehicleId) {
+      this.errormessage = 'Vehicle ID not found!';
+      return;
+    }
+
+    const data = {
+      vehicleId: this.selectedVehicleId,
+      pricePerKm: this.priceForm.value.pricePerKm,
+      pricePerHour: this.priceForm.value.pricePerHour,
+      pricePerDay: this.priceForm.value.pricePerDay
+    };
+
+    this.service.insertOrUpdatePricing(data).subscribe({
+      next: (res) => {
+        this.Successmessage = 'Price set successfully!';
+        this.errormessage = '';
+      },
+      error: (err) => {
+        this.errormessage = 'Error setting price!';
+        this.Successmessage = '';
+      }
+    });
+  }
 
   // get price data 
   loadPrices() {
@@ -583,23 +557,5 @@ updateEffectiveTo() {
   }
 
 
-  // Selected vehicle for view modal
-  selectedVehicleForView: any = null;
-  isViewModalOpen: boolean = false;
-
-  openViewModal(vehicle: any) {
-    this.selectedVehicleForView = vehicle;
-    this.isViewModalOpen = true;
-  }
-
-  closeViewModal() {
-    this.isViewModalOpen = false;
-    this.selectedVehicleForView = null;
-
-  }
-
-
-
-
-
 }
+

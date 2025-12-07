@@ -59,6 +59,7 @@
           <th class="px-4 py-3">Fuel Type</th>
           <th class="px-4 py-3">Year</th>
           <th class="px-4 py-3">Color</th>
+          <th class="px-4 py-3 text-center">Set Availability Days </th>
           <th class="px-4 py-3 text-center">Actions</th>
         </tr>
       </thead>
@@ -87,7 +88,22 @@
           <td class="px-4 py-3">{{ bike.fuelType }}</td>
           <td class="px-4 py-3">{{ bike.yearOfManufacture }}</td>
           <td class="px-4 py-3">{{ bike.color }}</td>
-        
+
+          <td class="px-4 py-3 text-center relative group">
+
+            <span>
+              {{ bike.availableDays || 'Not Set' }}
+            </span>
+            <button title="Add Availability" (click)="openAvailabilityModal(bike)" class="absolute top-1/2 left-20 -translate-y-1/2 
+           w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center 
+           opacity-0 group-hover:opacity-100 transition-all duration-200 cursor-pointer
+           hover:bg-blue-200">
+
+              <i class="fas fa-plus text-blue-600 text-sm"></i>
+            </button>
+          </td>
+
+
           <td class="px-4 md:px-2 py-3 text-center space-x-2">
             <button title="Edit" (click)="openModal(bike)">
               <i class="fas fa-edit text-green-500 text-lg cursor-pointer"></i>
@@ -95,9 +111,9 @@
             <button title="Delete" (click)="deleteVehicle(bike.vehicleId)">
               <i class="fas fa-trash text-red-600 text-lg cursor-pointer"></i>
             </button>
-                  <button title="View" (click)="openViewModal(bike)">
-    <i class="fas fa-eye text-blue-600 text-lg cursor-pointer"></i>
-  </button>
+            <button title="View" (click)="openViewModal(bike)">
+              <i class="fas fa-eye text-blue-600 text-lg cursor-pointer"></i>
+            </button>
           </td>
         </tr>
       </tbody>
@@ -118,7 +134,8 @@
           <th class="px-4 py-3">AC</th>
           <th class="px-4 py-3">Fuel</th>
           <th class="px-4 py-3">Year</th>
-         
+          <th class="px-4 py-3 text-center">Set Availability Days </th>
+
           <th class="px-4 py-3 text-center">Actions</th>
         </tr>
       </thead>
@@ -148,22 +165,95 @@
           <td class="px-4 py-3">{{ car.acAvailability || 'No' }}</td>
           <td class="px-4 py-3">{{ car.fuelType }}</td>
           <td class="px-4 py-3">{{ car.yearOfManufacture }}</td>
-         
+          <td class="px-4 py-3 text-center relative group">
+
+            <span>
+              {{ car.availableDays || 'Not Set' }}
+            </span>
+            <button title="Add Availability" (click)="openAvailabilityModal(car)" class="absolute top-1/2 left-20 -translate-y-1/2 
+           w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center 
+           opacity-0 group-hover:opacity-100 transition-all duration-200 cursor-pointer
+           hover:bg-blue-200">
+
+              <i class="fas fa-plus text-blue-600 text-sm"></i>
+            </button>
+
+          </td>
+
+
           <td class="px-4 md:px-2 py-3 text-center space-x-2">
             <button title="Edit" (click)="openModal(car)"><i
                 class="fas fa-edit text-green-500 text-lg cursor-pointer"></i></button>
             <button title="Delete" (click)="deleteVehicle(car.vehicleId)"><i
                 class="fas fa-trash text-red-600 text-lg cursor-pointer"></i></button>
 
-                 <button title="View" (click)="openViewModal(car)">
-    <i class="fas fa-eye text-blue-600 text-lg cursor-pointer"></i>
-  </button>
+            <button title="View" (click)="openViewModal(car)">
+              <i class="fas fa-eye text-blue-600 text-lg cursor-pointer"></i>
+            </button>
           </td>
         </tr>
       </tbody>
     </table>
   </div>
 </div>
+
+
+<!-- ================= ADD AVAILABILITY MODAL ================= -->
+
+<div *ngIf="isAvailabilityModalOpen" class="fixed inset-0 bg-black/30 flex items-center justify-center z-50">
+
+  <div class="bg-white w-full max-w-lg rounded-lg shadow-xl p-6 animate__animated animate__fadeInUp">
+
+    <h2 class="text-xl font-semibold mb-4 text-blue-700">
+      Set Availability for: {{ selectedCarForAvailability?.carName || selectedCarForAvailability?.bikeName }}
+    </h2>
+
+    <form (ngSubmit)="submitAvailability()">
+
+      <!-- Available Days -->
+      <div class="mb-3">
+        <label class="font-medium">Available Days</label>
+        <input type="number" min="1" [(ngModel)]="availabilityForm.availableDays" name="availableDays"
+          class="w-full p-2 border rounded" required (input)="updateEffectiveTo()" />
+      </div>
+
+      <div class="grid grid-cols-2 gap-3">
+        <!-- Effective From (date+time) -->
+        <div>
+          <label class="font-medium">Effective From</label>
+          <input type="datetime-local" [(ngModel)]="availabilityForm.effectiveFrom" name="effectiveFrom"
+            class="w-full p-2 border rounded" required (change)="updateEffectiveTo()" />
+        </div>
+
+        <!-- Effective To (auto calculated & disabled) -->
+        <div>
+          <label class="font-medium">Effective To</label>
+          <input type="datetime-local" [(ngModel)]="availabilityForm.effectiveTo" name="effectiveTo"
+            class="w-full p-2 border rounded bg-gray-100" [disabled]="true" />
+        </div>
+      </div>
+
+      <!-- Buttons -->
+      <div class="mt-5 flex justify-end gap-3">
+        <button type="button" (click)="closeAvailabilityModal()"
+          class="px-4 py-2 cursor-pointer bg-gray-300 hover:bg-gray-400 rounded">
+          Cancel
+        </button>
+
+        <button type="submit" class="px-4 py-2 cursor-pointer bg-blue-600 text-white hover:bg-blue-700 rounded">
+          Save
+        </button>
+      </div>
+
+      <div class="mt-3">
+        <span class="text-green-600 font-medium">{{ Successmessage }}</span>
+        <span class="text-red-600 font-medium">{{ errormessage }}</span>
+      </div>
+
+    </form>
+  </div>
+</div>
+
 
 
 
@@ -183,7 +273,7 @@
         Yes, Delete
       </button>
     </div>
-  
+
   </div>
 </div>
 
@@ -203,7 +293,7 @@
         class="px-4 py-2 cursor-pointer  rounded-lg bg-red-600 hover:bg-red-700 text-white transition">
         Yes, Delete
       </button>
-      
+
     </div>
     <p class="text-red-500 text-center">{{ errormessage }} </p>
   </div>
@@ -220,7 +310,7 @@
 
     <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">Update Vehicle Information</h2>
 
-   
+
     <form class="grid grid-cols-1 md:grid-cols-2 gap-6" [formGroup]="vehicleForm" (ngSubmit)="updateSelectedVehicle()">
       <!-- Vehicle Type -->
       <div class="md:col-span-2">
@@ -435,9 +525,9 @@
           Bike name is required.
         </span>
       </div>
-    
+
       <!-- Submit -->
-        <p class="text-red-500 text-center">{{ errormessage }}</p>
+      <p class="text-red-500 text-center">{{ errormessage }}</p>
       <div class="md:col-span-2">
         <button type="submit" [disabled]="vehicleForm.invalid" [ngClass]="{
     'bg-gray-300 cursor-not-allowed': vehicleForm.invalid,
@@ -468,7 +558,8 @@
     <div *ngIf="selectedVehicleForView">
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-gray-700">
 
-        <div><strong>Type:</strong> {{ selectedVehicleForView.vehicleType || (selectedVehicleForView.bikeName ? 'Bike' : 'Car') }}</div>
+        <div><strong>Type:</strong> {{ selectedVehicleForView.vehicleType || (selectedVehicleForView.bikeName ? 'Bike' :
+          'Car') }}</div>
         <div><strong>Bike Name:</strong> {{ selectedVehicleForView.bikeName || '-' }}</div>
         <div><strong>Car Name:</strong> {{ selectedVehicleForView.carName || '-' }}</div>
         <div><strong>Registration No:</strong> {{ selectedVehicleForView.registrationNo }}</div>
@@ -486,10 +577,15 @@
         <div><strong>Insurance Status:</strong> {{ selectedVehicleForView.insuranceStatus || '-' }}</div>
         <div><strong>RC Status:</strong> {{ selectedVehicleForView.rcStatus || '-' }}</div>
         <div><strong>Engine Capacity (cc):</strong> {{ selectedVehicleForView.engineCapacity || '-' }}</div>
-        <div><strong>status :</strong> {{ selectedVehicleForView.status || '-' }}</div>
+
+
+        <div><strong>Vehicle AvailableDays:</strong> {{ selectedVehicleForView.availableDays || '-' }}</div>
+        <div><strong>EffectiveFrom:</strong> {{ selectedVehicleForView.effectiveFrom || '-' }}</div>
+        <div><strong>EffectiveTo:</strong> {{ selectedVehicleForView.effectiveTo || '-' }}</div>
+        <div><strong>status :</strong> {{ selectedVehicleForView.Status || '-' }}</div>
 
       </div>
     </div>
-
+    
   </div>
 </div>
