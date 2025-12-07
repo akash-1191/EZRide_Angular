@@ -6,7 +6,7 @@ import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-set-rent',
-  imports: [CommonModule,ReactiveFormsModule,FormsModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule],
   templateUrl: './set-rent.component.html',
   styleUrl: './set-rent.component.css'
 })
@@ -34,23 +34,24 @@ export class SetRentComponent implements OnInit {
   selectedVehicleId: number | null = null;
   pricesList: any[] = [];
   pricesMap: { [vehicleId: number]: any } = {};
-ownerId:number=0;
-isSecurityModalOpen = false;
-selectedVehicleForSecurity: any = null;
-securityAmount: number | null = null;
+  ownerId: number = 0;
+  isSecurityModalOpen = false;
+  selectedVehicleForSecurity: any = null;
+  securityAmount: number | null = null;
 
-isRejectModalOpen = false;
-rejectReason = "";
-selectedVehicleForReject: number = 0;
+  isRejectModalOpen = false;
+  rejectReason = "";
+  selectedVehicleForReject: number = 0;
+  availabilityId: number = 0;
+  showVehiclePriceModal: boolean = false;
+  vehicleAmountPerDay: number = 0;
+  errorMessage: string = '';
+  successMessage: string = '';
 
-
-errorMessage = "";
-successMessage = "";
-
-  constructor(private service: MyServiceService,private route:ActivatedRoute) { }
+  constructor(private service: MyServiceService, private route: ActivatedRoute) { }
 
   ngOnInit(): void {
-     this.ownerId = Number(this.route.snapshot.paramMap.get('id'));
+    this.ownerId = Number(this.route.snapshot.paramMap.get('id'));
     this.loadPrices();
     this.getAllVehicles();
     this.fetchFirstImageForEachVehicle();
@@ -74,13 +75,14 @@ successMessage = "";
     this.service.getAllOwnerVehicles(this.ownerId).subscribe({
       next: (res) => {
         this.allVehicles = res;
-        console.log("Fetched Vehicles:", this.allVehicles );
+        // console.log("Fetched Vehicles:", this.allVehicles);
         this.bikeVehicles = this.allVehicles.filter(v => v.vehicletype === 'Bike');
         this.carVehicles = this.allVehicles.filter(v => v.vehicletype === 'Car');
         this.fetchFirstImageForEachVehicle();
         this.loadPrices();
       },
       error: (err) => {
+        // console.log("Error while fetching vehicles:", err);
       }
     });
   }
@@ -136,55 +138,55 @@ successMessage = "";
   });
 
 
-openSecurityModal(vehicle: any) {
-  this.selectedVehicleForSecurity = vehicle;
-  this.selectedVehicleId=vehicle.vehicleId;
-  this.securityAmount = vehicle.securityAmount || null;
-  this.isSecurityModalOpen = true;
-}
-
-closeSecurityModal() {
-  this.isSecurityModalOpen = false;
-  this.securityAmount = null;
-  this.errorMessage = "";
-  this.successMessage = "";
-}
-
-submitSecurity() {
-
-  // Validation: empty, null, undefined
-  if (this.securityAmount == null || this.securityAmount === undefined) {
-    this.errorMessage = "Please enter a valid amount.";
-    return;
+  openSecurityModal(vehicle: any) {
+    this.selectedVehicleForSecurity = vehicle;
+    this.selectedVehicleId = vehicle.vehicleId;
+    this.securityAmount = vehicle.securityAmount || null;
+    this.isSecurityModalOpen = true;
   }
 
-  // Validation: negative OR zero
-  if (this.securityAmount <= 0) {
-    this.errorMessage = "Amount must be greater than 0.";
-    return;
+  closeSecurityModal() {
+    this.isSecurityModalOpen = false;
+    this.securityAmount = null;
+    this.errorMessage = "";
+    this.successMessage = "";
   }
 
-  if (!this.selectedVehicleId) {
-    this.errorMessage = "Vehicle ID missing!";
-    return;
-  }
+  submitSecurity() {
 
-  const vehicleId = this.selectedVehicleId;
-
-  this.service.addOrUpdateDeposit(vehicleId, this.securityAmount).subscribe({
-    next: (res) => {
-      this.successMessage = "Security deposit updated successfully!";
-      this.getAllVehicles();
-
-      setTimeout(() => {
-        this.closeSecurityModal();
-      }, 1000);
-    },
-    error: () => {
-      this.errorMessage = "Failed to update security deposit!";
+    // Validation: empty, null, undefined
+    if (this.securityAmount == null || this.securityAmount === undefined) {
+      this.errorMessage = "Please enter a valid amount.";
+      return;
     }
-  });
-}
+
+    // Validation: negative OR zero
+    if (this.securityAmount <= 0) {
+      this.errorMessage = "Amount must be greater than 0.";
+      return;
+    }
+
+    if (!this.selectedVehicleId) {
+      this.errorMessage = "Vehicle ID missing!";
+      return;
+    }
+
+    const vehicleId = this.selectedVehicleId;
+
+    this.service.addOrUpdateDeposit(vehicleId, this.securityAmount).subscribe({
+      next: (res) => {
+        this.successMessage = "Security deposit updated successfully!";
+        this.getAllVehicles();
+
+        setTimeout(() => {
+          this.closeSecurityModal();
+        }, 1000);
+      },
+      error: () => {
+        this.errorMessage = "Failed to update security deposit!";
+      }
+    });
+  }
 
 
 
@@ -200,7 +202,7 @@ submitSecurity() {
       this.service.deleteVehicle(this.vehicleToDeleteId).subscribe({
         next: (res) => {
           this.Successmessage = 'Vehicle deleted successfully!';
-          this.getAllVehicles(); 
+          this.getAllVehicles();
           this.closeVehicleModal();
         },
         error: (err) => {
@@ -219,65 +221,116 @@ submitSecurity() {
 
 
   openRejectModal(vehicleId: number) {
-  this.selectedVehicleForReject = vehicleId;
-  this.rejectReason = "";
-  this.isRejectModalOpen = true;
-}
+    this.selectedVehicleForReject = vehicleId;
+    this.rejectReason = "";
+    this.isRejectModalOpen = true;
+  }
 
-closeRejectModal() {
-  this.isRejectModalOpen = false;
-  this.rejectReason = "";
-  this.selectedVehicleForReject = 0;
-}
+  closeRejectModal() {
+    this.isRejectModalOpen = false;
+    this.rejectReason = "";
+    this.selectedVehicleForReject = 0;
+  }
 
-// APPROVE VEHICLE
+  // APPROVE VEHICLE
 
-approveVehicle(vehicleId: number) {
+  approveVehicle(vehicleId: number) {
 
-  this.service.approveOwnerVehicle(vehicleId).subscribe({
-    next: (res) => {
-      console.log("API Success:", res);
-      this.successMessage = "Vehicle approved successfully!";
-      setTimeout(() => {
-        this.successMessage = "";
-      }, 5000);
-      this.getAllVehicles();
-    },
-    error: (err) => {
-      console.log("API Error:", err);
-      this.errorMessage = err.error?.message || "Something went wrong";
-      setTimeout(() => {
-        this.errorMessage = "";
-      }, 5000);
-    }
-  });
-}
-
-
-
-
-// REJECT VEHICLE
-rejectVehicle() {
-
-  console.log("Rejected Vehicle:", this.selectedVehicleForReject);
-  console.log("Reason:", this.rejectReason);
-
-  this.service.RejectOwnerVehicle(this.selectedVehicleForReject, this.rejectReason)
-    .subscribe({
+    this.service.approveOwnerVehicle(vehicleId).subscribe({
       next: (res) => {
-        console.log("API Success:", res);
-        this.successMessage = "Vehicle rejected successfully!";
-        this.closeRejectModal();
-       this.getAllVehicles();
+        // console.log("API Success:", res);
+        this.successMessage = "Vehicle approved successfully!";
+        setTimeout(() => {
+          this.successMessage = "";
+        }, 5000);
+        this.getAllVehicles();
       },
       error: (err) => {
-        console.log("API Error:", err);
+        // console.log("API Error:", err);
         this.errorMessage = err.error?.message || "Something went wrong";
+        setTimeout(() => {
+          this.errorMessage = "";
+        }, 5000);
       }
     });
+  }
+
+
+
+
+  // REJECT VEHICLE
+  rejectVehicle() {
+    this.service.RejectOwnerVehicle(this.selectedVehicleForReject, this.rejectReason)
+      .subscribe({
+        next: (res) => {
+          // console.log("API Success:", res);
+          this.successMessage = "Vehicle rejected successfully!";
+          this.closeRejectModal();
+          this.getAllVehicles();
+        },
+        error: (err) => {
+          // console.log("API Error:", err);
+          this.errorMessage = err.error?.message || "Something went wrong";
+        }
+      });
+  }
+
+  //set vehicle amount to pay the vehicle owner
+  openVehicleAmountToOwnerModal(availabilityId: number) {
+    this.availabilityId = availabilityId;
+    this.vehicleAmountPerDay = 0;
+    this.errorMessage = '';
+    this.successMessage = '';
+    this.showVehiclePriceModal = true;
+  }
+
+  // Save modal value
+saveVehicleAmountToOwner() {
+  // Validation: null, undefined, 0, negative
+  if (this.vehicleAmountPerDay === null || this.vehicleAmountPerDay === undefined) {
+    this.errorMessage = "Amount is required!";
+    this.successMessage = '';
+    return;
+  }
+
+  if (this.vehicleAmountPerDay <= 0) {
+    this.errorMessage = "Amount must be a positive number!";
+    this.successMessage = '';
+    return;
+  }
+
+  if (this.availabilityId) {
+    this.service.updateAvailabilityPrice(this.availabilityId, this.vehicleAmountPerDay)
+      .subscribe({
+        next: (res) => {
+          this.successMessage = "Amount saved successfully: " + res;
+          this.errorMessage = '';
+          this.closeVehiclePriceModal();
+          this.getAllVehicles();
+
+          setTimeout(() => {
+            this.successMessage = '';
+          }, 2000);
+        },
+        error: (err) => {
+          this.errorMessage = "Failed to save amount!";
+          this.successMessage = '';
+          setTimeout(() => {
+            this.errorMessage = '';
+          }, 5000);
+        }
+      });
+  }
 }
 
 
+
+
+  closeVehiclePriceModal() {
+    this.showVehiclePriceModal = false;
+    this.availabilityId = 0;
+    this.vehicleAmountPerDay = 0;
+  }
 
 
   //  Form Control Getters
@@ -313,6 +366,7 @@ rejectVehicle() {
       this.closesetpricemodal();
       this.closeSecurityModal();
       this.closeRejectModal();
+      this.closeVehiclePriceModal();
     }
   }
 

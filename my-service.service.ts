@@ -5,7 +5,7 @@ import { observableToBeFn } from 'rxjs/internal/testing/TestScheduler';
 // import { DateAvailabilityDTO } from './date-availability.model';
 export interface AvailabilitySlot {
   startDateTime: string;
-  endDateTime: string;   
+  endDateTime: string;
   isAvailable: boolean;
 }
 @Injectable({
@@ -64,7 +64,7 @@ export class MyServiceService {
 
   // Add Vehicle
   addVehicle(vehicleData: any): Observable<any> {
-    const token = sessionStorage.getItem('token');  
+    const token = sessionStorage.getItem('token');
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json'
@@ -538,9 +538,9 @@ export class MyServiceService {
     return this.http.get<any>(userdataurl, { headers });
   }
 
-/// all charges
+  /// all charges
 
-   getAlldamagecharges(): Observable<any> {
+  getAlldamagecharges(): Observable<any> {
     const token = sessionStorage.getItem('token');
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`,
@@ -667,18 +667,18 @@ export class MyServiceService {
   //   return this.http.post('http://localhost:7188/api/create-security-deposit-order', amount);
   // }
   createSecurityDepositOrder(amount: number): Observable<any> {
-  return this.http.post('http://localhost:7188/api/create-security-deposit-order', { amount });
-}
+    return this.http.post('http://localhost:7188/api/create-security-deposit-order', { amount });
+  }
 
 
-//after payment change the status of th esecurity deposit table 
+  //after payment change the status of th esecurity deposit table 
 
- refundSecurityDeposit(bookingId: number): Observable<any> {
+  refundSecurityDeposit(bookingId: number): Observable<any> {
     const url = `http://localhost:7188/api/refund-security-deposit-changestatus/${bookingId}`;
     return this.http.put(url, null); // null because we don’t send a body
   }
 
-    getallfeedbackmessage(): Observable<any> {
+  getallfeedbackmessage(): Observable<any> {
     const token = sessionStorage.getItem('token');
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`
@@ -687,9 +687,9 @@ export class MyServiceService {
     return this.http.get<any>(userdataurl, { headers });
   }
 
-  
 
-    // Get All Vehicles (for vehicle owner)
+
+  // Get All Vehicles (for vehicle owner)
   getAllVehiclesbyowner(): Observable<any> {
     const token = sessionStorage.getItem('token');
     const headers = new HttpHeaders({
@@ -712,7 +712,7 @@ export class MyServiceService {
   }
 
 
-   //Delete data vehicle by owner
+  //Delete data vehicle by owner
   deleteVehicleByOwner(vehicleId: number): Observable<any> {
     const token = sessionStorage.getItem('token');
     const headers = new HttpHeaders({
@@ -827,8 +827,8 @@ export class MyServiceService {
 
 
   //add or update the security amount 
-   addOrUpdateDeposit(vehicleId: number, amount: number): Observable<any> {
-   const token = sessionStorage.getItem('token');
+  addOrUpdateDeposit(vehicleId: number, amount: number): Observable<any> {
+    const token = sessionStorage.getItem('token');
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json'
@@ -841,51 +841,65 @@ export class MyServiceService {
 
 
   // Add Vehicle Availability (Owner)
-addAvailabilityDays(data: any): Observable<any> {
-  const token = sessionStorage.getItem('token');
+  addAvailabilityDays(data: any): Observable<any> {
+    const token = sessionStorage.getItem('token');
 
-  const headers = new HttpHeaders({
-    'Authorization': `Bearer ${token}`,
-    'Content-Type': 'application/json'
-  });
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
 
-  const url = 'http://localhost:7188/api/Vehicle_Owner_/addAvalibilityDays';
+    const url = 'http://localhost:7188/api/Vehicle_Owner_/addAvalibilityDays';
 
-  return this.http.post<any>(url, data, { headers, responseType: 'text' as 'json' });
-}
+    return this.http.post<any>(url, data, { headers, responseType: 'text' as 'json' });
+  }
 
 
-//admin give the aproval of owners vehicles
- approveOwnerVehicle(vehicleId: number): Observable<any> {
+  //admin give the aproval of owners vehicles
+  approveOwnerVehicle(vehicleId: number): Observable<any> {
     const token = sessionStorage.getItem('token');
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`
     });
 
     const url = `http://localhost:7188/api/AdminOwners/approve`;
-    const body={
-      vehicleId:vehicleId
+    const body = {
+      vehicleId: vehicleId
     }
     return this.http.put<any>(url, body, { headers });
   }
 
   //admin give the aproval of owners vehicles
- //admin reject owner vehicle
-RejectOwnerVehicle(vehicleId: number, reason: string): Observable<any> {
+  //admin reject owner vehicle
+  RejectOwnerVehicle(vehicleId: number, reason: string): Observable<any> {
+    const token = sessionStorage.getItem('token');
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+    const body = {
+      vehicleId: vehicleId,
+      rejectReason: reason
+    };
+
+    return this.http.put<any>(`http://localhost:7188/api/AdminOwners/rejectVehicle`, body, { headers });
+  }
+
+
+  //set to price vehicle to pay the vehicle owner
+ updateAvailabilityPrice(availabilityId: number, vehicleAmountPerDay: number): Observable<string> {
   const token = sessionStorage.getItem('token');
   const headers = new HttpHeaders({
     'Authorization': `Bearer ${token}`
   });
-  const body = {
-    vehicleId: vehicleId,
-    rejectReason: reason
-  };
 
-  return this.http.put<any>(`http://localhost:7188/api/AdminOwners/rejectVehicle`,body,{ headers });
+  const body = { availabilityId, vehicleAmountPerDay };
+  const url = `http://localhost:7188/api/AdminOwners/updatePrice`;
+
+  // Important: responseType: 'text' taaki JSON parse na ho
+  return this.http.put(url, body, { headers, responseType: 'text' });
 }
 
 
-  
 
 }
 
