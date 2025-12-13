@@ -49,6 +49,8 @@ export class BookingPageComponent implements OnInit {
   minTime: string = '';
 
   availabilitySlotsByDate: Record<string, { startTime: string, endTime: string }[]> = {};
+  vehicleAvailability: any;
+maxDate: Date | null = null;
 
 
   changeImage(image: string): void {
@@ -64,6 +66,26 @@ export class BookingPageComponent implements OnInit {
     this.initCheckboxes();
   }
 
+
+  loadVehicleAvailability() {
+  this.service.getAllVehiclesFTheOwnerVehicle(this.vehicleId).subscribe({
+    next: (res) => {
+      this.vehicleAvailability = res;
+
+      // OWNER vehicle → limit dates
+      if (res.ownershipType === 'OWNER' && res.status === 'Active') {
+        this.minDate = new Date(res.availableFrom);
+        this.maxDate = new Date(res.availableTo);
+      }
+
+      // EXPIRED → booking disable
+      if (res.status === 'Expired') {
+        this.bookingForm.disable();
+      }
+    },
+    error: (err) => console.error('Availability error', err)
+  });
+}
 
   loadUnavailableSlots(): Promise<void> {
     return new Promise((resolve, reject) => {
@@ -98,7 +120,7 @@ export class BookingPageComponent implements OnInit {
               current.setDate(current.getDate() + 1);
             }
           });
-          // console.log('🚫 Booked slots loaded:', this.bookedSlots); // 👈 Add this
+          // console.log(' Booked slots loaded:', this.bookedSlots); //  Add this
           resolve();
         },
         error: (err) => {
@@ -118,11 +140,22 @@ export class BookingPageComponent implements OnInit {
 
   isDateAvailable = (date: Date | null): boolean => {
     if (!date) return false;
-
     const dateOnly = date.toISOString().split('T')[0];
-    return !this.bookedDates.has(dateOnly);
+   // already booked
+  if (this.bookedDates.has(dateOnly)) return false;
 
-  };
+  //  before owner availability
+  if (this.vehicleAvailability?.availableFrom) {
+    if (date < new Date(this.vehicleAvailability.availableFrom)) return false;
+  }
+
+  //  after owner availability
+  if (this.vehicleAvailability?.availableTo) {
+    if (date > new Date(this.vehicleAvailability.availableTo)) return false;
+  }
+
+  return true;
+};
   checkAvailabilityStatus() {
   const pickupDate = this.bookingForm.get('pickupDate')?.value;
   const pickupTime = this.bookingForm.get('pickupTime')?.value;
@@ -192,6 +225,7 @@ export class BookingPageComponent implements OnInit {
     }, {
       validators: this.minimumBookingDurationValidator()
     });
+ this.loadVehicleAvailability();
     await this.loadUnavailableSlots();
 
 

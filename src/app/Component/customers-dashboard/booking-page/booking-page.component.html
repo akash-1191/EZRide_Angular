@@ -1,5 +1,12 @@
 <body class="bg-white text-[#1f1f1f]">
     <div class="max-w-6xl mx-auto p-4">
+        <div *ngIf="vehicleAvailability?.ownershipType === 'OWNER'"
+         class="mb-3 flex text-center items-center text-sm font-semibold text-blue-700">
+      Available from
+      {{ vehicleAvailability.availableFrom | date:'dd MMM yyyy' }}
+      to
+      {{ vehicleAvailability.availableTo | date:'dd MMM yyyy' }}
+    </div>
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
             <!-- Left: Image & Thumbnails -->
@@ -218,8 +225,12 @@
 
                             <mat-form-field appearance="fill" class="w-full sm:w-1/2 ">
                                 <mat-label>Pickup Date</mat-label>
-                                <input matInput [matDatepicker]="pickupDatePicker" formControlName="pickupDate"
-                                    [min]="minDate" [matDatepickerFilter]="isDateAvailable" />
+                                <input matInput
+                                [matDatepicker]="pickupDatePicker" 
+                                formControlName="pickupDate"
+                                [min]="minDate"
+                                [max]="maxDate"
+                                [matDatepickerFilter]="isDateAvailable" />
                                 <mat-datepicker-toggle matSuffix [for]="pickupDatePicker"></mat-datepicker-toggle>
                                 <mat-datepicker #pickupDatePicker></mat-datepicker>
                             </mat-form-field>
@@ -251,8 +262,12 @@
                             <!-- Dropoff Date -->
                             <mat-form-field appearance="fill" class="w-full sm:w-1/2">
                                 <mat-label>Dropoff Date</mat-label>
-                                <input matInput [matDatepicker]="dropoffDatePicker" formControlName="dropoffDate"
-                                    [min]="minDate" [disabled]="bookingForm.get('driveBasis')?.value !== 'perKm'" />
+                                <input matInput
+                                [matDatepicker]="dropoffDatePicker"
+                                formControlName="dropoffDate"
+                                [min]="minDate" 
+                                [max]="maxDate"
+                                [disabled]="bookingForm.get('driveBasis')?.value !== 'perKm'" />
                                 <mat-datepicker-toggle matSuffix [for]="dropoffDatePicker"></mat-datepicker-toggle>
                                 <mat-datepicker #dropoffDatePicker></mat-datepicker>
                             </mat-form-field>
