@@ -12,6 +12,7 @@ import { CommonModule } from '@angular/common';
 })
 export class MyVehicleComponent implements OnInit {
 
+  
   allVehicles: any[] = [];
   bikeVehicles: any[] = [];
   carVehicles: any[] = [];
@@ -78,7 +79,7 @@ export class MyVehicleComponent implements OnInit {
         this.carVehicles = this.allVehicles.filter(v => v.vehicletype === 'Car');
         this.fetchFirstImageForEachVehicle();
         this.loadPrices();
-        console.log("res[onsefjasgsjk", res);
+        
       },
       error: (err) => {
 
@@ -267,7 +268,7 @@ export class MyVehicleComponent implements OnInit {
     effectiveTo: effectiveToISO
   };
 
-  console.log("click data", data);
+
 
   this.service.addAvailabilityDays(data).subscribe({
     next: (res) => {
@@ -277,7 +278,7 @@ export class MyVehicleComponent implements OnInit {
       this.getAllVehicles();
     },
     error: (err) => {
-      console.log("click data error", err);
+      
       this.errormessage = err.error || err.message || "Something went wrong";
       this.Successmessage = '';
     }

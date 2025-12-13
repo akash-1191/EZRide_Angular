@@ -30,7 +30,9 @@
                 <ul class="flex flex-col py-4 space-y-1">
 
                     <!-- Dashboard Home -->
-                    <a routerLink="/OwnerVehicle-dashboard" class="cursor-pointer">
+                    <a routerLink="/OwnerVehicle-dashboard"
+                         class="cursor-pointer">
+
                         <span class="relative flex flex-row items-center h-11 hover:bg-gray-600 hover:text-indigo-300 
         border-l-4 border-transparent hover:border-indigo-500 pr-6 px-4">
                             <i class="fa-solid fa-gauge w-5 text-sm"></i>
@@ -38,9 +40,11 @@
                         </span>
                     </a>
 
-                    
+
                     <!-- Add New Vehicle -->
-                    <a routerLink="/OwnerVehicle-dashboard/own_Addvehicle" class="cursor-pointer">
+                    <a routerLink="/OwnerVehicle-dashboard/own_Addvehicle"
+                        routerLinkActive="bg-gray-700 text-indigo-300 border-indigo-500"
+                    class="cursor-pointer">
                         <span class="relative flex flex-row items-center h-11 hover:bg-gray-600 hover:text-indigo-300 
                         border-l-4 border-transparent hover:border-indigo-500 pr-6 px-4">
                             <i class="fa-solid fa-circle-plus w-5 text-sm"></i>
@@ -49,24 +53,20 @@
                     </a>
 
                     <!-- My Vehicles -->
-                    <a routerLink="/OwnerVehicle-dashboard/Myvehicle" class="cursor-pointer">
+                    <a routerLink="/OwnerVehicle-dashboard/Myvehicle" 
+                        routerLinkActive="bg-gray-700 text-indigo-300 border-indigo-500"
+                    class="cursor-pointer">
                         <span class="relative flex flex-row items-center h-11 hover:bg-gray-600 hover:text-indigo-300 
         border-l-4 border-transparent hover:border-indigo-500 pr-6 px-4">
                             <i class="fa-solid fa-car-side w-5 text-sm"></i>
                             <button class="ml-3 text-sm tracking-wide truncate">My Vehicles</button>
                         </span>
                     </a>
-                    <!-- Booking Requests -->
-                    <a routerLink="/OwnerVehicle-dashboard/booking-requests" class="cursor-pointer">
-                        <span class="relative flex flex-row items-center h-11 hover:bg-gray-600 hover:text-indigo-300 
-        border-l-4 border-transparent hover:border-indigo-500 pr-6 px-4">
-                            <i class="fa-solid fa-calendar-check w-5 text-sm"></i>
-                            <button class="ml-3 text-sm tracking-wide truncate">Booking Requests</button>
-                        </span>
-                    </a>
 
                     <!-- Payments -->
-                    <a routerLink="/OwnerVehicle-dashboard/payments" class="cursor-pointer">
+                    <a routerLink="/OwnerVehicle-dashboard/OwnerPaymentDetails"
+                    routerLinkActive="bg-gray-700 text-indigo-300 border-indigo-500"
+                    class="cursor-pointer">
                         <span class="relative flex flex-row items-center h-11 hover:bg-gray-600 hover:text-indigo-300 
         border-l-4 border-transparent hover:border-indigo-500 pr-6 px-4">
                             <i class="fa-solid fa-wallet w-5 text-sm"></i>
@@ -74,25 +74,29 @@
                         </span>
                     </a>
 
-                     <a routerLink="/OwnerVehicle-dashboard/owner-chat" class="cursor-pointer">
+                    <a routerLink="/OwnerVehicle-dashboard/owner-chat"
+                    routerLinkActive="bg-gray-700 text-indigo-300 border-indigo-500"
+                    class="cursor-pointer">
                         <span class="relative flex flex-row items-center h-11 hover:bg-gray-600 hover:text-indigo-300 
         border-l-4 border-transparent hover:border-indigo-500 pr-6 px-4">
-                            <i class="fa-solid fa-star w-5 text-sm"></i>
+                            <i class="fa-solid fa-headset w-5 text-sm"></i>
                             <button class="ml-3 text-sm tracking-wide truncate">Chat</button>
                         </span>
                     </a>
 
                     <!-- Feedback & Ratings -->
-                    <a routerLink="/OwnerVehicle-dashboard/feedback" class="cursor-pointer">
+                    <!-- <a routerLink="/OwnerVehicle-dashboard/feedback" class="cursor-pointer">
                         <span class="relative flex flex-row items-center h-11 hover:bg-gray-600 hover:text-indigo-300 
         border-l-4 border-transparent hover:border-indigo-500 pr-6 px-4">
                             <i class="fa-solid fa-star w-5 text-sm"></i>
                             <button class="ml-3 text-sm tracking-wide truncate">Feedback & Ratings</button>
                         </span>
-                    </a>
+                    </a> -->
 
                     <!-- Profile & Verification -->
-                    <a routerLink="/OwnerVehicle-dashboard/own_Profile" class="cursor-pointer">
+                    <a routerLink="/OwnerVehicle-dashboard/own_Profile"
+                    routerLinkActive="bg-gray-700 text-indigo-300 border-indigo-500"
+                    class="cursor-pointer">
                         <span class="relative flex flex-row items-center h-11 hover:bg-gray-600 hover:text-indigo-300 
         border-l-4 border-transparent hover:border-indigo-500 pr-6 px-4">
                             <i class="fa-solid fa-user-check w-5 text-sm"></i>
@@ -101,13 +105,15 @@
                     </a>
 
                     <!-- Support -->
-                    <a routerLink="/OwnerVehicle-dashboard/support-chat" class="cursor-pointer">
+                    <!-- <a routerLink="/OwnerVehicle-dashboard/support-chat"
+                    routerLinkActive="bg-gray-700 text-indigo-300 border-indigo-500"
+                    class="cursor-pointer">
                         <span class="relative flex flex-row items-center h-11 hover:bg-gray-600 hover:text-indigo-300 
         border-l-4 border-transparent hover:border-indigo-500 pr-6 px-4">
                             <i class="fa-solid fa-headset w-5 text-sm"></i>
                             <button class="ml-3 text-sm tracking-wide truncate">Support</button>
                         </span>
-                    </a>
+                    </a> -->
                 </ul>
 
 

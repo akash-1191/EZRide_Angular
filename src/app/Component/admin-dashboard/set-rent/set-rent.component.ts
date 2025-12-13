@@ -12,6 +12,10 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class SetRentComponent implements OnInit {
 
+
+  isViewModalOpen = false;
+  selectedVehicleDetails: any = null;
+
   allVehicles: any[] = [];
   bikeVehicles: any[] = [];
   carVehicles: any[] = [];
@@ -75,14 +79,14 @@ export class SetRentComponent implements OnInit {
     this.service.getAllOwnerVehicles(this.ownerId).subscribe({
       next: (res) => {
         this.allVehicles = res;
-        // console.log("Fetched Vehicles:", this.allVehicles);
+        console.log("Fetched Vehicles:", this.allVehicles);
         this.bikeVehicles = this.allVehicles.filter(v => v.vehicletype === 'Bike');
         this.carVehicles = this.allVehicles.filter(v => v.vehicletype === 'Car');
         this.fetchFirstImageForEachVehicle();
         this.loadPrices();
       },
       error: (err) => {
-        // console.log("Error while fetching vehicles:", err);
+        console.log("Error while fetching vehicles:", err);
       }
     });
   }
@@ -189,6 +193,17 @@ export class SetRentComponent implements OnInit {
   }
 
 
+  openViewModal(vehicle: any) {
+    this.selectedVehicleDetails = vehicle;
+    this.isViewModalOpen = true;
+  }
+
+  // Close modal method
+  closeViewModal() {
+    this.isViewModalOpen = false;
+    this.selectedVehicleDetails = null;
+  }
+
 
 
   // delete data of the vehicle
@@ -277,6 +292,7 @@ export class SetRentComponent implements OnInit {
 
   //set vehicle amount to pay the vehicle owner
   openVehicleAmountToOwnerModal(availabilityId: number) {
+    console.log("openVehicleAmountToOwnerModal called with availabilityId:", availabilityId);
     this.availabilityId = availabilityId;
     this.vehicleAmountPerDay = 0;
     this.errorMessage = '';
@@ -285,45 +301,68 @@ export class SetRentComponent implements OnInit {
   }
 
   // Save modal value
-saveVehicleAmountToOwner() {
-  // Validation: null, undefined, 0, negative
-  if (this.vehicleAmountPerDay === null || this.vehicleAmountPerDay === undefined) {
-    this.errorMessage = "Amount is required!";
-    this.successMessage = '';
-    return;
-  }
+  saveVehicleAmountToOwner() {
+      //  Availability ID is required
+    if (!this.availabilityId || this.availabilityId <= 0) {
+      this.errorMessage = "Availability is not set for this vehicle.";
+      this.successMessage = '';
+      return;
+    }
+    //  Amount is required
+    if (this.vehicleAmountPerDay === null || this.vehicleAmountPerDay === undefined) {
+      this.errorMessage = "Amount is required!";
+      this.successMessage = '';
+      return;
+    }
 
-  if (this.vehicleAmountPerDay <= 0) {
-    this.errorMessage = "Amount must be a positive number!";
-    this.successMessage = '';
-    return;
-  }
+    // Amount must be positive
+    if (this.vehicleAmountPerDay <= 0) {
+      this.errorMessage = "Amount must be a positive number!";
+      this.successMessage = '';
+      return;
+    }
 
-  if (this.availabilityId) {
+    console.log("click1 - Calling API with:", {
+      availabilityId: this.availabilityId,
+      amount: this.vehicleAmountPerDay
+    });
+
     this.service.updateAvailabilityPrice(this.availabilityId, this.vehicleAmountPerDay)
       .subscribe({
-        next: (res) => {
-          this.successMessage = "Amount saved successfully: " + res;
+        next: (res:any) => {
+           this.successMessage = res.message || res || 'Amount saved successfully!';
           this.errorMessage = '';
+          // console.log("Vehicle amount updated successfully:", res);
+
           this.closeVehiclePriceModal();
-          this.getAllVehicles();
+          this.getAllVehicles(); // Refresh data
 
           setTimeout(() => {
             this.successMessage = '';
           }, 2000);
         },
-        error: (err) => {
-          this.errorMessage = "Failed to save amount!";
-          this.successMessage = '';
+        error: (err:any) => {
+           if (err.error && err.error.message) {
+          this.errorMessage = err.error.message;
+        } else if (err.error && typeof err.error === 'string') {
+          this.errorMessage = err.error;
+        } else if (err.message) {
+          this.errorMessage = err.message;
+        } else if (err.status === 400 && err.error) {
+          // For BadRequest with string message
+          this.errorMessage = err.error;
+        } else {
+          this.errorMessage = 'Failed to save amount. Please try again.';
+        }
+        
+        this.successMessage = '';
+        
           setTimeout(() => {
             this.errorMessage = '';
           }, 5000);
         }
       });
   }
-}
-
-
 
 
   closeVehiclePriceModal() {
@@ -367,6 +406,7 @@ saveVehicleAmountToOwner() {
       this.closeSecurityModal();
       this.closeRejectModal();
       this.closeVehiclePriceModal();
+      this.closeViewModal();
     }
   }
 

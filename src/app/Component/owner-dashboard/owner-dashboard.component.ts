@@ -1,10 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
-import { Router, RouterLink, RouterOutlet } from '@angular/router';
+import { Router, RouterLink, RouterModule, RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-owner-dashboard',
-  imports: [RouterOutlet,RouterLink], 
+  imports: [RouterOutlet,RouterLink,CommonModule,RouterModule ], 
   templateUrl: './owner-dashboard.component.html',
   styleUrl: './owner-dashboard.component.css'
 })

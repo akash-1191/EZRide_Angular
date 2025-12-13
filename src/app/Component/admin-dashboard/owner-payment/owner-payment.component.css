@@ -1,0 +1,41 @@
+
+.transition {
+  transition: all 0.3s ease;
+}
+
+.custom-spinner {
+  border: 3px solid rgba(0, 0, 0, 0.1);
+  border-radius: 50%;
+  border-top: 3px solid #10B981;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.status-badge {
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  display: inline-block;
+}
+
+.status-active {
+  background-color: #D1FAE5;
+  color: #065F46;
+}
+
+.status-expired {
+  background-color: #FEE2E2;
+  color: #991B1B;
+}
+
+.status-pending {
+  background-color: #FEF3C7;
+  color: #92400E;
+}

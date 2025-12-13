@@ -880,26 +880,100 @@ export class MyServiceService {
       vehicleId: vehicleId,
       rejectReason: reason
     };
-
     return this.http.put<any>(`http://localhost:7188/api/AdminOwners/rejectVehicle`, body, { headers });
   }
 
 
   //set to price vehicle to pay the vehicle owner
- updateAvailabilityPrice(availabilityId: number, vehicleAmountPerDay: number): Observable<string> {
-  const token = sessionStorage.getItem('token');
-  const headers = new HttpHeaders({
-    'Authorization': `Bearer ${token}`
-  });
-
-  const body = { availabilityId, vehicleAmountPerDay };
-  const url = `http://localhost:7188/api/AdminOwners/updatePrice`;
-
-  // Important: responseType: 'text' taaki JSON parse na ho
-  return this.http.put(url, body, { headers, responseType: 'text' });
-}
+  updateAvailabilityPrice(availabilityId: number, vehicleAmountPerDay: number): Observable<string> {
+    const token = sessionStorage.getItem('token');
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+    const body = { availabilityId, vehicleAmountPerDay };
+    const url = `http://localhost:7188/api/AdminOwners/updatePrice`;
+    return this.http.put(url, body, { headers, responseType: 'text' });
+  }
 
 
+  getAllOwnerPaymentDetails(): Observable<any> {
+    const token = sessionStorage.getItem('token');
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
+    const url = 'http://localhost:7188/api/AdminOwners/get-owner-payment-data';
+    return this.http.get<any>(url, { headers });
+  }
+
+
+
+  //admin payment to the vehicle owner
+  createOwnerPaymentOrder(amount: number): Observable<any> {
+    const token = sessionStorage.getItem('token');
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
+    const url = 'http://localhost:7188/api/OwnerPayment/CreateOrder';
+    const body = {
+      amount: amount
+    };
+    return this.http.post<any>(url, body, { headers });
+  }
+
+  verifyOwnerPayment(data: any): Observable<any> {
+    const token = sessionStorage.getItem('token');
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
+    const url = 'http://localhost:7188/api/OwnerPayment/VerifyPayment';
+    return this.http.post<any>(url, data, { headers });
+  }
+
+  getOwnerPayments(ownerId: number): Observable<any> {
+    const token = sessionStorage.getItem('token');
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
+    const url = `http://localhost:7188/api/OwnerPayment/GetOwnerPayments/${ownerId}`;
+    return this.http.get<any>(url, { headers });
+  }
+
+  getOwnerPaymentsDetails(ownerId: number): Observable<any> {
+    const token = sessionStorage.getItem('token');
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
+    const url = `http://localhost:7188/api/OwnerPayment/GetOwnerPayments/${ownerId}`;
+    return this.http.get<any>(url, { headers });
+  }
+
+
+  VehicleReRent(vehicleId: number): Observable<any> {
+    const token = sessionStorage.getItem('token');
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
+    const url = `http://localhost:7188/api/VehicleReRent/Re-Rent/${vehicleId}`;
+    return this.http.post<any>(url, {}, { headers });
+  }
+
+
+
+  getSummaryOfTheOwnerDashboard(): Observable<any> {
+    const token = sessionStorage.getItem('token');
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
+    const url = 'http://localhost:7188/api/OwnerDashboard/summary';
+    return this.http.get<any>(url, { headers });
+  }
 
 }
 

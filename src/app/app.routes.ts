@@ -42,6 +42,8 @@ import { AprovedOwnerComponent } from './Component/admin-dashboard/aproved-owner
 import { SetRentComponent } from './Component/admin-dashboard/set-rent/set-rent.component';
 import { ChatOwnerComponent } from './Component/owner-dashboard/chat-owner/chat-owner.component';
 import { ChatAdminComponent } from './Component/admin-dashboard/chat-admin/chat-admin.component';
+import { OwnerPaymentComponent } from './Component/admin-dashboard/owner-payment/owner-payment.component';
+import { PaymentdetailsComponent } from './Component/owner-dashboard/paymentdetails/paymentdetails.component';
 
 
 
@@ -113,7 +115,9 @@ export const routes: Routes = [
       { path: "own_Profile", component: OwnProfileComponent },
       {path:"own_Addvehicle",component:OwnAddvehicleComponent},
       {path:"Myvehicle",component:MyVehicleComponent},
-      {path:"owner-chat",component:ChatOwnerComponent}
+      {path:"owner-chat",component:ChatOwnerComponent},
+      {path:"OwnerPaymentDetails",component:PaymentdetailsComponent}
+
     ]
   },
   {
@@ -143,7 +147,10 @@ export const routes: Routes = [
       {path:"verify-owners",component:VerifyownerComponent},
       {path:'approve-owner',component:AprovedOwnerComponent},
       {path:"set-rents/:id",component:SetRentComponent},
-      {path:"Admin-Chat",component:ChatAdminComponent}
+      {path:"Admin-Chat",component:ChatAdminComponent},
+      {path:"pay-owners",component:OwnerPaymentComponent}
+
+
     ]
   },
 ];

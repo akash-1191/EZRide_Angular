@@ -110,6 +110,7 @@
                     <td class="px-4 py-3">{{ bike.fuelType }}</td>
                     <td class="px-4 py-3">{{ bike.yearOfManufacture }}</td>
                     <td class="px-4 py-3">{{ bike.color }}</td>
+
                     <td class="px-1 py-3 group relative">
                         <!-- Price text agar already set hai toh show karo -->
                         <span class="text-sm text-gray-700">
@@ -140,13 +141,19 @@
                         </i>
 
                     </td>
-                    <td class="px-4 md:px-2 py-3 text-center space-x-2  hover:bg-gray-500/10">
-                            {{ bike.vehicleAmountPerDay || 'N/A' }}
-                        <button title="SetVehiclepriceTopayOwner" >
-                            <i class="fas fa-plus opacity-0 hover:opacity-100 text-blue-600 text-xl cursor-pointer"
-                                (click)="openVehicleAmountToOwnerModal(bike.availabilityId)" title="Set Vehicle Amount to Owner">
-                            </i>
-                        </button>
+                    <td class="px-4 md:px-2 py-3 text-center space-x-2 group hover:bg-gray-500/10">
+                        <div class="flex items-center justify-center gap-2">
+                            <span>{{ bike.vehicleAmountPerDay || 'N/A' }}</span>
+
+                            <!-- Icon - Hidden by default, show on parent hover -->
+                            <button class="opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                                title="SetVehiclepriceTopayOwner">
+                                <i class="fas fa-plus text-blue-600 text-xl cursor-pointer ml-2"
+                                    (click)="openVehicleAmountToOwnerModal(bike.availabilityId)"
+                                    title="Set Vehicle Amount to Owner">
+                                </i>
+                            </button>
+                        </div>
                     </td>
 
                     <td class="px-4 md:px-2 py-3 text-center space-x-3">
@@ -176,6 +183,11 @@
 
                             <i class="fas fa-times-circle"></i>
                         </button>
+                        <!-- view button -->
+                        <button title="View Details" (click)="openViewModal(bike)"
+                            class="cursor-pointer text-blue-600 text-lg">
+                            <i class="fas fa-eye"></i>
+                        </button>
 
                     </td>
 
@@ -202,7 +214,7 @@
                     <th class="px-4 py-3">Registration No</th>
                     <th class="px-4 py-3">Mileage</th>
                     <th class="px-4 py-3">Seating</th>
-                    <th class="px-4 py-3">AC</th>
+
                     <th class="px-4 py-3">Fuel</th>
                     <th class="px-4 py-3">Year</th>
                     <th class="px-4 py-3">Price</th>
@@ -234,7 +246,6 @@
                     <td class="px-4 py-3">{{ car.registrationNo }}</td>
                     <td class="px-4 py-3">{{ car.mileage}} km/l</td>
                     <td class="px-4 py-3">{{ car.seatingCapacity }}</td>
-                    <td class="px-4 py-3">{{ car.acAvailability || 'No' }}</td>
                     <td class="px-4 py-3">{{ car.fuelType }}</td>
                     <td class="px-4 py-3">{{ car.yearOfManufacture }}</td>
                     <td class="px-1 py-3 group relative">
@@ -267,13 +278,19 @@
                         </i>
 
                     </td>
-                     <td class="px-4 md:px-2 py-3 text-center space-x-2">
-                            {{ car.vehicleAmountPerDay || 'N/A' }}
-                        <button title="SetVehiclepriceTopayOwner" >
-                            <i class="fas fa-plus opacity-0 hover:opacity-100 text-blue-600 text-xl cursor-pointer"
-                                (click)="openVehicleAmountToOwnerModal(car.availabilityId)" title="Set Vehicle Amount to Owner">
-                            </i>
-                        </button>
+                    <td class="px-4 md:px-2 py-3 text-center space-x-2 group hover:bg-gray-500/10">
+                        <div class="flex items-center justify-center gap-2">
+                            <span>{{ car.vehicleAmountPerDay || 'N/A' }}</span>
+
+                            <!-- Icon - Hidden by default, show on parent hover -->
+                            <button class="opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                                title="SetVehiclepriceTopayOwner">
+                                <i class="fas fa-plus text-blue-600 text-xl cursor-pointer ml-2"
+                                    (click)="openVehicleAmountToOwnerModal(car.availabilityId)"
+                                    title="Set Vehicle Amount to Owner">
+                                </i>
+                            </button>
+                        </div>
                     </td>
                     <td class="px-4 md:px-2 py-3 text-center space-x-3">
 
@@ -301,6 +318,11 @@
         }" class="text-red-500 text-lg">
 
                             <i class="fas fa-times-circle"></i>
+                        </button>
+                        <!-- view button -->
+                        <button title="View Details" (click)="openViewModal(car)"
+                            class="cursor-pointer text-blue-600 text-lg">
+                            <i class="fas fa-eye"></i>
                         </button>
 
                     </td>
@@ -435,33 +457,33 @@
 <!-- //set vehicle amount by the vehicle owner  -->
 
 <div *ngIf="showVehiclePriceModal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4">
-  <div class="bg-white rounded-lg w-full max-w-md p-6 relative shadow-lg">
-    
-    <!-- Close Button -->
-    <button (click)="closeVehiclePriceModal()" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700">
-      <i class="fas fa-times text-xl"></i>
-    </button>
+    <div class="bg-white rounded-lg w-full max-w-md p-6 relative shadow-lg">
 
-    <h2 class="text-lg font-semibold mb-4">Set Vehicle Amount/Day</h2>
+        <!-- Close Button -->
+        <button (click)="closeVehiclePriceModal()" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700">
+            <i class="fas fa-times text-xl"></i>
+        </button>
 
-    <div>
-      <label class="block mb-2 font-medium">Vehicle Amount per Day (₹)</label>
-      <input type="number" min="0" placeholder="Enter price"
-             class="w-full border rounded p-2 mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
-             [(ngModel)]="vehicleAmountPerDay">
+        <h2 class="text-lg font-semibold mb-4">Set Vehicle Amount/Day</h2>
 
-      <div class="flex justify-end gap-3">
-        <button (click)="closeVehiclePriceModal()"
-                class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Cancel</button>
-        <button (click)="saveVehicleAmountToOwner()"
-                class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Save</button>
-      </div>
-      <div> 
-        <span class="text-red-500">{{errorMessage}}</span>
-        <span class="text-green-500">{{successMessage}}</span>
-      </div>
+        <div>
+            <label class="block mb-2 font-medium">Vehicle Amount per Day (₹)</label>
+            <input type="number" min="0" placeholder="Enter price"
+                class="w-full border rounded p-2 mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                [(ngModel)]="vehicleAmountPerDay">
+
+            <div class="flex justify-end gap-3">
+                <button (click)="closeVehiclePriceModal()"
+                    class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Cancel</button>
+                <button (click)="saveVehicleAmountToOwner()"
+                    class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Save</button>
+            </div>
+            <div>
+                <span class="text-red-500">{{errorMessage}}</span>
+                <span class="text-green-500">{{successMessage}}</span>
+            </div>
+        </div>
     </div>
-  </div>
 </div>
 
 
@@ -501,5 +523,263 @@
                 <span class="text-green-500">{{successMessage}}</span>
             </div>
         </form>
+    </div>
+</div>
+
+<!-- View Vehicle Details Modal -->
+<div *ngIf="isViewModalOpen && selectedVehicleDetails"
+    class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-xl shadow-lg w-full max-w-4xl max-h-[90vh] overflow-y-auto relative animate-fadeIn">
+
+        <!-- Close Button -->
+        <button (click)="closeViewModal()" class="absolute top-4 right-4 text-gray-500 hover:text-gray-700 z-10">
+            <i class="fas fa-times text-xl"></i>
+        </button>
+
+        <!-- Modal Content -->
+        <div class="p-6">
+            <!-- Header -->
+            <h3 class="text-2xl font-bold text-gray-800 mb-6 border-b pb-3">
+                <i class="fas fa-car mr-2 text-blue-600"></i>
+                Vehicle Details
+            </h3>
+
+            <!-- Vehicle Info in Two Columns -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <!-- Left Column -->
+                <div class="space-y-4">
+                    <div class="flex items-center">
+                        <i class="fas fa-id-card text-gray-500 w-6"></i>
+                        <span class="font-medium ml-2">Vehicle ID:</span>
+                        <span class="ml-auto font-semibold">{{selectedVehicleDetails.vehicleId}}</span>
+                    </div>
+
+                    <div class="flex items-center">
+                        <i class="fas fa-car text-gray-500 w-6"></i>
+                        <span class="font-medium ml-2">Type:</span>
+                        <span class="ml-auto">
+                            <span [ngClass]="{
+                'bg-green-100 text-green-800 px-2 py-1 rounded': selectedVehicleDetails.vehicletype === 'Car',
+                'bg-red-100 text-red-800 px-2 py-1 rounded': selectedVehicleDetails.vehicletype === 'Bike'
+              }">
+                                {{selectedVehicleDetails.vehicletype}}
+                            </span>
+                        </span>
+                    </div>
+
+                    <div class="flex items-center">
+                        <i class="fas fa-barcode text-gray-500 w-6"></i>
+                        <span class="font-medium ml-2">Registration:</span>
+                        <span class="ml-auto font-mono">{{selectedVehicleDetails.registrationNo}}</span>
+                    </div>
+
+                    <div class="flex items-center">
+                        <i class="fas fa-gas-pump text-gray-500 w-6"></i>
+                        <span class="font-medium ml-2">Fuel Type:</span>
+                        <span class="ml-auto">{{selectedVehicleDetails.fuelType}}</span>
+                    </div>
+
+                    <div class="flex items-center">
+                        <i class="fas fa-tachometer-alt text-gray-500 w-6"></i>
+                        <span class="font-medium ml-2">Mileage:</span>
+                        <span class="ml-auto">{{selectedVehicleDetails.mileage}} km/l</span>
+                    </div>
+
+                    <div class="flex items-center">
+                        <i class="fas fa-palette text-gray-500 w-6"></i>
+                        <span class="font-medium ml-2">Color:</span>
+                        <span class="ml-auto">{{selectedVehicleDetails.color}}</span>
+                    </div>
+
+                    <div *ngIf="selectedVehicleDetails.vehicletype === 'Car'" class="flex items-center">
+                        <i class="fas fa-user-friends text-gray-500 w-6"></i>
+                        <span class="font-medium ml-2">Seating:</span>
+                        <span class="ml-auto">{{selectedVehicleDetails.seatingCapacity}} persons</span>
+                    </div>
+                </div>
+
+                <!-- Right Column -->
+                <div class="space-y-4">
+                    <div class="flex items-center">
+                        <i class="fas fa-calendar-alt text-gray-500 w-6"></i>
+                        <span class="font-medium ml-2">Year:</span>
+                        <span class="ml-auto">{{selectedVehicleDetails.yearOfManufacture}}</span>
+                    </div>
+
+                    <div class="flex items-center">
+                        <i class="fas fa-shield-alt text-gray-500 w-6"></i>
+                        <span class="font-medium ml-2">Insurance:</span>
+                        <span class="ml-auto">
+                            <span [ngClass]="{
+                'bg-green-100 text-green-800 px-2 py-1 rounded': selectedVehicleDetails.insuranceStatus === 'Active',
+                'bg-red-100 text-red-800 px-2 py-1 rounded': selectedVehicleDetails.insuranceStatus !== 'Active'
+              }">
+                                {{selectedVehicleDetails.insuranceStatus}}
+                            </span>
+                        </span>
+                    </div>
+
+                    <div class="flex items-center">
+                        <i class="fas fa-file-alt text-gray-500 w-6"></i>
+                        <span class="font-medium ml-2">RC Status:</span>
+                        <span class="ml-auto">
+                            <span [ngClass]="{
+                'bg-green-100 text-green-800 px-2 py-1 rounded': selectedVehicleDetails.rcStatus === 'Active',
+                'bg-red-100 text-red-800 px-2 py-1 rounded': selectedVehicleDetails.rcStatus !== 'Active'
+              }">
+                                {{selectedVehicleDetails.rcStatus}}
+                            </span>
+                        </span>
+                    </div>
+
+                    <div class="flex items-center">
+                        <i class="fas fa-check-circle text-gray-500 w-6"></i>
+                        <span class="font-medium ml-2">Approval:</span>
+                        <span class="ml-auto">
+                            <span [ngClass]="{
+                'bg-green-100 text-green-800 px-2 py-1 rounded': selectedVehicleDetails.isApproved,
+                'bg-yellow-100 text-yellow-800 px-2 py-1 rounded': !selectedVehicleDetails.isApproved
+              }">
+                                {{selectedVehicleDetails.isApproved ? 'Approved' : 'Pending'}}
+                            </span>
+                        </span>
+                    </div>
+
+                    <div class="flex items-center">
+                        <i class="fas fa-money-bill-wave text-gray-500 w-6"></i>
+                        <span class="font-medium ml-2">Security Deposit:</span>
+                        <span class="ml-auto font-bold">₹{{selectedVehicleDetails.securityDepositAmount || '0'}}</span>
+                    </div>
+
+                    <div class="flex items-center">
+                        <i class="fas fa-gas-pump text-gray-500 w-6"></i>
+                        <span class="font-medium ml-2">Tank Capacity:</span>
+                        <span class="ml-auto">{{selectedVehicleDetails.fuelTankCapacity}} L</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Vehicle Name Section -->
+            <div class="mb-6 p-4 bg-gray-50 rounded-lg">
+                <h4 class="font-semibold text-lg mb-2">
+                    <i class="fas fa-tag mr-2"></i>
+                    {{selectedVehicleDetails.vehicletype}} Details
+                </h4>
+                <div class="font-medium">
+                    {{selectedVehicleDetails.vehicletype === 'Car' ?
+                    selectedVehicleDetails.carName :
+                    selectedVehicleDetails.bikeName}}
+                </div>
+            </div>
+
+            <!-- Availability Section -->
+            <div class="mb-6">
+                <h4 class="font-semibold text-lg mb-4 border-b pb-2">
+                    <i class="fas fa-calendar-check mr-2 text-green-600"></i>
+                    Availability History
+                </h4>
+
+                <!-- Current Active Availability -->
+                <div *ngIf="selectedVehicleDetails.availabilityId" class="mb-4">
+                    <h5 class="font-medium text-green-700 mb-2">Current Active Availability:</h5>
+                    <div class="bg-green-50 p-4 rounded-lg">
+                        <div class="grid grid-cols-3 gap-4">
+                            <div>
+                                <span class="text-sm text-gray-600">Amount/Day:</span>
+                                <p class="font-bold">₹{{selectedVehicleDetails.vehicleAmountPerDay || '0'}}</p>
+                            </div>
+                            <!-- <div>
+                <span class="text-sm text-gray-600">Availability ID:</span>
+                <p class="font-bold">{{selectedVehicleDetails.availabilityId}}</p>
+              </div> -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- All Availabilities (if available) -->
+                <div
+                    *ngIf="selectedVehicleDetails.allAvailabilities && selectedVehicleDetails.allAvailabilities.length > 0">
+                    <h5 class="font-medium text-gray-700 mb-2">All Availabilities:</h5>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full bg-white border rounded-lg">
+                            <thead class="bg-gray-100">
+                                <tr>
+
+                                    <th class="px-4 py-2 text-left">Days</th>
+                                    <th class="px-4 py-2 text-left">From</th>
+                                    <th class="px-4 py-2 text-left">To</th>
+                                    <th class="px-4 py-2 text-left">Amount/Day</th>
+                                    <th class="px-4 py-2 text-left">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let avail of selectedVehicleDetails.allAvailabilities" [ngClass]="{
+                      'bg-green-50': avail.status === 'Active',
+                      'bg-gray-50': avail.status === 'Expired'
+                    }" class="border-t">
+
+                                    <td class="px-4 py-2">{{avail.availableDays}}</td>
+                                    <td class="px-4 py-2">{{avail.effectiveFrom | date:'dd/MM/yyyy'}}</td>
+                                    <td class="px-4 py-2">{{avail.effectiveTo | date:'dd/MM/yyyy'}}</td>
+                                    <td class="px-4 py-2 font-medium">₹{{avail.vehicleAmountPerDay}}</td>
+                                    <td class="px-4 py-2">
+                                        <span [ngClass]="{
+                      'bg-green-100 text-green-800 px-2 py-1 rounded text-xs': avail.status === 'Active',
+                      'bg-gray-200 text-gray-800 px-2 py-1 rounded text-xs': avail.status === 'Expired'
+                    }">
+                                            {{avail.status}}
+                                        </span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- No Availabilities Message -->
+                <div *ngIf="!selectedVehicleDetails.allAvailabilities || selectedVehicleDetails.allAvailabilities.length === 0"
+                    class="text-center py-8 text-gray-500">
+                    <i class="fas fa-calendar-times text-3xl mb-3"></i>
+                    <p>No availability records found</p>
+                </div>
+            </div>
+
+            <!-- Status & Rejection Reason -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                <!-- Status -->
+                <div class="p-4 bg-blue-50 rounded-lg">
+                    <h5 class="font-semibold text-blue-800 mb-2">
+                        <i class="fas fa-info-circle mr-2"></i>
+                        Current Status
+                    </h5>
+                    <div class="flex items-center">
+                        <span [ngClass]="{
+              'bg-green-100 text-green-800 px-3 py-1 rounded': selectedVehicleDetails.availability === 'Available',
+              'bg-red-100 text-red-800 px-3 py-1 rounded': selectedVehicleDetails.availability === 'Booked',
+              'bg-yellow-100 text-yellow-800 px-3 py-1 rounded': selectedVehicleDetails.availability === 'Disabled'
+            }" class="font-medium">
+                            {{selectedVehicleDetails.availability}}
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Rejection Reason (if any) -->
+                <div *ngIf="selectedVehicleDetails.rejectReason" class="p-4 bg-red-50 rounded-lg">
+                    <h5 class="font-semibold text-red-800 mb-2">
+                        <i class="fas fa-exclamation-triangle mr-2"></i>
+                        Rejection Reason
+                    </h5>
+                    <p class="text-red-700">{{selectedVehicleDetails.rejectReason}}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="bg-gray-50 px-6 py-4 border-t flex justify-end">
+            <button (click)="closeViewModal()"
+                class="px-4 py-2 bg-gray-800 text-white rounded hover:bg-gray-900 transition">
+                Close
+            </button>
+        </div>
     </div>
 </div>

@@ -90,7 +90,6 @@
           <td class="px-4 py-3">{{ bike.color }}</td>
 
           <td class="px-4 py-3 text-center relative group">
-
             <span>
               {{ bike.availableDays || 'Not Set' }}
             </span>
@@ -583,6 +582,8 @@
         <div><strong>EffectiveFrom:</strong> {{ selectedVehicleForView.effectiveFrom || '-' }}</div>
         <div><strong>EffectiveTo:</strong> {{ selectedVehicleForView.effectiveTo || '-' }}</div>
         <div><strong>status :</strong> {{ selectedVehicleForView.Status || '-' }}</div>
+        <div class="text-red-500"><strong>RejectResion :</strong> {{ selectedVehicleForView.rejectresion || '-' }}</div>
+        
 
       </div>
     </div>
