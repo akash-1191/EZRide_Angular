@@ -188,6 +188,11 @@ export class MyServiceService {
     return this.http.get<any[]>(url);
   }
 
+  //get aal data of the 3 table vehhicle price and vehicleimage
+getAllVehiclesFTheOwnerVehicle(vehicleId: number): Observable<any> {
+  const url = `http://localhost:7188/api/VehicleAvailability/availabilityOwnerVehicle/${vehicleId}`;
+  return this.http.get<any>(url);
+}
 
 
   // Get Vehicle Details by ID

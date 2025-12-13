@@ -20,7 +20,7 @@ export class VehicleAvalibleComponent implements OnInit {
   bikeVehicles: any[] = [];
   showdatabike: any[] = [];
   showdatacar: any[] = [];
-
+   vehicleAvailabilityMap: { [key: number]: any } = {};
 
   constructor(private myService: MyServiceService, private cdr: ChangeDetectorRef) { }
 
@@ -43,11 +43,11 @@ export class VehicleAvalibleComponent implements OnInit {
       (v.pricePerKm && v.pricePerKm > 0);
 
     if (type.toLowerCase() === 'all') {
-       this.filteredVehicles = this.allVehicles.filter(v => hasPrice(v)); // all vehicles
+      this.filteredVehicles = this.allVehicles.filter(v => hasPrice(v)); // all vehicles
 
     } else if (type.toLowerCase() === 'car') {
       this.carVehicles = this.allVehicles.filter(
-        v => v.type?.toLowerCase() === 'car'&& hasPrice(v)
+        v => v.type?.toLowerCase() === 'car' && hasPrice(v)
 
       );
       this.showdatacar = [...this.carVehicles]; // show cars only
@@ -64,9 +64,15 @@ export class VehicleAvalibleComponent implements OnInit {
   loadAllVehicles(): void {
     this.myService.getAllVehiclesdetails().subscribe({
       next: (res) => {
-       
+
         this.allVehicles = res;
+        // console.log("getAllVehiclesdetails",res)
         this.filterVehicles(this.selectedTab);
+        
+        for (let v of this.allVehicles) {
+        this.loadVehicleAvailability(v.vehicleId);
+      }
+
         this.cdr.detectChanges();
       },
       error: (err) => {
@@ -74,4 +80,21 @@ export class VehicleAvalibleComponent implements OnInit {
       }
     });
   }
+
+ 
+
+loadVehicleAvailability(vehicleId: number): void {
+  if (this.vehicleAvailabilityMap[vehicleId]) return;
+
+  this.myService.getAllVehiclesFTheOwnerVehicle(vehicleId).subscribe({
+    next: (res) => {
+      // console.log('Availability for', vehicleId, res);
+      this.vehicleAvailabilityMap[vehicleId] = res;
+    },
+    error: (err) => {
+      console.error('Availability error', vehicleId, err);
+    }
+  });
+  }
+
 }
