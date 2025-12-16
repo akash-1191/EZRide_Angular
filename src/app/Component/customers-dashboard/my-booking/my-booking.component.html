@@ -97,16 +97,13 @@
     </div>
 </div>
 
-
-<div *ngIf="showModal" class="fixed inset-0 z-40 bg-black/30  flex items-center justify-center">
+<div *ngIf="showModal" class="fixed inset-0 z-40 bg-black/30 flex items-center justify-center">
     <!-- Modal Container -->
     <div
         class="relative bg-white rounded-lg shadow-xl w-full max-w-4xl h-[90vh] overflow-y-auto transform transition-all duration-300 scale-100">
         <!-- Modal Header -->
         <div class="flex items-center justify-between px-6 py-4 border-b border-gray-700 ">
-            <h2 class="text-xl font-semibold text-gray-800 ">
-                Booking Details
-            </h2>
+            <h2 class="text-xl font-semibold text-gray-800 ">Booking Details</h2>
             <button (click)="closeModal()" class="cursor-pointer text-gray-500 hover:text-red-500">
                 <i class="fas fa-times text-xl"></i>
             </button>
@@ -116,78 +113,104 @@
         <div class="p-6 text-gray-700">
             <div class="bg-white shadow-md rounded-lg overflow-hidden max-w-3xl mx-auto">
                 <!-- Vehicle Image -->
-
                 <div
                     class="overflow-hidden rounded-t-lg group w-full h-64 shadow-md hover:shadow-xl transition-shadow duration-300">
-
                     <img class="w-full h-full object-cover transform transition-transform duration-500 group-hover:scale-110"
                         [src]="'http://localhost:7188/' + selectedBooking.vehicleImage" alt="Vehicle Image">
                 </div>
+
                 <!-- Booking Details -->
                 <div class="p-6 space-y-4">
-
                     <h2 class="text-2xl font-semibold text-gray-800">Booking Details</h2>
-
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <p class="text-gray-600"><span class="font-semibold">Vehicle Name: </span> {{
+                            <p class="text-gray-600"><span class="font-semibold">Vehicle Name: </span>{{
                                 selectedBooking?.vehicleName }}</p>
-                            <p class="text-gray-600"><span class="font-semibold">Vehicle Type: </span>
-                                {{selectedBooking?.vehicleType}}</p>
-                            <p class="text-gray-600"><span class="font-semibold">Fuel Type: </span>
-                                {{selectedBooking?.fuelType}}</p>
-                            <p class="text-gray-600"><span class="font-semibold">Registration No: </span>
-                                {{selectedBooking.registrationNo}}</p>
+                            <p class="text-gray-600"><span class="font-semibold">Vehicle Type: </span>{{
+                                selectedBooking?.vehicleType }}</p>
+                            <p class="text-gray-600"><span class="font-semibold">Fuel Type: </span>{{
+                                selectedBooking?.fuelType }}</p>
+                            <p class="text-gray-600"><span class="font-semibold">Registration No: </span>{{
+                                selectedBooking?.registrationNo }}</p>
                         </div>
                         <div>
-                            <!-- <p class="text-gray-600"><span class="font-semibold">Booking ID:</span> {{selectedBo}}</p> -->
-                            <p class="text-gray-600"><span class="font-semibold">Booking Status: </span> <span
-                                    class="text-green-500 font-bold">{{selectedBooking?.bookingStatus}}</span></p>
-                            <p class="text-gray-600"><span class="font-semibold">Booking Valid: </span>
-                                {{selectedBooking.bookingType}}</p>
-                            <p class="text-gray-600"><span class="font-semibold">Transaction ID: </span>
-                                {{selectedBooking.transactionId}}</p>
+                            <p class="text-gray-600"><span class="font-semibold">Booking Status: </span>
+                                <span class="text-green-500 font-bold">{{ selectedBooking?.bookingStatus }}</span>
+                            </p>
+                            <p class="text-gray-600"><span class="font-semibold">Booking Valid: </span>{{
+                                selectedBooking?.bookingType }}</p>
+                            <p class="text-gray-600"><span class="font-semibold">Transaction ID: </span>{{
+                                selectedBooking?.transactionId }}</p>
                         </div>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <p class="text-gray-600"><span class="font-semibold">Satrt journey: </span>
-                                {{selectedBooking.bookingDateTime |date: 'dd/MM/yyyy, h:mm a'}},
-                            </p>
-                            <p class="text-gray-600"><span class="font-semibold">Drop-Off Date: </span>
-                                {{selectedBooking.dropOffDateTime |date: 'dd/MM/yyyy, h:mm a'}},
-                            </p>
-                            <p class="text-gray-600"><span class="font-semibold">Booking
-                                    Time: </span>{{selectedBooking.createdAt |date: 'dd/MM/yyyy, h:mm a'}}</p>
+                            <p class="text-gray-600"><span class="font-semibold">Start journey: </span>{{
+                                selectedBooking?.bookingDateTime | date: 'dd/MM/yyyy, h:mm a' }}</p>
+                            <p class="text-gray-600"><span class="font-semibold">Drop-Off Date: </span>{{
+                                selectedBooking?.dropOffDateTime | date: 'dd/MM/yyyy, h:mm a' }}</p>
+                            <p class="text-gray-600"><span class="font-semibold">Booking Time: </span>{{
+                                selectedBooking?.createdAt | date: 'dd/MM/yyyy, h:mm a' }}</p>
                         </div>
                         <div>
-                            <p class="text-gray-600"><span class="font-semibold">Payment Mode: </span>
-                                {{selectedBooking.paymentMode}}</p>
-                            <p class="text-gray-600"><span class="font-semibold">Payment Status: </span> <span
-                                    class="text-green-600 font-bold">{{selectedBooking.paymentStatus|| "Not_Pay"}}
-                                </span></p>
-                            <p class="text-gray-600"><span class="font-semibold">Total Amount:</span>
-                                {{selectedBooking.totalAmount}}</p>
-
+                            <p class="text-gray-600"><span class="font-semibold">Payment Mode: </span>{{
+                                selectedBooking?.paymentMode }}</p>
+                            <p class="text-gray-600"><span class="font-semibold">Payment Status: </span>
+                                <span class="text-green-600 font-bold">{{ selectedBooking?.paymentStatus || 'Not_Paid'
+                                    }}</span>
+                            </p>
+                            <p class="text-gray-600"><span class="font-semibold">Total Amount:</span> {{
+                                selectedBooking?.totalAmount }}</p>
                         </div>
                     </div>
+
+                    <!-- Driver Details -->
+                    <!-- Modal ke driver section ko aise update karo -->
+                    <div *ngIf="selectedBooking?.driverFirstName && 
+            selectedBooking.driverFirstName !== 'N/A' && 
+            selectedBooking.driverFirstName !== 'null'; 
+            else noDriver">
+                        <div class="mt-4 p-4 bg-gray-50 rounded-lg">
+                            <h3 class="font-semibold text-lg mb-2">Driver Details</h3>
+                            <div class="flex items-center">
+                                <img *ngIf="selectedBooking?.driverProfileImage && 
+                  selectedBooking.driverProfileImage !== 'default-image.jpg' && 
+                  selectedBooking.driverProfileImage !== 'N/A'"
+                                    [src]="'http://localhost:7188/' + selectedBooking.driverProfileImage"
+                                    class="w-16 h-16 rounded-full mr-4" alt="Driver">
+                                <div>
+                                    <p class="text-gray-800">
+                                        <span class="font-semibold">Name: </span>
+                                        {{ selectedBooking.driverFirstName }} {{ selectedBooking.driverLastName || '' }}
+                                    </p>
+                                    <p *ngIf="selectedBooking?.driverExperience && 
+                  selectedBooking.driverExperience !== 'N/A'" class="text-gray-600">
+                                        <span class="font-semibold">Experience: </span>
+                                        {{ selectedBooking.driverExperience }} years
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <ng-template #noDriver>
+                    </ng-template>
                 </div>
             </div>
         </div>
-        <!-- Booking Actions Section -->
 
+        <!-- Booking Actions Section -->
         <div class="flex items-center justify-center bg-gray-100 space-x-20 mt-4">
-            <!-- Downloa  d Receipt Button -->
+            <!-- Download Receipt Button -->
             <button
-                class="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 hover:from-pink-600 hover:to-red-600 text-white font-semibold text-sm px-6 py-3 rounded-md cursor-pointer shadow-lg transition duration-300 ease-in-out transform hover:scale-105"
+                class="bg-linear-to-r from-indigo-500 via-purple-500 to-pink-500 hover:from-pink-600 hover:to-red-600 text-white font-semibold text-sm px-6 py-3 rounded-md cursor-pointer shadow-lg transition duration-300 ease-in-out transform hover:scale-105"
                 (click)="handleDownload(selectedBooking)">
                 📄 Download Receipt
             </button>
 
             <!-- Send Receipt to Email Button -->
             <button
-                class="bg-gradient-to-r from-green-400 via-blue-500 to-purple-600 hover:from-purple-600 hover:to-red-500 text-white font-semibold text-sm px-6 py-3 rounded-md cursor-pointer shadow-lg transition duration-300 ease-in-out transform hover:scale-105"
+                class="bg-linear-to-r from-green-400 via-blue-500 to-purple-600 hover:from-purple-600 hover:to-red-500 text-white font-semibold text-sm px-6 py-3 rounded-md cursor-pointer shadow-lg transition duration-300 ease-in-out transform hover:scale-105"
                 (click)="handleSendEmail(selectedBooking)">
                 📧 Send Receipt to Email
             </button>
@@ -200,8 +223,6 @@
                 <span class="font-semibold text-indigo-600">Payment tab</span>.
             </p>
         </div>
-
-
 
         <!-- Email Selection Modal -->
         <div *ngIf="showEmailPopup" class="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
@@ -223,14 +244,11 @@
 
                 <div class="flex justify-end space-x-2">
                     <button (click)="showEmailPopup = false"
-                        class=" cursor-pointer px-4 py-2 text-gray-700 border rounded">Cancel</button>
-                    <!-- <button (click)="sendEmailReceipt()" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Send</button> -->
+                        class="cursor-pointer px-4 py-2 text-gray-700 border rounded">Cancel</button>
 
                     <div class="flex justify-end space-x-2 items-center">
-
                         <button (click)="sendEmailReceipt()" [disabled]="isSendingEmail"
-                            class="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 hover:from-pink-600 hover:to-red-600 text-white font-semibold text-sm px-6 py-3 rounded-md cursor-pointer shadow-lg transition duration-300 ease-in-out transform hover:scale-105">
-
+                            class="bg-linear-to-r from-indigo-500 via-purple-500 to-pink-500 hover:from-pink-600 hover:to-red-600 text-white font-semibold text-sm px-6 py-3 rounded-md cursor-pointer shadow-lg transition duration-300 ease-in-out transform hover:scale-105">
                             <span *ngIf="!isSendingEmail">Send</span>
                             <svg *ngIf="isSendingEmail" class="animate-spin h-5 w-5 text-white"
                                 xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -249,16 +267,9 @@
                 {{successmessage}}
             </p>
         </div>
-        <ng-template #noData>
-            <tr>
-                <td colspan="8" class="text-center text-xl py-4 text-gray-700">
-                    No bookings found for this filter.
-                </td>
-            </tr>
-        </ng-template>
-
     </div>
 </div>
+
 
 <!-- Cancel Confirmation Modal -->
 <div class="fixed inset-0 bg-black/30 flex items-center justify-center z-50" *ngIf="showCancelModal">

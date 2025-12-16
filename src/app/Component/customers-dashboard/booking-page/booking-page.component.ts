@@ -25,6 +25,10 @@ import { NgxMatTimepickerModule } from 'ngx-mat-timepicker';
 })
 
 export class BookingPageComponent implements OnInit {
+
+
+
+
   activeTab: 'en' | 'hi' = 'en';
   isImageUploaded: boolean = false;
   imageFile: File | null = null;
@@ -50,7 +54,16 @@ export class BookingPageComponent implements OnInit {
 
   availabilitySlotsByDate: Record<string, { startTime: string, endTime: string }[]> = {};
   vehicleAvailability: any;
-maxDate: Date | null = null;
+  maxDate: Date | null = null;
+
+
+  // driver section 
+  showDriverSection = true;  // To toggle driver details section
+  showTermsSection = false;
+
+  availableDrivers: any[] = [];
+
+
 
 
   changeImage(image: string): void {
@@ -58,6 +71,7 @@ maxDate: Date | null = null;
   }
   // validation formmodal
   constructor(private fb: FormBuilder, private route: ActivatedRoute, private service: MyServiceService, private router: Router) {
+    // this.loadDriverDetails();
     this.formcheckcondition = this.fb.group({
       englishTerms: this.fb.array([]),
       hindiTerms: this.fb.array([])
@@ -65,27 +79,52 @@ maxDate: Date | null = null;
 
     this.initCheckboxes();
   }
+ // Filter drivers based on the selected vehicle type (Car/Bike)
+loadDriverDetails() {
+    this.service.getdriverdata().subscribe({
+      next: (res) => {
+        // Filter drivers based on the selected vehicle type (Car/Bike)
+      if (this.vehicleDetails?.type === 'Car') {
+        // For Car, filter drivers that can drive FourWheeler or Both
+        this.availableDrivers = res.filter((driver: any) => 
+          driver.vehicleType === 'FourWheeler' || driver.vehicleType === 'Both'
+        );
+      } else if (this.vehicleDetails?.type === 'Bike') {
+        // For Bike, filter drivers that can drive TwoWheeler or Both
+        this.availableDrivers = res.filter((driver: any) => 
+          driver.vehicleType === 'TwoWheeler' || driver.vehicleType === 'Both'
+        );
+      }
+        // console.log("Filtered driver data for", this.vehicleDetails?.type, ":", this.availableDrivers);
+      },
+      error: (err) => console.error('Error fetching driver data', err),
+    });
+  }
 
+  // When skip is clicked, show terms and conditions
+  onSkip() {
+    this.showDriverSection = false;
+    this.showTermsSection = true;
+  }
 
   loadVehicleAvailability() {
-  this.service.getAllVehiclesFTheOwnerVehicle(this.vehicleId).subscribe({
-    next: (res) => {
-      this.vehicleAvailability = res;
+    this.service.getAllVehiclesFTheOwnerVehicle(this.vehicleId).subscribe({
+      next: (res) => {
+        this.vehicleAvailability = res;
+        // OWNER vehicle → limit dates
+        if (res.ownershipType === 'OWNER' && res.status === 'Active') {
+          this.minDate = new Date(res.availableFrom);
+          this.maxDate = new Date(res.availableTo);
+        }
 
-      // OWNER vehicle → limit dates
-      if (res.ownershipType === 'OWNER' && res.status === 'Active') {
-        this.minDate = new Date(res.availableFrom);
-        this.maxDate = new Date(res.availableTo);
-      }
-
-      // EXPIRED → booking disable
-      if (res.status === 'Expired') {
-        this.bookingForm.disable();
-      }
-    },
-    error: (err) => console.error('Availability error', err)
-  });
-}
+        // EXPIRED → booking disable
+        if (res.status === 'Expired') {
+          this.bookingForm.disable();
+        }
+      },
+      error: (err) => console.error('Availability error', err)
+    });
+  }
 
   loadUnavailableSlots(): Promise<void> {
     return new Promise((resolve, reject) => {
@@ -141,72 +180,74 @@ maxDate: Date | null = null;
   isDateAvailable = (date: Date | null): boolean => {
     if (!date) return false;
     const dateOnly = date.toISOString().split('T')[0];
-   // already booked
-  if (this.bookedDates.has(dateOnly)) return false;
+    // already booked
+    if (this.bookedDates.has(dateOnly)) return false;
 
-  //  before owner availability
-  if (this.vehicleAvailability?.availableFrom) {
-    if (date < new Date(this.vehicleAvailability.availableFrom)) return false;
-  }
+    //  before owner availability
+    if (this.vehicleAvailability?.availableFrom) {
+      if (date < new Date(this.vehicleAvailability.availableFrom)) return false;
+    }
 
-  //  after owner availability
-  if (this.vehicleAvailability?.availableTo) {
-    if (date > new Date(this.vehicleAvailability.availableTo)) return false;
-  }
+    //  after owner availability
+    if (this.vehicleAvailability?.availableTo) {
+      if (date > new Date(this.vehicleAvailability.availableTo)) return false;
+    }
 
-  return true;
-};
+    return true;
+  };
   checkAvailabilityStatus() {
-  const pickupDate = this.bookingForm.get('pickupDate')?.value;
-  const pickupTime = this.bookingForm.get('pickupTime')?.value;
+    const pickupDate = this.bookingForm.get('pickupDate')?.value;
+    const pickupTime = this.bookingForm.get('pickupTime')?.value;
 
-  if (!pickupDate || !pickupTime || typeof pickupTime !== 'string' || !pickupTime.includes(':')) {
-    this.availabilityColor = null;
-    return;
+    if (!pickupDate || !pickupTime || typeof pickupTime !== 'string' || !pickupTime.includes(':')) {
+      this.availabilityColor = null;
+      return;
+    }
+
+    const pickup = new Date(pickupDate);
+
+    if (isNaN(pickup.getTime())) {
+      console.error('Invalid pickup date:', pickupDate);
+      this.availabilityColor = null;
+      return;
+    }
+
+    const [hoursStr, minutesStr] = pickupTime.split(':');
+    const hours = parseInt(hoursStr, 10);
+    const minutes = parseInt(minutesStr, 10);
+
+    if (isNaN(hours) || isNaN(minutes)) {
+      console.error('Invalid pickup time:', pickupTime);
+      this.availabilityColor = null;
+      return;
+    }
+
+    pickup.setHours(hours, minutes, 0, 0);
+
+    if (isNaN(pickup.getTime())) {
+      console.error('Final pickup datetime is invalid:', pickup);
+      this.availabilityColor = null;
+      return;
+    }
+
+    const selectedTimeISO = pickup.toISOString();
+
+    const foundUnavailable = this.bookedSlots.some(slot =>
+      selectedTimeISO >= new Date(slot.startDateTime).toISOString() &&
+      selectedTimeISO < new Date(slot.endDateTime).toISOString()
+    );
+
+    this.availabilityColor = foundUnavailable ? 'red' : 'green';
   }
-
-  const pickup = new Date(pickupDate);
-
-  if (isNaN(pickup.getTime())) {
-    console.error('Invalid pickup date:', pickupDate);
-    this.availabilityColor = null;
-    return;
-  }
-
-  const [hoursStr, minutesStr] = pickupTime.split(':');
-  const hours = parseInt(hoursStr, 10);
-  const minutes = parseInt(minutesStr, 10);
-
-  if (isNaN(hours) || isNaN(minutes)) {
-    console.error('Invalid pickup time:', pickupTime);
-    this.availabilityColor = null;
-    return;
-  }
-
-  pickup.setHours(hours, minutes, 0, 0);
-
-  if (isNaN(pickup.getTime())) {
-    console.error('Final pickup datetime is invalid:', pickup);
-    this.availabilityColor = null;
-    return;
-  }
-
-  const selectedTimeISO = pickup.toISOString();
-
-  const foundUnavailable = this.bookedSlots.some(slot =>
-    selectedTimeISO >= new Date(slot.startDateTime).toISOString() &&
-    selectedTimeISO < new Date(slot.endDateTime).toISOString()
-  );
-
-  this.availabilityColor = foundUnavailable ? 'red' : 'green';
-}
 
 
   // validation for the dattime
   async ngOnInit() {
-
     this.vehicleId = +this.route.snapshot.paramMap.get('id')!;
     this.loadVehicleDetails();
+    if (this.vehicleDetails) {
+    this.loadDriverDetails();  // Fetch drivers after vehicle details are ready
+  }
     const now = new Date();
     this.minDate = now; // aaj ke date se pehle pick nahi kar sakte
     const hours = now.getHours().toString().padStart(2, '0');
@@ -225,7 +266,7 @@ maxDate: Date | null = null;
     }, {
       validators: this.minimumBookingDurationValidator()
     });
- this.loadVehicleAvailability();
+    this.loadVehicleAvailability();
     await this.loadUnavailableSlots();
 
 
@@ -250,6 +291,7 @@ maxDate: Date | null = null;
       this.bookingForm.updateValueAndValidity({ onlySelf: false, emitEvent: false });
     });
   }
+
 
 
   // autoupdate dropof 
@@ -340,7 +382,8 @@ maxDate: Date | null = null;
     this.service.getVehicleDetailsById(this.vehicleId).subscribe({
       next: (res) => {
         this.vehicleDetails = res;
-        // console.log("response datais:",res);
+        // console.log("load vehcile detials datais:",this.vehicleDetails);
+        
         if (res.imagePaths && res.imagePaths.length > 0) {
           const baseUrl = 'http://localhost:7188/';
           this.thumbnails = res.imagePaths.map((img: string) => baseUrl + img);
@@ -349,6 +392,7 @@ maxDate: Date | null = null;
           this.thumbnails = [];
           this.selectedImage = '../../../../assets/image/imageNotAvalible.png'; // Agar image na ho to blank
         }
+         this.loadDriverDetails();
       },
       error: (err) => console.error('Error fetching vehicle:', err)
     });
@@ -434,6 +478,27 @@ maxDate: Date | null = null;
       this.bookingForm.markAllAsTouched();
     }
   }
+  // When driver is selected
+onDriverSelect(driver: any) {
+  if (this.bookingForm.valid) {
+    const amount = this.calculateAmountBreakup();
+
+    const bookingData = {
+      vehicleDetails: this.vehicleDetails,
+      driverDetails: driver, // Adding driver data
+      bookingFormValues: this.bookingForm.getRawValue(),
+      ...amount
+    };
+    // console.log("driver selected",bookingData);
+    // Navigating to the preview page with all the booking data
+    this.router.navigate(['/customer-dashboard/previewPage'], {
+      state: { bookingData }
+    });
+  } else {
+    this.bookingForm.markAllAsTouched();
+  }
+}
+
 
 
   //for privew page mate
@@ -483,9 +548,11 @@ maxDate: Date | null = null;
     this.showModal = false;
     this.isImageUploaded = false;
     this.selectedImage = this.thumbnails[0];
-    this.activeTab = 'en';
     this.initCheckboxes();
     this.clearCheckboxes();
+    this.showDriverSection = true; // Reset modal state on close
+    this.showTermsSection = false;  // Terms section hidden
+    this.activeTab = 'en';
   }
 
   @HostListener('window:keydown', ['$event'])

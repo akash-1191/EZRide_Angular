@@ -4,14 +4,15 @@ import { jwtDecode } from 'jwt-decode';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NgxPaginationModule } from 'ngx-pagination';
+import { ChangeDetectorRef } from '@angular/core';
+
 @Component({
   selector: 'app-my-booking',
-  imports: [CommonModule, FormsModule,NgxPaginationModule],
+  imports: [CommonModule, FormsModule, NgxPaginationModule],
   templateUrl: './my-booking.component.html',
   styleUrl: './my-booking.component.css'
 })
 export class MyBookingComponent implements OnInit {
-
   currentPage: number = 1;
   bookings: any[] = [];
   errorMsg: string = '';
@@ -24,59 +25,66 @@ export class MyBookingComponent implements OnInit {
   showFilterDropdown: boolean = false;
   selectedFilter: string = 'Latest';
   showPaymentMessage = false;
-
   showEmailPopup = false;
   newEmail = '';
   useOwnEmail = true;
   currentBooking: any = null;
   isSendingEmail = false;
-
+  allBookings: any[] = []; // Yeh store karega ALL bookings with driver details
 
   filterTypes: string[] = [
-    'All',
-    'Today',
-    'StartTime_Asc',
-    'StartTime_Desc',
-    'Pending',
-    'Confirmed',
-    'InProgress',
-    'Completed',
-    'Cancelled',
-    'PaymentSuccess',
-    'PaymentPending',
-    'PaymentFailed',
-    'Latest',
-    'Old',
-    'PerDay',
-    'PerHour',
-    'PerKm',
-    'Bike',
-    'Car'
+    'All', 'Today', 'StartTime_Asc', 'StartTime_Desc', 'Pending', 'Confirmed', 
+    'InProgress', 'Completed', 'Cancelled', 'PaymentSuccess', 'PaymentPending', 
+    'PaymentFailed', 'Latest', 'Old', 'PerDay', 'PerHour', 'PerKm', 'Bike', 'Car'
   ];
 
-  constructor(private services: MyServiceService) { }
+  constructor(private services: MyServiceService, private cdRef: ChangeDetectorRef) { }
 
   ngOnInit(): void {
     const token = sessionStorage.getItem('token');
     if (token) {
       const decode: any = jwtDecode(token);
       this.userId = decode.UserId || decode.userId;
-      this.loadBookings(this.userId);
-      // this.getBookings('latest');
+      this.loadBookings();
     } else {
       this.errorMsg = 'User not logged in';
     }
   }
 
-  loadBookings(userId: number) {
+  loadBookings() {
     this.services.getAllBookings().subscribe({
       next: (res) => {
-        this.bookings = res.data || res;
+        this.allBookings = Array.isArray(res) ? res : [];
+        this.bookings = [...this.allBookings]; 
+
         this.applyFilter(this.selectedFilter);
       },
       error: (err) => {
+        console.error("Error loading bookings:", err);
         this.errorMsg = 'Failed to load bookings';
       }
+    });
+  }
+
+  // Driver details merge function
+  mergeDriverDetails(allBookings: any[], filteredBookings: any[]): any[] {
+    const driverMap = new Map<number, any>();
+    
+    allBookings.forEach(b => {
+      if (b.bookingId && (b.driverFirstName || b.driverProfileImage)) {
+        driverMap.set(b.bookingId, {
+          driverFirstName: b.driverFirstName,
+          driverLastName: b.driverLastName,
+          driverProfileImage: b.driverProfileImage,
+          driverExperience: b.driverExperience
+        });
+      }
+    });
+    
+    // Merge driver details into filtered bookings
+    return filteredBookings.map(b => {
+      const driverDetails = driverMap.get(b.bookingId);
+      return driverDetails ? { ...b, ...driverDetails } : b;
     });
   }
 
@@ -86,22 +94,24 @@ export class MyBookingComponent implements OnInit {
       this.erromessage = "Invalid booking details.";
       return;
     }
+    
     this.services.cancelBooking(booking.bookingId, this.userId).subscribe({
       next: (res) => {
-
-        this.loadBookings(this.userId);
+        this.loadBookings();
         this.closeCancelModal();
       },
       error: (err) => {
-        this.erromessage = 'Allready Booking Cancel.';
+        this.erromessage = 'Already Booking Cancel.';
       }
     });
   }
 
   openModal(booking: any) {
+    // console.log("Selected Booking Data:", booking);
     this.selectedBooking = booking;
     this.showModal = true;
-
+    this.cdRef.detectChanges();
+    
   }
 
   closeModal() {
@@ -110,10 +120,12 @@ export class MyBookingComponent implements OnInit {
     this.successmessage = '';
     this.erromessage = '';
   }
+
   openCancelModal(booking: any) {
     this.selectedBooking = booking;
     this.showCancelModal = true;
   }
+
   closeCancelModal() {
     this.showCancelModal = false;
     this.selectedBooking = null;
@@ -132,6 +144,12 @@ export class MyBookingComponent implements OnInit {
   }
 
   getBookings(filterType: string) {
+    // Agar "All" filter hai, toh direct allBookings use karo
+    if (filterType === 'All') {
+      this.bookings = [...this.allBookings];
+      return;
+    }
+
     const filterPayload: any = {
       userId: this.userId
     };
@@ -144,68 +162,59 @@ export class MyBookingComponent implements OnInit {
       case 'Cancelled':
         filterPayload.bookingStatus = filterType;
         break;
-
       case 'PaymentSuccess':
         filterPayload.paymentStatus = 'Success';
         break;
-
       case 'PaymentPending':
         filterPayload.paymentStatus = 'Pending';
         break;
-
       case 'PaymentFailed':
         filterPayload.paymentStatus = 'Failed';
         break;
-
       case 'Latest':
         filterPayload.sortBy = 'latest';
         break;
-
       case 'Old':
         filterPayload.sortBy = 'old';
         break;
-
       case 'PerDay':
         filterPayload.minDays = 1;
         break;
-
       case 'PerHour':
         filterPayload.minHours = 1;
         break;
-
       case 'PerKm':
         filterPayload.minKilometers = 1;
         break;
-
       case 'Bike':
       case 'Car':
         filterPayload.vehicleType = filterType;
         break;
-
       case 'Today':
         filterPayload.onlyToday = true;
         break;
-
       case 'StartTime_Asc':
         filterPayload.sortBy = 'starttime_asc';
         break;
-
       case 'StartTime_Desc':
         filterPayload.sortBy = 'starttime_desc';
-        break;
-
-      case 'All':
-      default:
-
         break;
     }
 
     this.services.getFilteredBookings(filterPayload).subscribe({
       next: (res) => {
-        this.bookings = res?.data || res || [];
-        // console.log("filterdata is:",res);
+        let filteredBookings = res?.data || res || [];
+        
+        // Agar allBookings available hain, toh driver details merge karo
+        if (this.allBookings && this.allBookings.length > 0 && filteredBookings.length > 0) {
+          filteredBookings = this.mergeDriverDetails(this.allBookings, filteredBookings);
+        }
+        
+        this.bookings = filteredBookings;
+        console.log(`Filtered bookings (${filterType}):`, this.bookings);
       },
       error: (err) => {
+        console.error("Filter error:", err);
         this.errorMsg = 'Failed to load filtered bookings';
       }
     });
@@ -216,13 +225,13 @@ export class MyBookingComponent implements OnInit {
     const target = event.target as HTMLElement;
     if (!target.closest('.filter-container')) {
       this.showFilterDropdown = false;
-
     }
   }
+  
   @HostListener('document:keydown.escape', ['$event'])
   onEscapePress(event: any) {
     this.closeCancelModal();
-    this.closeModal()
+    this.closeModal();
     this.showFilterDropdown = false;
     this.showEmailPopup = false;
   }

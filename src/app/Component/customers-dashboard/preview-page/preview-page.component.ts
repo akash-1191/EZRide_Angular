@@ -3,7 +3,7 @@ import { Component, Inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { MyServiceService } from '../../../../../my-service.service';
 import { jwtDecode } from 'jwt-decode';
-import {environment } from '../../.../../../../environments/environment'
+import { environment } from '../../.../../../../environments/environment'
 
 declare var Razorpay: any;
 @Component({
@@ -18,8 +18,9 @@ export class PreviewPageComponent {
   bookingData: any;
   errormessage: string = '';
   sucsessmessage: string = '';
+  vehicleDetails: any;
+  availableDrivers: any[] = [];
 
-  
 
   // declare var Razorpay: any;
   constructor(private router: Router, private services: MyServiceService) { }
@@ -29,10 +30,11 @@ export class PreviewPageComponent {
     this.bookingData = history.state.bookingData;
 
     if (!this.bookingData) {
-
       this.errormessage = 'Booking data missing!';
       return;
     }
+
+    // console.log('Selected Driver:', this.bookingData.driverDetails);
 
     const token = sessionStorage.getItem('token');
     if (token) {
@@ -49,8 +51,6 @@ export class PreviewPageComponent {
       this.errormessage = 'User not logged in';
     }
   }
-
-
 
   confirmBooking(): void {
     if (!this.bookingData || !this.bookingData.userId) {
@@ -79,17 +79,25 @@ export class PreviewPageComponent {
       totalHours: this.bookingData.bookingFormValues.driveBasis === 'perHour' ? this.bookingData.bookingFormValues.hoursToDrive : null,
       perKelomeater: this.bookingData.bookingFormValues.driveBasis === 'perKm' ? this.bookingData.bookingFormValues.kmsToDrive : null,
       status: 'Pending',
-      createdAt: new Date()
+      createdAt: new Date(),
+      driverRequired: this.bookingData.driverDetails ? 'yes' : 'no',
+      driverId: this.bookingData.driverDetails?.driverId || null,
+
     };
 
     this.services.confirmBooking(payload).subscribe({
       next: (res: any) => {
-        this.bookingData.bookingId = res.data.bookingId;
-        this.submitPayment();
-        console.log("conferm booking data is the :",res)
+        if (res && res.data && res.data.bookingId) {
+          this.bookingData.bookingId = res.data.bookingId; // BookingId fetched here
+          // console.log("Booking ID is ....", this.bookingData.bookingId);
+          this.createDriverBooking(); // Now call createDriverBooking
+          this.submitPayment();
+        } else {
+          this.errormessage = 'Failed to create booking, no booking ID returned';
+        }
       },
       error: (err: any) => {
-        console.log("errormsg:",err); 
+        console.log("Error msg:", err);
         if (err.error && err.error.message) {
           this.errormessage = err.error.message;
         } else {
@@ -99,6 +107,35 @@ export class PreviewPageComponent {
     });
   }
 
+
+  // Method to create driver booking entry
+  createDriverBooking(): void {
+    if (!this.bookingData.bookingId) {
+      this.errormessage = 'BookingId is missing!';
+      return;
+    }
+
+    const driverBookingData = {
+      bookingId: this.bookingData.bookingId,
+      DriverId: this.bookingData.driverDetails?.driverId,
+      VehicleId: this.bookingData.vehicleDetails?.vehicleId,
+      AssignTime: new Date(),
+      StartTime: new Date(this.bookingData.bookingFormValues.pickupDate),
+      EndTime: new Date(this.bookingData.bookingFormValues.dropoffDate),
+    };
+
+    // console.log("Driver booking payload:", driverBookingData);
+
+    this.services.createDriverBooking(driverBookingData).subscribe({
+      next: (response) => {
+        console.log('Driver booking created successfully:', response);
+      },
+      error: (err) => {
+        console.error('Error while creating driver booking:', err);
+        // this.errormessage = 'Failed to create driver booking.';
+      }
+    });
+  }
 
   parseTime(timeStr: string): { hour: number, minute: number } {
     const isAmPmFormat = /am|pm/i.test(timeStr);
@@ -125,9 +162,9 @@ export class PreviewPageComponent {
   submitPayment(): void {
     this.services.createOrder({ amount: this.bookingData.totalAmount }).subscribe({
       next: (res) => {
-        
-        console.log('Order Response:', res);
-        console.log('Amount Type:', typeof res.amount, 'Currency:', res.currency);
+
+        // console.log('Order Response:', res);
+        // console.log('Amount Type:', typeof res.amount, 'Currency:', res.currency);
         const orderId = res.orderId;
         const options: any = {
           key: environment.SECRET_KEY_Razorpay, // Razorpay test key
@@ -162,18 +199,18 @@ export class PreviewPageComponent {
                 this.services.addSecurityDeposit(depositData).subscribe({
                   next: (res2) => {
                     this.router.navigate(['/customer-dashboard/reciptpage'], {
-                     queryParams: { bookingId: this.bookingData.bookingId }
+                      queryParams: { bookingId: this.bookingData.bookingId }
                     });
-                  
+
 
                   },
                   error: (err2) => {
-                    this.errormessage = 'Security deposit save failed',err2;
+                    this.errormessage = 'Security deposit save failed', err2;
                   }
                 });
               },
               error: (err) => {
-                this.errormessage = 'Payment verification failed',err;
+                this.errormessage = 'Payment verification failed', err;
               }
             });
           },
@@ -198,8 +235,10 @@ export class PreviewPageComponent {
 
       error: (err) => {
         // console.error('Order creation failed', err);
-        this.errormessage = 'Failed to create order',err;
+        this.errormessage = 'Failed to create order', err;
       }
     });
   }
+
+
 }

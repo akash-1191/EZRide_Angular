@@ -1,12 +1,12 @@
 <body class="bg-white text-[#1f1f1f]">
     <div class="max-w-6xl mx-auto p-4">
         <div *ngIf="vehicleAvailability?.ownershipType === 'OWNER'"
-         class="mb-3 flex text-center items-center text-sm font-semibold text-blue-700">
-      Available from
-      {{ vehicleAvailability.availableFrom | date:'dd MMM yyyy' }}
-      to
-      {{ vehicleAvailability.availableTo | date:'dd MMM yyyy' }}
-    </div>
+            class="mb-3 flex text-center items-center text-sm font-semibold text-blue-700">
+            Available from
+            {{ vehicleAvailability.availableFrom | date:'dd MMM yyyy' }}
+            to
+            {{ vehicleAvailability.availableTo | date:'dd MMM yyyy' }}
+        </div>
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
             <!-- Left: Image & Thumbnails -->
@@ -30,8 +30,8 @@
             <div class="lg:col-span-1 space-y-4 mt-10">
                 <h1 class="text-2xl font-bold">{{ vehicleDetails?.carType }} {{ vehicleDetails?.yearOfManufacture }}
                 </h1>
-                <p *ngIf="vehicleDetails?.type === 'Car'"  class="text-sm text-gray-600">
-                    The Car  is the high-performance version of the 2 Series 2-door coupé. The first generation of the
+                <p *ngIf="vehicleDetails?.type === 'Car'" class="text-sm text-gray-600">
+                    The Car is the high-performance version of the 2 Series 2-door coupé. The first generation of the
                     M2 is the F87 coupé and is powered by turbocharged.
                 </p>
 
@@ -114,7 +114,7 @@
                         </div>
                     </div>
                 </div>
-                
+
             </div>
 
             <!-- Right: Booking Form & Share -->
@@ -225,12 +225,8 @@
 
                             <mat-form-field appearance="fill" class="w-full sm:w-1/2 ">
                                 <mat-label>Pickup Date</mat-label>
-                                <input matInput
-                                [matDatepicker]="pickupDatePicker" 
-                                formControlName="pickupDate"
-                                [min]="minDate"
-                                [max]="maxDate"
-                                [matDatepickerFilter]="isDateAvailable" />
+                                <input matInput [matDatepicker]="pickupDatePicker" formControlName="pickupDate"
+                                    [min]="minDate" [max]="maxDate" [matDatepickerFilter]="isDateAvailable" />
                                 <mat-datepicker-toggle matSuffix [for]="pickupDatePicker"></mat-datepicker-toggle>
                                 <mat-datepicker #pickupDatePicker></mat-datepicker>
                             </mat-form-field>
@@ -262,12 +258,9 @@
                             <!-- Dropoff Date -->
                             <mat-form-field appearance="fill" class="w-full sm:w-1/2">
                                 <mat-label>Dropoff Date</mat-label>
-                                <input matInput
-                                [matDatepicker]="dropoffDatePicker"
-                                formControlName="dropoffDate"
-                                [min]="minDate" 
-                                [max]="maxDate"
-                                [disabled]="bookingForm.get('driveBasis')?.value !== 'perKm'" />
+                                <input matInput [matDatepicker]="dropoffDatePicker" formControlName="dropoffDate"
+                                    [min]="minDate" [max]="maxDate"
+                                    [disabled]="bookingForm.get('driveBasis')?.value !== 'perKm'" />
                                 <mat-datepicker-toggle matSuffix [for]="dropoffDatePicker"></mat-datepicker-toggle>
                                 <mat-datepicker #dropoffDatePicker></mat-datepicker>
                             </mat-form-field>
@@ -306,66 +299,136 @@
                     </div>
                 </form>
 
-               
-                   <div *ngIf="vehicleDetails?.type === 'Car'"   >
+
+                <div *ngIf="vehicleDetails?.type === 'Car'">
                     <h2 class="font-semibold text-lg mt-4">Features</h2>
                     <ul class="list-disc list-inside text-sm font-bold space-y-1 flex ml-3 ">
-                        <li  class="ml-2">Bluetooth</li>
+                        <li class="ml-2">Bluetooth</li>
                         <li class="ml-2">Multimedia Player</li>
                         <li class="ml-2">Central Lock</li>
                     </ul>
-               
+
                 </div>
             </div>
         </div>
         <!-- Modal -->
-        <div *ngIf="showModal"
-            class="fixed inset-0 flex items-center justify-center bg-black/50 z-50 overflow-y-auto p-4">
-            <div class="bg-white rounded-xl shadow-lg w-full max-w-2xl p-6 relative">
+        <div *ngIf="showModal" class="fixed inset-0 flex items-center justify-center bg-black/50 z-50 p-4">
 
+            <div class="bg-white rounded-xl shadow-xl w-full max-w-2xl p-6 relative">
 
+                <!-- Close -->
                 <button (click)="closeModal()"
-                    class="absolute cursor-pointer top-3  hover:text-3xl right-3 text-gray-700 hover:text-red-600 text-2xl font-bold">&times;</button>
-                <div class="flex flex-wrap mb-4 border-b text-base sm:text-lg">
-                    <button (click)="activeTab = 'en'"
-                        [ngClass]="{'border-b-2 border-blue-600  font-semibold': activeTab === 'en'}"
-                        class="px-4 py-2 focus:outline-none cursor-pointer w-1/2 sm:w-auto text-center">
-                        English
-                    </button>
-                    <button (click)="activeTab = 'hi'"
-                        [ngClass]="{'border-b-2 border-blue-600  font-semibold': activeTab === 'hi'}"
-                        class="px-4 py-2 focus:outline-none w-1/2 cursor-pointer sm:w-auto text-center">
-                        हिन्दी
-                    </button>
-                </div>
-                <!-- English Tab -->
-                <div *ngIf="activeTab === 'en'" class="space-y-2 text-base sm:text-lg text-gray-700">
-                    <ul class="space-y-2">
-                        <li class="flex items-start space-x-2"
-                            *ngFor="let control of englishTerms.controls; let i = index">
-                            <input type="checkbox" class="mt-1 cursor-pointer w-4 h-4" [checked]="control.value"
-                                (change)="onCheckboxChange(i, 'en', $event)" />
-                            <span>{{ englishTexts[i] }}</span>
-                        </li>
-                    </ul>
-                </div>
-                <!-- Hindi Tab -->
-                <div *ngIf="activeTab === 'hi'" class="space-y-2 text-base sm:text-lg text-gray-700">
-                    <ul class="space-y-2">
-                        <li class="flex items-start space-x-2"
-                            *ngFor="let control of hindiTerms.controls; let i = index">
-                            <input type="checkbox" class="mt-1 cursor-pointer w-4 h-4" [checked]="control.value"
-                                (change)="onCheckboxChange(i, 'hi', $event)" />
-                            <span>{{ hindiTexts[i] }}</span>
-                        </li>
-                    </ul>
-                </div>
-                <!-- Submit Button -->
-                <button type="button" [disabled]="!allChecked()" (click)="goToPreviewPage()"
-                    class="mt-4 w-full sm:w-auto bg-gray-600 hover:bg-gray-800 text-white font-semibold px-6 py-2 rounded disabled:opacity-50">
-                    Submit
+                    class="absolute top-3 right-3 text-2xl font-bold text-gray-600 hover:text-red-600">
+                    &times;
                 </button>
+
+                <!-- ================= DRIVER SECTION ================= -->
+                <div *ngIf="showDriverSection">
+
+                    <h3 class="text-xl font-semibold mb-4 text-gray-800">
+                        Select Driver
+                    </h3>
+
+                    <!-- Driver Card -->
+                    <div *ngFor="let driver of availableDrivers"
+                        class="border rounded-lg p-4 mb-3 flex justify-between items-center hover:shadow">
+
+                        <!-- Left -->
+                        <div class="flex items-center gap-3">
+                            <img [src]="driver.profileimage ? 'http://localhost:7188/' + driver.profileimage : 'assets/user.png'"
+                                class="w-12 h-12 rounded-full object-cover">
+
+                            <div>
+                                <p class="font-semibold">
+                                    {{ driver.firstname }} {{ driver.lastname }}
+                                </p>
+                                <p class="text-sm text-gray-500">
+                                    {{ driver.experienceYears }} yrs experience
+                                </p>
+
+                                <!-- Stars -->
+                                <div class="flex mt-1">
+                                    <ng-container *ngIf="driver.reviews?.length > 0; else emptyStars">
+                                        <span *ngFor="let i of [1,2,3,4,5]" class="text-yellow-400 text-sm">
+                                            ★
+                                        </span>
+                                    </ng-container>
+
+                                    <ng-template #emptyStars>
+                                        <span *ngFor="let i of [1,2,3,4,5]" class="text-gray-300 text-sm">
+                                            ★
+                                        </span>
+                                    </ng-template>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right -->
+                        <button (click)="onDriverSelect(driver)" class="bg-blue-600 cursor-pointer  hover:bg-blue-700 text-white px-4 py-2 rounded">
+                            Select
+                        </button>
+                    </div>
+
+                    <!-- Skip -->
+                    <div class="text-center mt-4">
+  <button (click)="onSkip()"
+          class="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-6 rounded-md transition duration-300 ease-in-out cursor-pointer">
+    Skip & Continue without Driver
+  </button>
+</div>
+
+
+                </div>
+
+                <!-- ================= TERMS SECTION ================= -->
+                <div *ngIf="showTermsSection">
+
+                    <!-- Tabs -->
+                    <div class="flex border-b mb-4">
+                        <button (click)="activeTab = 'en'" class="px-4 py-2 font-semibold"
+                            [ngClass]="activeTab === 'en' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-gray-500'">
+                            English
+                        </button>
+
+                        <button (click)="activeTab = 'hi'" class="px-4 py-2 font-semibold"
+                            [ngClass]="activeTab === 'hi' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-gray-500'">
+                            हिन्दी
+                        </button>
+                    </div>
+
+                    <!-- English -->
+                    <div *ngIf="activeTab === 'en'">
+                        <ul class="space-y-2">
+                            <li *ngFor="let control of englishTerms.controls; let i=index" class="flex gap-2">
+                                <input type="checkbox" class="mt-1" [checked]="control.value"
+                                    (change)="onCheckboxChange(i,'en',$event)">
+                                <span>{{ englishTexts[i] }}</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Hindi -->
+                    <div *ngIf="activeTab === 'hi'">
+                        <ul class="space-y-2">
+                            <li *ngFor="let control of hindiTerms.controls; let i=index" class="flex gap-2">
+                                <input type="checkbox" class="mt-1" [checked]="control.value"
+                                    (change)="onCheckboxChange(i,'hi',$event)">
+                                <span>{{ hindiTexts[i] }}</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Submit -->
+                    <button [disabled]="!allChecked()" (click)="goToPreviewPage()"
+                        class="mt-6 w-full bg-gray-700 hover:bg-gray-900 text-white py-2 rounded disabled:opacity-50">
+                        Submit
+                    </button>
+
+                </div>
             </div>
         </div>
+
+
+
     </div>
 </body>

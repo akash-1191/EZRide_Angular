@@ -44,6 +44,12 @@ import { ChatOwnerComponent } from './Component/owner-dashboard/chat-owner/chat-
 import { ChatAdminComponent } from './Component/admin-dashboard/chat-admin/chat-admin.component';
 import { OwnerPaymentComponent } from './Component/admin-dashboard/owner-payment/owner-payment.component';
 import { PaymentdetailsComponent } from './Component/owner-dashboard/paymentdetails/paymentdetails.component';
+import { DriverrequestComponent } from './Component/admin-dashboard/driverrequest/driverrequest.component';
+import { VerifiedDriverComponent } from './Component/admin-dashboard/verified-driver/verified-driver.component';
+import { OngoingtripComponent } from './Component/admin-dashboard/ongoingtrip/ongoingtrip.component';
+import { BokingTripComponent } from './Component/Driver-dashboard/boking-trip/boking-trip.component';
+import { CurrentTripComponent } from './Component/Driver-dashboard/current-trip/current-trip.component';
+import { ChatDriverComponent } from './Component/Driver-dashboard/chat-driver/chat-driver.component';
 
 
 
@@ -78,8 +84,8 @@ export const routes: Routes = [
       {
         path: 'unauthorized', component: UnauthorizedComponent
       },
-      {path:'help',component:HelpComponent},
-      {path:'services',component:ServiceComponent}
+      { path: 'help', component: HelpComponent },
+      { path: 'services', component: ServiceComponent }
     ]
   },
 
@@ -100,9 +106,9 @@ export const routes: Routes = [
       { path: 'paymentDetails', component: PaymentDetailsComponent },
       { path: 'reciptpage', component: ReciptpageComponent },
       { path: 'feedback', component: FeedbackpageComponent },
-      {path:'Rejected_Bookings',component:RejectedBookingsComponent},
-      {path:'Current_Rides', component:CurrentRidesComponent},
-       {path:"Helpcustomer",component:HelpCustomerDashboardComponent}
+      { path: 'Rejected_Bookings', component: RejectedBookingsComponent },
+      { path: 'Current_Rides', component: CurrentRidesComponent },
+      { path: "Helpcustomer", component: HelpCustomerDashboardComponent }
     ]
   },
 
@@ -113,20 +119,24 @@ export const routes: Routes = [
     children: [
       { path: "", component: OwnDashboardComponent },
       { path: "own_Profile", component: OwnProfileComponent },
-      {path:"own_Addvehicle",component:OwnAddvehicleComponent},
-      {path:"Myvehicle",component:MyVehicleComponent},
-      {path:"owner-chat",component:ChatOwnerComponent},
-      {path:"OwnerPaymentDetails",component:PaymentdetailsComponent}
+      { path: "own_Addvehicle", component: OwnAddvehicleComponent },
+      { path: "Myvehicle", component: MyVehicleComponent },
+      { path: "owner-chat", component: ChatOwnerComponent },
+      { path: "OwnerPaymentDetails", component: PaymentdetailsComponent }
 
     ]
   },
   {
-    path:'Driver-dashboard',component:DriverDashboardComponent,
-    canActivate:[authGuard],
-    data:{expectedRole:'Driver'},
-    children:[
-      {path:"driverProfile",component:DriverProfileComponent}
-      
+    path: 'Driver-dashboard', component: DriverDashboardComponent,
+    canActivate: [authGuard],
+    data: { expectedRole: 'Driver' },
+    children: [
+      { path: "driverProfile", component: DriverProfileComponent },
+      { path: "BookingTrip", component: BokingTripComponent },
+      { path: "Current_Rides", component: CurrentTripComponent },
+      { path: "adminChat", component: ChatDriverComponent }
+
+
     ]
   },
 
@@ -138,17 +148,23 @@ export const routes: Routes = [
       // { path: "", component: AdmiDashboardComponent },
       { path: "a_addvehicle", component: AAddvehicleComponent },
       { path: "", component: ManagevehicleComponent },
-      {path:'ContachMeaaage',component:ContactmessaegComponent},
-      {path:'bookingrequest',component:BookingRequestComponent},
-      {path:'Returnvehicle_check',component:ReturnVehicleComponent},
-      {path:"Damagecharges",component:FuelDamageReportComponent},
-      {path:"securitydepositrefaund",component:SecuritydepositRefaundAdminComponent},
-      {path:"Feesback",component:UserFeedbackbyadminComponent},
-      {path:"verify-owners",component:VerifyownerComponent},
-      {path:'approve-owner',component:AprovedOwnerComponent},
-      {path:"set-rents/:id",component:SetRentComponent},
-      {path:"Admin-Chat",component:ChatAdminComponent},
-      {path:"pay-owners",component:OwnerPaymentComponent}
+      { path: 'ContachMeaaage', component: ContactmessaegComponent },
+      { path: 'bookingrequest', component: BookingRequestComponent },
+      { path: 'Returnvehicle_check', component: ReturnVehicleComponent },
+      { path: "Damagecharges", component: FuelDamageReportComponent },
+      { path: "securitydepositrefaund", component: SecuritydepositRefaundAdminComponent },
+      { path: "Feesback", component: UserFeedbackbyadminComponent },
+      { path: "verify-owners", component: VerifyownerComponent },
+      { path: 'approve-owner', component: AprovedOwnerComponent },
+      { path: "set-rents/:id", component: SetRentComponent },
+      { path: "Admin-Chat", component: ChatAdminComponent },
+      { path: "pay-owners", component: OwnerPaymentComponent },
+      { path: "driverrequest", component: DriverrequestComponent },
+      { path: "verify-drivers", component: VerifiedDriverComponent },
+      { path: "ongoing-trips", component: OngoingtripComponent }
+
+
+
 
 
     ]

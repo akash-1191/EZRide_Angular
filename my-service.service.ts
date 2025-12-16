@@ -189,10 +189,10 @@ export class MyServiceService {
   }
 
   //get aal data of the 3 table vehhicle price and vehicleimage
-getAllVehiclesFTheOwnerVehicle(vehicleId: number): Observable<any> {
-  const url = `http://localhost:7188/api/VehicleAvailability/availabilityOwnerVehicle/${vehicleId}`;
-  return this.http.get<any>(url);
-}
+  getAllVehiclesFTheOwnerVehicle(vehicleId: number): Observable<any> {
+    const url = `http://localhost:7188/api/VehicleAvailability/availabilityOwnerVehicle/${vehicleId}`;
+    return this.http.get<any>(url);
+  }
 
 
   // Get Vehicle Details by ID
@@ -979,6 +979,178 @@ getAllVehiclesFTheOwnerVehicle(vehicleId: number): Observable<any> {
     const url = 'http://localhost:7188/api/OwnerDashboard/summary';
     return this.http.get<any>(url, { headers });
   }
+
+
+
+
+
+  // Add Driver Exprince api 
+  AddUpdateDriverExprience(data: any): Observable<any> {
+    const token = sessionStorage.getItem('token');
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+    const uploadDoc = `http://localhost:7188/api/addUpdateDriverExprience`;
+    return this.http.post(uploadDoc, data, { headers });
+  }
+
+
+
+
+
+  // add driver document 
+  addDriverDocument(formData: FormData): Observable<any> {
+    const token = sessionStorage.getItem('token');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`
+    });
+    const url = 'http://localhost:7188/api/DriverDocuments/addDriverDocument';
+    return this.http.post(url, formData, { headers });
+  }
+
+  deleteDriverDocument(documentId: number): Observable<any> {
+    const token = sessionStorage.getItem('token');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`
+    });
+    const url = `http://localhost:7188/api/DriverDocuments/deleteDriverDocument/${documentId}`;
+    return this.http.delete(url, { headers });
+  }
+
+  getDriverDocuments(driverId: number): Observable<any> {
+    const token = sessionStorage.getItem('token');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`
+    });
+    const url = `http://localhost:7188/api/DriverDocuments/getDriverDocuments/${driverId}`
+    return this.http.get(url, { headers });
+  }
+
+
+  // get Driver Exprince api 
+  getDriverExprience(): Observable<any> {
+    const token = sessionStorage.getItem('token');
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+    const uploadDoc = `http://localhost:7188/api/getDriverExprience`;
+    return this.http.get(uploadDoc, { headers });
+  }
+
+  // get Driver Exprince api 
+  GetAllDriverDetials(): Observable<any> {
+    const token = sessionStorage.getItem('token');
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+    const uploadDoc = 'http://localhost:7188/driversdata';
+    return this.http.get(uploadDoc, { headers });
+  }
+
+  // add driver appprove
+  approveDriver(userId: number): Observable<any> {
+    const token = sessionStorage.getItem('token');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`
+    });
+    const url = `http://localhost:7188/api/AdminDriver/approve-driver/${userId}`;
+    return this.http.post(url, {}, { headers });
+  }
+
+
+
+  rejectDriver(userId: number, rejectionReason: string): Observable<any> {
+    const token = sessionStorage.getItem('token');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`
+    });
+    const url = `http://localhost:7188/api/AdminDriver/reject-driver`;
+    const body = {
+      userId: userId,
+      rejectionReason: rejectionReason
+    };
+    return this.http.post(url, body, { headers });
+  }
+
+
+  // add driver appprove
+  getdriverdata(): Observable<any> {
+    const url = 'http://localhost:7188/api/getAllDriversWithReviews';
+    return this.http.get(url);
+  }
+
+
+  // create booking driver 
+  createDriverBooking(driverBookingData: any): Observable<any> {
+    const url = 'http://localhost:7188/api/create-driver-booking';
+    return this.http.post(url, driverBookingData);
+  }
+
+  // Method to check driver availability
+  checkDriverAvailability(vehicleId: number, bookingId?: number): Observable<any> {
+    const url = `http://localhost:7188/api/check-driver-availability/${vehicleId}/${bookingId || ''}`;
+    return this.http.get(url);
+  }
+
+
+  //admin get all driver details 
+  AdminGetAallDriverdetails(): Observable<any> {
+    const token = sessionStorage.getItem('token');
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
+    const userdataurl = 'http://localhost:7188/api/AdminDriver/DrivertripsDetails';
+    return this.http.get<any>(userdataurl, { headers });
+  }
+
+
+  //drive get all customer booking 
+  driverGetAallbooking(): Observable<any> {
+    const token = sessionStorage.getItem('token');
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
+    const userdataurl = 'http://localhost:7188/api/DriverDashboard/DriverTripsDetails';
+    return this.http.get<any>(userdataurl, { headers });
+  }
+
+  //drive update status is bust
+  driverUpdateStatusBusy(driverBookingId: number): Observable<any> {
+  const token = sessionStorage.getItem('token');
+  const headers = new HttpHeaders({
+    Authorization: `Bearer ${token}`,
+    'Content-Type': 'application/json'
+  });
+  const url =`http://localhost:7188/api/DriverDashboard/UpdateDriverTripStatus?driverBookingId=${driverBookingId}`;
+
+  return this.http.post<any>(url, {}, { headers });
+}
+
+ driverUpdateStatuscompleted(driverBookingId: number): Observable<any> {
+  const token = sessionStorage.getItem('token');
+  const headers = new HttpHeaders({
+    Authorization: `Bearer ${token}`,
+    'Content-Type': 'application/json'
+  });
+  const url =`http://localhost:7188/api/DriverDashboard/UpdateDriverTripStatusComplete?driverBookingId=${driverBookingId}`;
+
+  return this.http.post<any>(url, {}, { headers });
+}
+
+
+  
+  // //drive update status is bust
+  // driverUpdateStatusInactive(): Observable<any> {
+  //   const token = sessionStorage.getItem('token');
+  //   const headers = new HttpHeaders({
+  //     'Authorization': `Bearer ${token}`,
+  //     'Content-Type': 'application/json'
+  //   });
+  //   const userdataurl = 'http://localhost:7188/api/DriverDashboard/driver/status/update';
+  //   return this.http.get<any>(userdataurl, { headers });
+  // }
 
 }
 

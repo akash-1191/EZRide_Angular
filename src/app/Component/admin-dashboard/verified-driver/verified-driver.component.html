@@ -1,0 +1,263 @@
+<div class="p-6">
+    <h2 class="text-2xl font-bold mb-6 text-gray-800 capitalize">
+        Driver Approval Panel
+        <div class="space-x-8">
+            <!-- SUCCESS MESSAGE -->
+            <div *ngIf="successMessage" class="mb-4 p-4 rounded-lg bg-green-100 text-green-800 font-medium">
+                {{ successMessage }}
+            </div>
+
+            <!-- ERROR MESSAGE -->
+            <div *ngIf="errorMessage" class="mb-4 p-4 rounded-lg bg-red-100 text-red-800 font-medium">
+                {{ errorMessage }}
+            </div>
+        </div>
+    </h2>
+
+    <!-- Approved DRIVERS TABLE -->
+    <div class="overflow-x-auto bg-white shadow-md rounded-lg">
+        <h2 class="text-xl font-semibold text-green-700 px-4 py-3 border-b">
+            <i class="fas fa-check-circle text-green-600"></i> Approved Drivers
+        </h2>
+
+        <table class="min-w-full text-sm text-left text-gray-700">
+            <thead class="bg-gray-100 text-gray-600 uppercase text-xs">
+                <tr>
+                    <th class="px-4 py-3">Driver</th>
+                    <th class="px-4 py-3">Contact</th>
+                    <th class="px-4 py-3">City</th>
+                    <th class="px-4 py-3">Experience</th>
+                    <th class="px-4 py-3">Vehicle</th>
+                    <th class="px-4 py-3">Status</th>
+                    <th class="px-4 py-3 text-center">Actions</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <!-- Loop through approved drivers -->
+                <tr *ngFor="let d of approvedDrivers" class="border-b hover:bg-green-50 transition">
+
+                    <!-- DRIVER -->
+                    <td class="px-4 py-3 flex items-center gap-3">
+                        <img [src]="'http://localhost:7188' + d.image" class="w-10 h-10 rounded-full object-cover">
+                        <span class="font-medium">{{ d.fullName }}</span>
+                    </td>
+
+                    <!-- CONTACT -->
+                    <td class="px-4 py-3">
+                        <div>{{ d.email }}</div>
+                        <div class="text-gray-500">{{ d.phone }}</div>
+                    </td>
+
+                    <td class="px-4 py-3">{{ d.city }}</td>
+                    <td class="px-4 py-3">{{ d.experienceYears }} yrs</td>
+                    <td class="px-4 py-3 font-semibold">{{ d.vehicleType }}</td>
+
+                    <!-- STATUS -->
+                    <td class="px-4 py-3">
+                        <span class="px-3 py-1 rounded-full text-xs font-semibold" [ngClass]="{
+                            'bg-yellow-100 text-yellow-700': d.userStatus === 'Active',
+                            'bg-red-100 text-red-700': d.userStatus === 'Disabled'
+                        }">
+                            {{ d.userStatus }}
+                        </span>
+                    </td>
+
+                    <!-- ACTIONS -->
+                    <td class="px-4 py-3 text-center space-x-3 text-lg">
+                        <i class="fas fa-eye text-blue-600 cursor-pointer" (click)="openViewModal(d)"></i>
+                        <!-- Add more action buttons if needed -->
+                    </td>
+                </tr>
+
+                <!-- No Data Message -->
+                <tr *ngIf="approvedDrivers.length === 0">
+                    <td colspan="7" class="text-center py-4 text-gray-500">
+                        No approved drivers found.
+                    </td>
+                </tr>
+
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+<div class="p-6">
+    <h2 class="text-xl font-semibold text-red-700 px-4 py-3 border-b">
+        <i class="fas fa-times-circle text-red-600"></i> Rejected Drivers List
+
+    </h2>
+    <!--Aproved DRIVERS TABLE -->
+    <div class="overflow-x-auto bg-white shadow rounded-lg">
+        <table class="min-w-full text-sm text-left">
+            <thead class="bg-gray-100 text-gray-700">
+                <tr>
+                    <th class="px-4 py-3">Driver</th>
+                    <th class="px-4 py-3">Contact</th>
+                    <th class="px-4 py-3">City</th>
+                    <th class="px-4 py-3">Experience</th>
+                    <th class="px-4 py-3">Vehicle</th>
+                    <th class="px-4 py-3">Status</th>
+                    <th class="px-4 py-3">Reject Reason</th>
+                    <th class="px-4 py-3 text-center">Actions</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <tr *ngFor="let d of rejectedDrivers" class="border-t hover:bg-red-50 transition">
+
+                    <!-- DRIVER -->
+                    <td class="px-4 py-3 flex items-center gap-3">
+                        <img [src]="'http://localhost:7188' + d.image" class="w-10 h-10 rounded-full object-cover">
+                        <span class="font-medium">{{ d.fullName }}</span>
+                    </td>
+
+                    <!-- CONTACT -->
+                    <td class="px-4 py-3">
+                        <div>{{ d.email }}</div>
+                        <div class="text-gray-500">{{ d.phone }}</div>
+                    </td>
+
+                    <td class="px-4 py-3">{{ d.city }}</td>
+                    <td class="px-4 py-3">{{ d.experienceYears }} yrs</td>
+                    <td class="px-4 py-3 font-semibold">{{ d.vehicleType }}</td>
+
+                    <!-- STATUS -->
+                    <td class="px-4 py-3">
+                        <span class="px-3 py-1 rounded-full text-xs font-semibold" [ngClass]="{
+                'bg-yellow-100 text-yellow-700': d.userStatus === 'Active',
+                'bg-red-100 text-red-700': d.userStatus === 'Disabled'
+              }">
+                            {{ d.userStatus }}
+                        </span>
+                    </td>
+                    <td class="px-4 py-3 font-semibold">{{ d.rejectResion}}</td>
+                    <!-- ACTIONS -->
+                    <td class="px-4 py-3 text-center space-x-3 text-lg ">
+                        <i class="fas fa-eye text-blue-600 cursor-pointer" (click)="openViewModal(d)"></i>
+                    </td>
+                </tr>
+                <tr *ngIf="rejectedDrivers.length === 0">
+                    <td colspan="8" class="text-center py-4 text-gray-500 bg-red-50 transition">
+                        No rejected drivers found.
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- VIEW DRIVER MODAL -->
+<div *ngIf="isViewModalOpen" class="fixed inset-0 bg-black/60 flex justify-center items-center z-50">
+
+    <div class="bg-white w-full max-w-4xl rounded-2xl p-6 overflow-y-auto max-h-[90vh]">
+
+        <!-- HEADER -->
+        <div class="flex justify-between items-center border-b pb-3 mb-5">
+            <h3 class="text-2xl font-bold text-gray-800">
+                Driver Details
+            </h3>
+            <button (click)="closeViewModal()" class="text-2xl font-bold text-gray-600 hover:text-black cursor-pointer">
+                &times;
+            </button>
+        </div>
+
+        <!-- ================= PROFILE SECTION ================= -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+            <div class="flex justify-center">
+                <img [src]="'http://localhost:7188' + selectedDriver.image"
+                    class="w-36 h-36 rounded-full object-cover shadow">
+            </div>
+
+            <div class="md:col-span-2 space-y-2">
+                <p><b>Name:</b> {{ selectedDriver.fullName }}</p>
+                <p><b>Email:</b> {{ selectedDriver.email }}</p>
+                <p><b>Phone:</b> {{ selectedDriver.phone }}</p>
+                <p><b>City:</b> {{ selectedDriver.city }}</p>
+            </div>
+        </div>
+
+        <!-- ================= RIDE INFO ================= -->
+        <div class="border rounded-xl p-4 mb-6 bg-gray-50">
+            <h4 class="text-lg font-semibold mb-3 text-gray-800">
+                Ride Information
+            </h4>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <p><b>Experience:</b> {{ selectedDriver.experienceYears }} years</p>
+                <p><b>Vehicle Type:</b> {{ selectedDriver.vehicleType }}</p>
+                <p><b>Availability:</b> {{ selectedDriver.availabilityStatus }}</p>
+                <p><b>Status:</b> {{ selectedDriver.driverStatus }}</p>
+            </div>
+        </div>
+
+        <!-- ================= DOCUMENTS ================= -->
+        <div>
+            <h4 class="text-lg font-semibold mb-4 text-gray-800">
+                Uploaded Documents
+            </h4>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+
+                <div *ngFor="let doc of selectedDriver.documents" class="border rounded-xl p-3 shadow-sm bg-white">
+
+                    <p class="font-semibold text-center mb-2">
+                        {{ doc.documentType }}
+                    </p>
+
+                    <!-- IMAGE -->
+                    <img *ngIf="!doc.documentPath.endsWith('.pdf')" [src]="'http://localhost:7188/' + doc.documentPath"
+                        (click)="openImagePreview(doc.documentPath)"
+                        class="w-full h-40 object-cover rounded cursor-pointer hover:opacity-80">
+
+                    <!-- PDF -->
+                    <div *ngIf="doc.documentPath.endsWith('.pdf')" class="text-center">
+                        <img src="https://cdn-icons-png.flaticon.com/512/337/337946.png"
+                            class="w-16 mx-auto mb-2 cursor-pointer" (click)="openPdf(doc.documentPath)">
+                        <p class="text-blue-600 underline cursor-pointer" (click)="openPdf(doc.documentPath)">
+                            View PDF
+                        </p>
+                    </div>
+
+                    <p class="text-sm text-center mt-2 text-gray-600">
+                        Status: <b>{{ doc.status }}</b>
+                    </p>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+<!-- IMAGE PREVIEW MODAL -->
+<div *ngIf="isImagePreviewOpen" class="fixed inset-0 bg-black/80 flex justify-center items-center z-60">
+
+    <img [src]="previewImageUrl" class="max-w-[90%] max-h-[90%] rounded-xl shadow-2xl">
+
+    <button (click)="closeImagePreview()" class="absolute top-6 right-8 text-white text-4xl font-bold cursor-pointer">
+        &times;
+    </button>
+</div>
+
+<!-- REJECT MODAL -->
+<div *ngIf="isRejectModalOpen" class="fixed inset-0 bg-black/50 flex justify-center items-center z-50">
+    <div class="bg-white w-full max-w-md rounded-xl p-6">
+
+        <h3 class="text-xl font-bold mb-4 text-red-600">
+            Reject Driver
+        </h3>
+
+        <textarea [(ngModel)]="rejectReason" rows="4" class="w-full border rounded-lg p-3"
+            placeholder="Enter rejection reason"></textarea>
+
+        <div class="flex justify-end gap-4 mt-5">
+            <button class="px-4 py-2 border rounded cursor-pointer" (click)="closeRejectModal()">Cancel</button>
+
+            <button class="px-4 py-2 cursor-pointer bg-red-600 text-white rounded" (click)="submitReject()">
+                Reject
+            </button>
+        </div>
+
+    </div>
+</div>

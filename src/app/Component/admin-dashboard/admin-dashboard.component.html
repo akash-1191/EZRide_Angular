@@ -1,5 +1,5 @@
-<section >
-  <div class="min-h-screen flex flex-col antialiased bg-slate-100 ">
+<section>
+  <div class="min-h-screen flex flex-col antialiased  bg-slate-100 ">
 
     <!-- Header -->
     <div class="fixed w-full flex items-center justify-between h-14 bg-slate-800 text-white z-20 shadow-md px-4">
@@ -11,7 +11,9 @@
         <span class="hidden md:block font-semibold text-lg tracking-wide">Admin Dashboard</span>
       </div>
       <ul class="flex items-center space-x-4">
-        <li><div class="w-px h-6 bg-slate-400"></div></li>
+        <li>
+          <div class="w-px h-6 bg-slate-400"></div>
+        </li>
         <li>
           <p (click)="logout()" class="cursor-pointer flex items-center hover:text-blue-300 transition duration-200">
             <i class="fa-solid fa-right-from-bracket mr-2"></i> Logout
@@ -21,11 +23,10 @@
     </div>
 
     <!-- Sidebar -->
-    <div id="sidebar"
-  [class.-translate-x-full]="!isSidebarOpen"
+    <div id="sidebar" [class.-translate-x-full]="!isSidebarOpen"
       class="fixed flex flex-col top-14 left-0 w-64 md:w-64 h-full bg-slate-900 text-white z-30 shadow-lg transform md:translate-x-0 transition-transform duration-300 ease-in-out">
 
-      <div class="flex flex-col justify-between flex-grow">
+      <div class="flex flex-col justify-between grow">
         <ul class="flex flex-col py-4 space-y-1">
 
           <!-- Dashboard -->
@@ -39,7 +40,7 @@
 
           <!-- Add Vehicle -->
           <a routerLink="/admin-dashboard/a_addvehicle" class="cursor-pointer">
-            
+
             <span class="relative flex flex-row items-center h-11 hover:bg-gray-600 hover:text-indigo-300  
               border-l-4 border-transparent hover:border-indigo-500 pr-6 px-4">
               <i class="fa-solid fa-plus w-5 text-sm"></i>
@@ -78,21 +79,26 @@
             </div>
 
             <ul *ngIf="userPanelOpen" class="pl-10 py-1 text-sm space-y-1 text-gray-300">
-              <li><a routerLink="/admin-dashboard/bookingrequest" class="flex items-center p-2 hover:text-indigo-300 hover:bg-gray-700">
-                <i class="fa-solid fa-calendar-check mr-2"></i> Booking Requests</a></li>
-              <li><a routerLink="/admin-dashboard/Returnvehicle_check" class="flex items-center p-2 hover:text-indigo-300 hover:bg-gray-700">
-                <i class="fa-solid fa-clipboard-check mr-2"></i> Return Vehicle Check</a></li>
-              <li><a routerLink="/admin-dashboard/Damagecharges" class="flex items-center p-2 hover:text-indigo-300 hover:bg-gray-700">
-                <i class="fa-solid fa-gas-pump mr-2"></i> Fuel & Damage Charges</a></li>
-              <li><a routerLink="/admin-dashboard/securitydepositrefaund" class="flex items-center p-2 hover:text-indigo-300 hover:bg-gray-700">
-                <i class="fa-solid fa-sack-dollar mr-2"></i> Security Refunds</a></li>
-              <li><a routerLink="/admin-dashboard/Feesback" class="flex items-center p-2 hover:text-indigo-300 hover:bg-gray-700">
-                <i class="fa-solid fa-comments mr-2"></i> User Feedback</a></li>
+              <li><a routerLink="/admin-dashboard/bookingrequest"
+                  class="flex items-center p-2 hover:text-indigo-300 hover:bg-gray-700">
+                  <i class="fa-solid fa-calendar-check mr-2"></i> Booking Requests</a></li>
+              <li><a routerLink="/admin-dashboard/Returnvehicle_check"
+                  class="flex items-center p-2 hover:text-indigo-300 hover:bg-gray-700">
+                  <i class="fa-solid fa-clipboard-check mr-2"></i> Return Vehicle Check</a></li>
+              <li><a routerLink="/admin-dashboard/Damagecharges"
+                  class="flex items-center p-2 hover:text-indigo-300 hover:bg-gray-700">
+                  <i class="fa-solid fa-gas-pump mr-2"></i> Fuel & Damage Charges</a></li>
+              <li><a routerLink="/admin-dashboard/securitydepositrefaund"
+                  class="flex items-center p-2 hover:text-indigo-300 hover:bg-gray-700">
+                  <i class="fa-solid fa-sack-dollar mr-2"></i> Security Refunds</a></li>
+              <li><a routerLink="/admin-dashboard/Feesback"
+                  class="flex items-center p-2 hover:text-indigo-300 hover:bg-gray-700">
+                  <i class="fa-solid fa-comments mr-2"></i> User Feedback</a></li>
             </ul>
           </li>
 
           <!-- OWNER PANEL -->
-           <li>
+          <li>
             <div (click)="ownerPanelOpen = !ownerPanelOpen" class="flex items-center justify-between cursor-pointer h-11 px-4 hover:bg-gray-600 hover:text-indigo-300  
                 border-l-4 border-transparent hover:border-indigo-500 transition-all duration-300">
               <div class="flex items-center">
@@ -104,18 +110,121 @@
             </div>
 
             <ul *ngIf="ownerPanelOpen" class="pl-10 py-1 text-sm space-y-1 text-gray-300">
-              <li><a routerLink="/admin-dashboard/verify-owners" class="flex items-center p-2 hover:text-indigo-300 hover:bg-gray-700">
-                <i class="fa-solid fa-user-check mr-2"></i> Verify Owners</a></li>
-              <li><a routerLink="/admin-dashboard/approve-owner" class="flex items-center p-2 hover:text-indigo-300 hover:bg-gray-700">
-                <i class="fa-solid fa-coins mr-2"></i> Approve Owner</a></li>
-              <li><a routerLink="/admin-dashboard/pay-owners" class="flex items-center p-2 hover:text-indigo-300 hover:bg-gray-700">
-                <i class="fa-solid fa-credit-card mr-2"></i> Pay to Owners</a></li>
+              <li><a routerLink="/admin-dashboard/verify-owners"
+                  class="flex items-center p-2 hover:text-indigo-300 hover:bg-gray-700">
+                  <i class="fa-solid fa-user-check mr-2"></i> Verify Owners</a></li>
+              <li><a routerLink="/admin-dashboard/approve-owner"
+                  class="flex items-center p-2 hover:text-indigo-300 hover:bg-gray-700">
+                  <i class="fa-solid fa-coins mr-2"></i> Approve Owner</a></li>
+              <li><a routerLink="/admin-dashboard/pay-owners"
+                  class="flex items-center p-2 hover:text-indigo-300 hover:bg-gray-700">
+                  <i class="fa-solid fa-credit-card mr-2"></i> Pay to Owners</a></li>
               <!-- <li><a routerLink="/admin-dashboard/owner-feedback" class="flex items-center p-2 hover:text-indigo-300 hover:bg-gray-700">
                 <i class="fa-solid fa-comment-dots mr-2"></i> Owner Feedback</a></li> -->
-              <li><a routerLink="/admin-dashboard/Admin-Chat" class="flex items-center p-2 hover:text-indigo-300 hover:bg-gray-700">
-                <i class="fa-solid fa-comments-dollar mr-2"></i> Owner Conversations</a></li>
+              <li><a routerLink="/admin-dashboard/Admin-Chat"
+                  class="flex items-center p-2 hover:text-indigo-300 hover:bg-gray-700">
+                  <i class="fa-solid fa-comments-dollar mr-2"></i> Owner Conversations</a></li>
             </ul>
-          </li> 
+          </li>
+
+
+
+
+          <!-- DRIVER PANEL -->
+          <li>
+            <!-- Driver Panel Header -->
+            <div (click)="driverPanelOpen = !driverPanelOpen" class="flex items-center justify-between cursor-pointer h-11 px-4
+           hover:bg-gray-600 hover:text-indigo-300
+           border-l-4 border-transparent hover:border-indigo-500
+           transition-all duration-300">
+              <div class="flex items-center">
+                <i class="fa-solid fa-user-tie w-5 text-sm"></i>
+                <span class="ml-3 text-sm">Driver Panel</span>
+              </div>
+              <i class="fa-solid fa-chevron-down text-xs" [ngClass]="{
+         'rotate-180': driverPanelOpen,
+         'transition-transform': true
+       }"></i>
+            </div>
+
+            <!-- Driver Panel Menu -->
+            <ul *ngIf="driverPanelOpen" class="pl-10 py-1 text-sm space-y-1 text-gray-300">
+
+              <li>
+                <a routerLink="/admin-dashboard/driverrequest"
+                  class="flex items-center p-2 hover:text-indigo-300 hover:bg-gray-700">
+                  <i class="fa-solid fa-user-plus mr-2"></i>
+                  Driver Requests
+                </a>
+              </li>
+
+              <!-- Verify Drivers -->
+              <li>
+                <a routerLink="/admin-dashboard/verify-drivers"
+                  class="flex items-center p-2 hover:text-indigo-300 hover:bg-gray-700">
+                  <i class="fa-solid fa-user-check mr-2"></i>
+                  Verify Drivers
+                </a>
+              </li>
+
+              <!-- Approved Drivers -->
+              <!-- <li>
+                <a routerLink="/admin-dashboard/approved-drivers"
+                  class="flex items-center p-2 hover:text-indigo-300 hover:bg-gray-700">
+                  <i class="fa-solid fa-user-shield mr-2"></i>
+                  Approved Drivers
+                </a>
+              </li> -->
+
+              <!-- Ongoing Trips -->
+              <li>
+                <a routerLink="/admin-dashboard/ongoing-trips"
+                  class="flex items-center p-2 hover:text-indigo-300 hover:bg-gray-700">
+                  <i class="fa-solid fa-route mr-2"></i>
+                  Ongoing Trips
+                </a>
+              </li>
+
+              <!-- Completed Trips -->
+              <li>
+                <a routerLink="/admin-dashboard/completed-trips"
+                  class="flex items-center p-2 hover:text-indigo-300 hover:bg-gray-700">
+                  <i class="fa-solid fa-flag-checkered mr-2"></i>
+                  Completed Trips
+                </a>
+              </li>
+
+              <!-- Driver Payments -->
+              <li>
+                <a routerLink="/admin-dashboard/driver-payments"
+                  class="flex items-center p-2 hover:text-indigo-300 hover:bg-gray-700">
+                  <i class="fa-solid fa-money-bill-wave mr-2"></i>
+                  Driver Payments
+                </a>
+              </li>
+
+              <!-- Driver Reviews -->
+              <li>
+                <a routerLink="/admin-dashboard/driver-reviews"
+                  class="flex items-center p-2 hover:text-indigo-300 hover:bg-gray-700">
+                  <i class="fa-solid fa-star mr-2"></i>
+                  Driver Reviews
+                </a>
+              </li>
+
+              <li>
+                <a routerLink="/admin-dashboard/driver-conversations"
+                  class="flex items-center p-2 hover:text-indigo-300 hover:bg-gray-700">
+                  <i class="fa-solid fa-comments mr-2"></i>
+                  Driver Conversations
+                </a>
+              </li>
+
+            </ul>
+          </li>
+
+
+
         </ul>
 
         <p class="mb-14 px-5 py-3 hidden md:block text-center text-xs text-slate-400">

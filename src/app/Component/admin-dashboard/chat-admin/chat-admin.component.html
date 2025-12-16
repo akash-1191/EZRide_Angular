@@ -35,18 +35,18 @@
             (click)="selectedUserType = 'owner'; onUserTypeChange()">
             Owners
           </button>
-          <button 
+          <!-- <button 
             class="flex-1 px-3 py-2 text-sm font-medium rounded-lg transition-all"
             [class]="selectedUserType === 'customer' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'"
             (click)="selectedUserType = 'customer'; onUserTypeChange()">
             Customers
-          </button>
-          <!-- <button 
+          </button> -->
+          <button 
             class="flex-1 px-3 py-2 text-sm font-medium rounded-lg transition-all"
             [class]="selectedUserType === 'driver' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'"
             (click)="selectedUserType = 'driver'; onUserTypeChange()">
             Drivers
-          </button> -->
+          </button>
         </div>
 
         <!-- Users List -->
@@ -67,7 +67,7 @@
                  [class]="selectedUserId === user.userId ? 'bg-blue-50 border-l-4 border-blue-500' : 'bg-gray-50 hover:bg-gray-100'"
                  (click)="selectUser(user.userId)">
               
-              <div class="flex-shrink-0 w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+              <div class="shrink-0 w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
                 <span class="font-semibold text-blue-600">
                   {{ user.firstName?.charAt(0) || user.name?.charAt(0) || user.fullName?.charAt(0) || 'U' }}
                 </span>
@@ -116,7 +116,7 @@
                [class]="selectedConversation?.conversationId === conv.conversationId ? 'bg-blue-50' : 'hover:bg-gray-50'"
                (click)="selectConversation(conv)">
             
-            <div class="flex-shrink-0">
+            <div class="shrink-0">
               <div class="w-12 h-12 rounded-full flex items-center justify-center text-lg font-semibold"
                    [class]="conv.otherUserRole === 'Owner' || conv.otherUserRole === 'OWNER' ? 'bg-blue-100 text-blue-600' : 
                             conv.otherUserRole === 'Customer' || conv.otherUserRole === 'CUSTOMER' ? 'bg-green-100 text-green-600' : 
@@ -146,7 +146,7 @@
                   {{ conv.lastMessage ? (conv.lastMessage.timestamp | date:'shortTime') : 'No messages' }}
                 </span>
                 <span *ngIf="conv.unreadCount > 0" 
-                      class="bg-red-500 text-white text-xs font-bold rounded-full min-w-[20px] h-5 flex items-center justify-center px-1.5">
+                      class="bg-red-500 text-white text-xs font-bold rounded-full min-w-5 h-5 flex items-center justify-center px-1.5">
                   {{ conv.unreadCount }}
                 </span>
               </div>

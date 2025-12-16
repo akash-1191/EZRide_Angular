@@ -14,6 +14,7 @@ export class AdminDashboardComponent {
  userPanelOpen: boolean = false;
  ownerPanelOpen: boolean = false;
  isSidebarOpen: boolean = false;
+ driverPanelOpen: boolean = false;
  
  toggleSidebar() {
    this.isSidebarOpen = !this.isSidebarOpen;

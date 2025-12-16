@@ -1,470 +1,755 @@
+<!DOCTYPE html>
+<html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Customer Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 
-<section *ngIf="profiledata" class="flex items-center justify-center md:p-6 p-2 ">
-    <!-- Profile Section -->
-    <div class="bg-white rounded-lg shadow-xl w-full">
-        <!-- Background Header -->
-        <div class="bg-gradient-to-r from-gray-600 to-gray-800 text-white p-6 rounded-t-lg">
-            <div class="text-center text-2xl font-bold">
-                <p>{{ profiledata?.firstname }} {{ profiledata?.middlename }} {{ profiledata?.lastname}}</p>
+<body class="bg-gray-100 min-h-screen">
+
+    <!-- Main Container -->
+    <main *ngIf="profiledata" class="max-w-7xl mx-auto p-4 md:p-6 lg:p-8 space-y-8">
+
+        <!-- Profile Card -->
+        <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200">
+            <!-- Header Section -->
+            <div class="bg-linear-to-r from-gray-700 to-gray-800 text-white p-6 md:p-8">
+                <div class="flex flex-col md:flex-row justify-between items-center">
+                    <div>
+                        <h1 class="text-2xl md:text-3xl font-bold">
+                            {{ profiledata?.firstname }} {{ profiledata?.middlename }} {{ profiledata?.lastname }}
+                        </h1>
+
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Profile Content -->
+            <div class="p-6 md:p-8">
+                <!-- Profile Image and Info Grid -->
+                <div class="flex flex-col lg:flex-row gap-8">
+                    <!-- Profile Image Section -->
+                    <div class="lg:w-1/3">
+                        <div class="relative group">
+                            <div
+                                class="w-48 h-48 md:w-56 md:h-56 mx-auto lg:mx-0 rounded-xl overflow-hidden border-4 border-white shadow-lg">
+                                <img [src]="'http://localhost:7188' + profiledata.image" alt="Profile Picture"
+                                    (error)="onImageError($event)"
+                                    class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110 cursor-pointer">
+                            </div>
+                            <!-- Edit Overlay -->
+                            <div
+                                class="absolute inset-0 w-48 h-48 md:w-56 md:h-56 mx-auto lg:mx-0 rounded-xl bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                                <button type="button" (click)="openImageUploadModal()"
+                                    class="bg-white text-gray-700 p-3 rounded-full hover:bg-gray-100 transition-colors duration-200 shadow-lg cursor-pointer">
+                                    <i class="fas fa-camera text-xl"></i>
+                                </button>
+                            </div>
+                            <p class="text-center text-gray-500 text-sm mt-4">
+                                Click photo to update
+                            </p>
+                        </div>
+
+                        <!-- Quick Stats -->
+                        <div class="mt-8 p-6 bg-gray-50 rounded-lg shadow-sm border border-gray-100">
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="font-semibold text-gray-700">
+                                    <i class="fas fa-chart-line mr-2 text-gray-600"></i>
+                                    Quick Stats
+                                </h3>
+                                <span class="text-xs bg-gray-200 text-gray-700 px-2 py-1 rounded-full">
+                                    Active
+                                </span>
+                            </div>
+                            <div class="space-y-3">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-600 text-sm">Documents</span>
+                                    <span class="font-semibold">{{ documents.length || 0 }}</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-600 text-sm">Status</span>
+                                    <span class="font-semibold text-gray-700">
+                                        {{ driverExperienceData?.availabilityStatus || 'Not Set' }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Profile Details -->
+                    <div class="lg:w-2/3">
+                        <!-- Personal Information -->
+                        <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                            <div class="flex justify-between items-center mb-6">
+                                <h2 class="text-xl font-bold text-gray-800">
+                                    <i class="fas fa-user-tie mr-3 text-gray-700"></i>
+                                    Personal Information
+                                </h2>
+                                <button type="button" (click)="openEditProfileModal()"
+                                    class="text-sm bg-gray-100 text-gray-700 hover:bg-gray-200 px-4 py-2 rounded-lg transition-colors duration-200 font-medium border border-gray-300 cursor-pointer">
+                                    <i class="fas fa-edit mr-2"></i>Edit Profile
+                                </button>
+                            </div>
+
+                            <!-- Information Grid -->
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <!-- Info Item Component -->
+                                <div class="space-y-1">
+                                    <label class="text-sm font-medium text-gray-500">Full Name</label>
+                                    <p class="text-gray-800 font-semibold text-lg">
+                                        {{ profiledata.firstname }} {{ profiledata.middlename }} {{ profiledata.lastname
+                                        }}
+                                    </p>
+                                </div>
+                                <div class="space-y-1">
+                                    <label class="text-sm font-medium text-gray-500">Age</label>
+                                    <p class="text-gray-800 font-semibold text-lg">{{ profiledata.age }} years</p>
+                                </div>
+                                <div class="space-y-1">
+                                    <label class="text-sm font-medium text-gray-500">Gender</label>
+                                    <p class="text-gray-800 font-semibold text-lg">{{ profiledata.gender }}</p>
+                                </div>
+                                <div class="space-y-1">
+                                    <label class="text-sm font-medium text-gray-500">Phone Number</label>
+                                    <p class="text-gray-800 font-semibold text-lg">
+                                        <i class="fas fa-phone mr-2 text-gray-600"></i>
+                                        {{ profiledata.phone }}
+                                    </p>
+                                </div>
+                                <div class="space-y-1">
+                                    <label class="text-sm font-medium text-gray-500">Email</label>
+                                    <p class="text-gray-800 font-semibold text-lg">
+                                        <i class="fas fa-envelope mr-2 text-gray-600"></i>
+                                        {{ profiledata.email }}
+                                    </p>
+                                </div>
+                                <div class="space-y-1">
+                                    <label class="text-sm font-medium text-gray-500">Location</label>
+                                    <p class="text-gray-800 font-semibold text-lg">
+                                        <i class="fas fa-map-marker-alt mr-2 text-gray-600"></i>
+                                        {{ profiledata.city }}, {{ profiledata.state }}
+                                    </p>
+                                </div>
+                                 <div class="space-y-1">
+                                    <label class="text-sm font-medium text-gray-500">User Status</label>
+                                    <p class="text-gray-800 font-semibold text-lg">
+                                        <i class="fas fa-envelope mr-2 text-gray-600"></i>
+                                        {{ profiledata.status }}
+                                    </p>
+                                </div>
+                                 <div class="space-y-1">
+                                    <label class="text-sm font-medium text-gray-500">RejectResion</label>
+                                    <p class="text-red-800 font-semibold text-lg">
+                                        <i class="fas fa-envelope mr-2 text-gray-600"></i>
+                                         {{ profiledata.rejectresion || '--'}}
+                                    </p>
+                                </div>
+                                <div class="md:col-span-2 space-y-1">
+                                    <label class="text-sm font-medium text-gray-500">Address</label>
+                                    <p class="text-gray-700 font-semibold">
+                                        <i class="fas fa-home mr-2 text-gray-600"></i>
+                                        {{ profiledata.address }}
+                                    </p>
+                                </div>
+                               
+                            
+                            </div>
+                        </div>
+
+                        <!-- Driver Experience Section -->
+                        <div class="mt-6 bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                            <div class="flex justify-between items-center mb-6">
+                                <div>
+                                    <h2 class="text-xl font-bold text-gray-800">
+                                        <i class="fas fa-car mr-3 text-gray-700"></i>
+                                        Driver Experience
+                                    </h2>
+                                    <p class="text-gray-600 text-sm mt-1">Update your driving details</p>
+                                </div>
+                                <button (click)="openExperienceModal()"
+                                    class="text-sm bg-gray-100 text-gray-700 hover:bg-gray-200 px-4 py-2 rounded-lg transition-colors duration-200 font-medium border border-gray-300 cursor-pointer">
+                                    <i class="fas fa-plus mr-2"></i>Add / Update
+                                </button>
+                            </div>
+
+                            <!-- <div *ngIf="driverExperienceData; else noExperience" class="space-y-4">
+                                <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200">
+                                    <div>
+                                        <p class="text-gray-700 font-medium">
+                                            <i class="fas fa-clock mr-2 text-gray-600"></i>
+                                            Experience
+                                        </p>
+                                        <p class="text-2xl font-bold text-gray-800 mt-2">
+                                            {{ driverExperienceData.experienceYears }} 
+                                            <span class="text-sm text-gray-600">Years</span>
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <p class="text-gray-700 font-medium">
+                                            <i class="fas fa-clock mr-2 text-gray-600"></i>
+                                            Ride Vehicle
+                                        </p>
+                                        <p class="text-2xl font-bold text-gray-800 mt-2">
+                                            {{ vehicleTypeMap[driverExperienceData?.vehicleType] || 'Unknown' }}
+                                            
+                                        </p>
+                                    </div>
+                                    <div class="text-right">
+                                        <p class="text-gray-700 font-medium">
+                                            <i class="fas fa-user-check mr-2 text-gray-600"></i>
+                                            Status
+                                        </p>
+                                        <span class="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium mt-2" 
+                                              [ngClass]="{
+                                                'bg-green-100 text-green-700 border border-green-200': driverExperienceData.availabilityStatus === 'Available',
+                                                'bg-yellow-100 text-yellow-700 border border-yellow-200': driverExperienceData.availabilityStatus === 'Busy',
+                                                'bg-gray-100 text-gray-700 border border-gray-200': driverExperienceData.availabilityStatus === 'Inactive'
+                                              }">
+                                            <i class="fas fa-circle mr-2 text-xs"></i>
+                                            {{ driverExperienceData.availabilityStatus }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div> -->
+
+                            <div *ngIf="driverExperienceData; else noExperience" class="space-y-4">
+                                <div
+                                    class="flex flex-col md:flex-row items-center justify-between p-4 md:p-6 bg-gray-50 rounded-lg border border-gray-200">
+                                    <!-- Experience -->
+                                    <div class="text-center md:text-left mb-4 md:mb-0 md:flex-1">
+                                        <p
+                                            class="text-gray-700 font-medium flex items-center justify-center md:justify-start">
+                                            <i class="fas fa-clock mr-2 text-gray-600"></i>
+                                            Experience
+                                        </p>
+                                        <p class="text-2xl font-bold text-gray-800 mt-2">
+                                            {{ driverExperienceData.experienceYears }}
+                                            <span class="text-sm text-gray-600">Years</span>
+                                        </p>
+                                    </div>
+
+                                    <!-- Ride Vehicle -->
+                                    <div class="text-center mb-4 md:mb-0 md:flex-1">
+                                        <p class="text-gray-700 font-medium flex items-center justify-center">
+                                            <i class="fas fa-car mr-2 text-gray-600"></i>
+                                            Ride Vehicle
+                                        </p>
+                                        <p class="text-xl font-bold text-gray-800 mt-2">
+                                            {{ vehicleTypeMap[driverExperienceData?.vehicleType] || 'Unknown' }}
+                                        </p>
+                                       
+                                    </div>
+
+                                    <!-- Status -->
+                                    <div class="text-center md:text-right md:flex-1">
+                                        <p
+                                            class="text-gray-700 font-medium flex items-center justify-center md:justify-end">
+                                            <i class="fas fa-user-check mr-2 text-gray-600"></i>
+                                            Status
+                                        </p>
+                                        <div class="mt-2">
+                                            <span
+                                                class="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium"
+                                                [ngClass]="{
+                        'bg-green-100 text-green-700 border border-green-200': driverExperienceData.availabilityStatus === 'Available',
+                        'bg-yellow-100 text-yellow-700 border border-yellow-200': driverExperienceData.availabilityStatus === 'Busy',
+                        'bg-gray-100 text-gray-700 border border-gray-200': driverExperienceData.availabilityStatus === 'Inactive'
+                      }">
+                                                <i class="fas fa-circle mr-2 text-xs"></i>
+                                                {{ driverExperienceData.availabilityStatus }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <ng-template #noExperience>
+                                <div
+                                    class="text-center py-8 bg-gray-50 rounded-lg border border-dashed border-gray-300">
+                                    <i class="fas fa-car text-4xl text-gray-400 mb-4"></i>
+                                    <p class="text-gray-600 font-medium">No driver experience added yet</p>
+                                    <p class="text-gray-500 text-sm mt-1">Add your experience to get started</p>
+                                </div>
+                            </ng-template>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <!-- Profile Info Section -->
-        <div class="flex justify-center items-center md:p-8 p-0">
-            <div class="bg-white shadow-lg rounded-lg p-8 w-full space-y-6">
-                <!-- Header -->
-                <div class="flex flex-col md:flex-row items-start space-x-6 md:space-x-12">
-                    <div class="relative group mb-4 md:mb-0">
-                        <img [src]="'http://localhost:7188' + profiledata.image" alt="Profile Picture"
-                            (error)="onImageError($event)"
-                            class="md:w-52 md:h-52 w-44 h-44 md:rounded-sm rounded-full md: ml-12 border-4 border-gray-600 transition-all duration-300 ease-in-out group-hover:blur-[1px]" />
-                        <div
-                            class="absolute inset-0 left-18 flex items-center justify-center opacity-0 group-hover:opacity-100 group-hover:bg-none transition-all duration-300">
-                            <button type="button" (click)="openImageUploadModal()"
-                                class="bg-gray-500 text-white  px-2 py-1 text-2xl rounded-full">
-                                <i class="fa fa-pencil-alt cursor-pointer"></i>
+        <!-- Documents Section -->
+        <div class="bg-white rounded-xl shadow-lg p-6 md:p-8 border border-gray-200">
+            <!-- Documents Header -->
+            <div class="mb-8">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4">
+                    <div>
+                        <h2 class="text-2xl font-bold text-gray-800">
+                            <i class="fas fa-file-alt mr-3 text-gray-700"></i>
+                            Uploaded Documents
+                        </h2>
+                        <p class="text-gray-600 mt-2">Manage your uploaded documents here</p>
+                    </div>
+
+                    <!-- Upload Button -->
+                    <button type="button" (click)="openAddDocumentModal()"
+                        class="bg-gray-800 hover:bg-gray-900 text-white px-6 py-3 rounded-xl transition-all duration-300 shadow-md hover:shadow-lg font-medium cursor-pointer">
+                        <i class="fas fa-cloud-upload-alt mr-2"></i>Upload Document
+                    </button>
+                </div>
+
+                <!-- Status Alert -->
+                <div *ngIf="!allMandatoryUploaded" class="bg-red-50 border-l-4 border-red-500 p-4 rounded-r-lg">
+                    <div class="flex items-center">
+                        <i class="fas fa-exclamation-triangle text-red-500 text-xl mr-3"></i>
+                        <div>
+                            <p class="font-semibold text-red-700">Required Documents Missing</p>
+                            <p class="text-red-600 text-sm mt-1">
+                                Please upload: <strong>{{ missingMandatoryDocuments.join(', ') }}</strong>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div *ngIf="allMandatoryUploaded" class="bg-green-50 border-l-4 border-green-500 p-4 rounded-r-lg">
+                    <div class="flex items-center">
+                        <i class="fas fa-check-circle text-green-500 text-xl mr-3"></i>
+                        <div>
+                            <p class="font-semibold text-green-700">All Documents Complete!</p>
+                            <p class="text-green-600 text-sm mt-1">All mandatory documents have been uploaded
+                                successfully.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Documents Grid -->
+            <div *ngIf="documents && documents.length > 0; else noDocuments"
+                class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Document Card -->
+                <div *ngFor="let doc of documents"
+                    class="group bg-white rounded-lg border border-gray-200 hover:border-gray-300 hover:shadow-lg transition-all duration-300 overflow-hidden">
+                    <!-- Card Header -->
+                    <div class="p-5 border-b border-gray-100 bg-gray-50">
+                        <div class="flex justify-between items-center">
+                            <div class="flex items-center">
+                                <i class="fas fa-file text-gray-600 mr-3"></i>
+                                <h3 class="font-semibold text-gray-800 truncate">{{ documentTypeMap[doc.documentType] }}
+                                </h3>
+                            </div>
+                            <button (click)="openDeleteConfirm(doc.documentId)"
+                                class="text-gray-500 hover:text-red-600 transition-colors duration-200 cursor-pointer">
+                                <i class="fas fa-trash-alt"></i>
                             </button>
                         </div>
                     </div>
-                    <div class="text-center mb-6 w-full">
-                        <!-- <h1 class="md:text-3xl text-2xl font-extrabold text-gray-800">
-                            User Name 
-                        </h1> -->
-                        <!-- Company Details -->
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 text-left mx-4 mt-10">
-                            <div class="space-y-2">
-                                <p class="text-gray-800 font-semibold">Full Name:- <span class="text-gray-600"> {{
-                                        profiledata.firstname }} {{ profiledata.middlename }} {{ profiledata.lastname
-                                        }}</span>
-                                </p>
-                            </div>
-                            <div class="space-y-2">
-                                <p class="text-gray-800 font-semibold">Age:- <span
-                                        class="text-gray-600">{{profiledata.age}}</span></p>
-                            </div>
-                            <div class="space-y-2">
-                                <p class="text-gray-800 font-semibold">Gender:- <span
-                                        class="text-gray-600">{{profiledata.gender}}</span>
-                                </p>
-                            </div>
-                            <div class="space-y-2">
-                                <p class="text-gray-800 font-semibold">Phone No:- <span
-                                        class="text-gray-600">{{profiledata.phone}}</span></p>
-                            </div>
-                            <div class="space-y-2">
-                                <p class="text-gray-800 font-semibold">State:- <span
-                                        class="text-gray-600">{{profiledata.state}}</span>
-                                </p>
-                            </div>
-                            <div class="space-y-2">
-                                <p class="text-gray-800 font-semibold">City:- <span
-                                        class="text-gray-600">{{profiledata.city}}</span>
-                                </p>
-                            </div>
-                            <div class="space-y-2">
-                                <p class="text-gray-800 font-semibold">Email:- <span
-                                        class="text-gray-600">{{profiledata.email}}</span></p>
-                            </div>
-                            <div class="space-y-2">
-                                <p class="text-gray-800 font-semibold">Address:- <span
-                                        class="text-gray-600">{{profiledata.address}}</span></p>
+
+                    <!-- Document Preview -->
+                    <div class="p-4">
+                        <div class="h-48 rounded-lg overflow-hidden bg-gray-100">
+                            <!-- Image Preview -->
+                            <img *ngIf="doc.documentPath.endsWith('.jpg') || doc.documentPath.endsWith('.jpeg') || doc.documentPath.endsWith('.png')"
+                                [src]="'http://localhost:7188/' + doc.documentPath"
+                                class="w-full h-full object-contain cursor-pointer hover:scale-105 transition-transform duration-300">
+
+                            <!-- PDF Preview -->
+                            <div *ngIf="doc.documentPath.endsWith('.pdf')"
+                                class="w-full h-full flex flex-col items-center justify-center p-4">
+                                <i class="fas fa-file-pdf text-red-500 text-5xl mb-4 cursor-pointer"></i>
+                                <p class="text-gray-600 text-sm mb-2">PDF Document</p>
+                                <a (click)="openPdf('http://localhost:7188' + doc.documentPath)"
+                                    class="text-blue-600 hover:text-blue-700 font-medium cursor-pointer">
+                                    <i class="fas fa-external-link-alt mr-2"></i>View Document
+                                </a>
                             </div>
                         </div>
-                    </div>
 
-                </div>
+                        <!-- Document Type Badge -->
 
-
-                <!-- Modal for File Upload -->
-                <div *ngIf="isImageUploadModalOpen"
-                    class="modal fixed inset-0 z-50 bg-black/30 flex justify-center items-center transition-all duration-300 ease-in-out">
-                    <div
-                        class="bg-white p-6 rounded-lg w-96 relative shadow-2xl scale-105 transition-transform duration-300 ease-in-out">
-                        <button type="button" (click)="closeImageUploadModal()"
-                            class="absolute top-2 right-2 text-gray-600 hover:text-gray-900 transition-colors duration-200">
-                            <i class="fa fa-times cursor-pointer"></i>
-                        </button>
-
-                        <h2 class="text-2xl font-semibold text-gray-800 mb-6 text-center">Upload New Image</h2>
-                        <form enctype="multipart/form-data" class="space-y-4">
-                            <div>
-                                <label for="uploadedFile" class="block text-gray-700 font-medium mb-2">Select
-                                    Image</label>
-                                <input type="file" id="uploadedFile" accept="image/*" (change)="onImageSelected($event)"
-                                    class="w-full border-2 border-gray-300 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500 transition-all duration-200" />
-                            </div>
-                            <div class="flex justify-center items-center mt-6">
-                                <button type="button" (click)="submitImageUpload()"
-                                    class="cursor-pointer bg-gray-600 text-white py-3 px-6 rounded-lg hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-all duration-300">
-                                    Upload Image
-                                </button>
-                            </div>
-                        </form>
                     </div>
                 </div>
+            </div>
 
-
-                <div class="bg-white mt-6 rounded-lg shadow-lg p-6 w-full">
-
-                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
-                        <h2 class="text-xl font-semibold text-gray-800">Uploaded Documents</h2>
-                        <button type="button" (click)="UploadModalOpen()"
-                            class="text-sm bg-gray-700 text-white px-4 py-2 cursor-pointer rounded hover:bg-gray-800 transition">
-                            <i class="fas fa-upload mr-2"></i> Upload Documents
-                        </button>
-                    </div>
-
-                    <!-- Document Grid -->
-                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                        <!--  AGE PROOF -->
-                        <div class="relative border rounded-lg p-4 shadow-sm hover:shadow-md transition">
-                            <span class="block font-semibold mb-2 text-gray-700">Age Proof</span>
-                            <ng-container *ngIf="uploadedDocData?.ageProofPath; else noAgeProof">
-                                <ng-container [ngSwitch]="getFileType(uploadedDocData.ageProofPath)">
-                                    <!-- Image -->
-                                    <img *ngSwitchCase="'image'"
-                                        [src]="'http://localhost:7188/' + uploadedDocData.ageProofPath"
-                                        class="w-full h-52 object-cover rounded" alt="Age Proof" />
-
-
-                                    <!-- PDF -->
-                                    <div *ngSwitchCase="'pdf'"
-                                        class="w-full h-52 flex flex-col items-center justify-center bg-gray-100 rounded">
-                                        <i class="fas fa-file-pdf text-red-600 text-4xl mb-2 cursor-pointer"
-                                            (click)="deleteDocumentField('ageproof')"></i>
-                                        <a [href]="'http://localhost:7188/' + uploadedDocData.ageProofPath"
-                                            target="_blank" class="text-sm text-blue-600 underline">View PDF</a>
-                                    </div>
-                                </ng-container>
-                                <!--  Close -->
-                                <button
-                                    class="absolute top-0 right-0 text-white bg-black/60 hover:bg-black p-1 rounded-sm text-xs">
-                                    <i class="fas fa-times cursor-pointer text-lg hover:text-red-500"
-                                        (click)="deleteDocumentField('ageproof')"></i>
-                                </button>
-                            </ng-container>
-                            <ng-template #noAgeProof>
-                                <div
-                                    class="w-full h-52 flex items-center justify-center bg-gray-100 rounded text-gray-500 text-sm text-center">
-                                    <i class="fas fa-image text-2xl mr-2"></i> No document uploaded
-                                </div>
-                            </ng-template>
-                        </div>
-
-                        <!-- ADDRESS PROOF -->
-                        <div class="relative border rounded-lg p-4 shadow-sm hover:shadow-md transition">
-                            <span class="block font-semibold mb-2 text-gray-700">Address Proof</span>
-                            <ng-container *ngIf="uploadedDocData?.addressProofPath; else noAddressProof">
-                                <ng-container [ngSwitch]="getFileType(uploadedDocData.addressProofPath)">
-                                    <img *ngSwitchCase="'image'"
-                                        [src]="'http://localhost:7188/' + uploadedDocData.addressProofPath"
-                                        class="w-full h-52 object-cover rounded" alt="Address Proof" />
-                                    
-
-                                    <div *ngSwitchCase="'pdf'"
-                                        class="w-full h-52 flex flex-col items-center justify-center bg-gray-100 rounded">
-                                        <i class="fas fa-file-pdf text-red-600 text-4xl mb-2 cursor-pointer"
-                                            (click)="deleteDocumentField('addressproof')"></i>
-                                        <a [href]="'http://localhost:7188/' + uploadedDocData.addressProofPath"
-                                            target="_blank" class="text-sm text-blue-600 underline">View PDF</a>
-                                    </div>
-                                </ng-container>
-                                <button
-                                    class="absolute top-0 right-0 text-white bg-black/60 hover:bg-black p-1 rounded-sm text-xs">
-                                    <i class="fas fa-times cursor-pointer text-lg hover:text-red-500"
-                                        (click)="deleteDocumentField('addressproof')"></i>
-                                </button>
-                            </ng-container>
-                            <ng-template #noAddressProof>
-                                <div
-                                    class="w-full h-52 flex items-center justify-center bg-gray-100 rounded text-gray-500 text-sm text-center">
-                                    <i class="fas fa-image text-2xl mr-2"></i> No document uploaded
-                                </div>
-                            </ng-template>
-                        </div>
-
-                        <!--  DRIVING LICENSE -->
-                        <div class="relative border rounded-lg p-4 shadow-sm hover:shadow-md transition">
-                            <span class="block font-semibold mb-2 text-gray-700">Driving Licence</span>
-                            <ng-container *ngIf="uploadedDocData?.dlImagePath; else noDLProof">
-                                <ng-container [ngSwitch]="getFileType(uploadedDocData.dlImagePath)">
-                                    <img *ngSwitchCase="'image'"
-                                        [src]="'http://localhost:7188/' + uploadedDocData.dlImagePath"
-                                        class="w-full h-52 object-cover rounded" alt="DL Proof" />
-                                    <div *ngSwitchCase="'pdf'"
-                                        class="w-full h-52 flex flex-col items-center justify-center bg-gray-100 rounded">
-                                        <i class="fas fa-file-pdf text-red-600 text-4xl mb-2 cursor-pointer"
-                                            (click)="deleteDocumentField('dlimage')"></i>
-                                        <a [href]="'http://localhost:7188/' + uploadedDocData.dlImagePath"
-                                            target="_blank" class="text-sm text-blue-600 underline">View PDF</a>
-                                    </div>
-                                </ng-container>
-                                <button
-                                    class="absolute top-0 right-0 text-white bg-black/60 hover:bg-black p-1 rounded-sm text-xs">
-                                    <i class="fas fa-times cursor-pointer text-lg hover:text-red-500"
-                                        (click)="deleteDocumentField('dlimage')"></i>
-                                </button>
-                            </ng-container>
-                            <ng-template #noDLProof>
-                                <div
-                                    class="w-full h-52 flex items-center justify-center bg-gray-100 rounded text-gray-500 text-sm text-center">
-                                    <i class="fas fa-image text-2xl mr-2"></i> No document uploaded
-                                </div>
-                            </ng-template>
-                        </div>
-                    </div>
-                    <!--  Footer Info -->
-                    <p class="text-md text-gray-500 mt-6 text-center">
-                        <span class="text-xl">📎</span> Supported formats: JPG, PNG, PDF. Max size 5 MB per file.
-                    </p>
+            <!-- No Documents State -->
+            <ng-template #noDocuments>
+                <div class="text-center py-12 bg-gray-50 rounded-xl border-2 border-dashed border-gray-300">
+                    <i class="fas fa-folder-open text-5xl text-gray-400 mb-4"></i>
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">No Documents Uploaded</h3>
+                    <p class="text-gray-500 mb-6">Start by uploading your first document</p>
+                    <button type="button" (click)="openAddDocumentModal()"
+                        class="bg-gray-800 hover:bg-gray-900 text-white px-8 py-3 rounded-xl transition-all duration-300 font-medium cursor-pointer">
+                        <i class="fas fa-upload mr-2"></i>Upload Now
+                    </button>
                 </div>
+            </ng-template>
 
+            <!-- Footer Info -->
+            <div class="mt-8 pt-6 border-t border-gray-200">
+                <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+                    <div class="flex items-center text-gray-600">
+                        <i class="fas fa-info-circle mr-2 text-gray-500"></i>
+                        <span class="text-sm">Supported formats: JPG, PNG, PDF • Max size: 5MB per file</span>
+                    </div>
+                    <div class="text-sm text-gray-500">
+                        Total Documents: <span class="font-semibold text-gray-700">{{ documents.length || 0 }}</span>
+                    </div>
+                </div>
             </div>
         </div>
 
+        <!-- MODALS -->
+        <!-- Image Upload Modal -->
+        <div *ngIf="isImageUploadModalOpen" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
+            <div class="bg-white rounded-xl w-full max-w-md shadow-2xl">
+                <div class="p-6 border-b border-gray-200">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-xl font-bold text-gray-800">
+                            <i class="fas fa-camera mr-2"></i>Upload Profile Picture
+                        </h3>
+                        <button (click)="closeImageUploadModal()"
+                            class="text-gray-500 hover:text-gray-700 transition-colors duration-200 cursor-pointer">
+                            <i class="fas fa-times text-xl"></i>
+                        </button>
+                    </div>
+                </div>
 
+                <div class="p-6">
+                    <form enctype="multipart/form-data" class="space-y-6">
+                        <!-- File Upload Area -->
+                        <div
+                            class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-gray-400 transition-colors duration-300">
+                            <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-4"></i>
+                            <p class="text-gray-600 font-medium mb-2">Drop your image here or click to browse</p>
+                            <p class="text-gray-500 text-sm">Supports JPG, PNG • Max 5MB</p>
+                            <input type="file" id="uploadedFile" accept="image/*" (change)="onImageSelected($event)"
+                                class="hidden">
+                            <label for="uploadedFile"
+                                class="inline-block mt-4 bg-gray-100 text-gray-700 hover:bg-gray-200 px-6 py-3 rounded-lg cursor-pointer transition-colors duration-200 font-medium">
+                                <i class="fas fa-folder-open mr-2"></i>Browse Files
+                            </label>
+                        </div>
 
-
-        <!-- Edit Profile Section -->
-        <div class="border-t-2 border-gray-300 w-full"></div>
-        <div class="bg-white rounded-lg shadow-lg w-full p-6">
-            <div class=" flex justify-between items-center space-x-4">
-                <h2 class="text-xl font-semibold text-gray-800">Edit User Profile</h2>
-                <button type="button" (click)="openEditProfileModal()"
-                    class="cursor-pointer text-gray-600 hover:text-gray-800 text-xl">
-                    <i class="fas fa-edit"></i> Edit
-                </button>
+                        <!-- Upload Button -->
+                        <div class="flex gap-4">
+                            <button type="button" (click)="closeImageUploadModal()"
+                                class="flex-1 border border-gray-300 text-gray-700 hover:bg-gray-50 px-6 py-3 rounded-xl transition-colors duration-200 font-medium cursor-pointer">
+                                Cancel
+                            </button>
+                            <button type="button" (click)="submitImageUpload()"
+                                class="flex-1 bg-gray-800 hover:bg-gray-900 text-white px-6 py-3 rounded-xl transition-all duration-300 font-medium cursor-pointer">
+                                <i class="fas fa-upload mr-2"></i>Upload Image
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
-    </div>
 
-    <!-- Modal for User Profile Edit -->
-    <div *ngIf="isEditProfileModalOpen" class="fixed inset-0  bg-black/50 top-10  z-50 overflow-auto">
-        <div class="flex items-start justify-center min-h-screen pt-10 px-4">
-            <div class="bg-white text-gray-800 rounded-lg w-full max-w-2xl p-4 sm:p-6 md:p-8 shadow-lg relative">
-                <button type="button" (click)="closeEditProfileModal()"
-                    class="cursor-pointer absolute top-2 right-2 text-gray-600 hover:text-gray-800 text-2xl">
-                    <i class="fas fa-times cursor-pointer"></i>
-                </button>
-                <h2 class="text-2xl font-bold mb-6 text-gray-800">Edit User Profile</h2>
+        <!-- Edit Profile Modal -->
+        <div *ngIf="isEditProfileModalOpen"
+            class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 overflow-y-auto">
+            <div class="bg-white rounded-xl w-full max-w-4xl my-8 shadow-2xl">
+                <!-- Modal Header -->
+                <div class="p-6 border-b border-gray-200 bg-gray-50 rounded-t-xl">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <h3 class="text-2xl font-bold text-gray-800">
+                                <i class="fas fa-user-edit mr-2"></i>Edit Profile
+                            </h3>
+                            <p class="text-gray-600 mt-1">Update your personal information</p>
+                        </div>
+                        <button (click)="closeEditProfileModal()"
+                            class="text-gray-500 hover:text-gray-700 transition-colors duration-200 cursor-pointer">
+                            <i class="fas fa-times text-2xl"></i>
+                        </button>
+                    </div>
+                </div>
 
-                <!-- Form Grid -->
+                <!-- Form -->
                 <form [formGroup]="updateUserForm" (ngSubmit)="submitProfileUpdate()"
-                    class="w-full max-w-3xl mx-auto bg-white p-8 rounded-md shadow-md relative z-10">
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                    class="p-6 space-y-6 max-h-[70vh] overflow-y-auto">
+                    <!-- Form Grid -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <!-- First Name -->
                         <div>
-                            <label class="block text-gray-700 text-sm font-bold mb-2" for="fname">First Name</label>
-                            <input
-                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500"
-                                type="text" id="fname" name="fname" placeholder="Enter First Name"
-                                formControlName="firstname">
-                            <span class="text-red-500"
-                                *ngIf="firstname.errors?.['required'] && (firstname.touched || firstname.dirty)">Please
-                                Enter
-                                firstname</span>
-                            <span class="text-red-500"
-                                *ngIf="firstname.errors?.['pattern'] && (firstname.touched || firstname.dirty)">Invalid
-                                Name</span>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="fas fa-user mr-2 text-gray-600"></i>First Name
+                            </label>
+                            <input formControlName="firstname"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent transition-all duration-200 cursor-pointer"
+                                placeholder="Enter first name">
                         </div>
 
+                        <!-- Middle Name -->
                         <div>
-                            <label class="block text-gray-700 text-sm font-bold mb-2" for="mname">Middle Name</label>
-                            <input
-                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500"
-                                type="text" id="mname" name="mname" placeholder="Middle Name"
-                                formControlName="middleName">
-                            <span class="text-red-500"
-                                *ngIf="middleName.errors?.['pattern'] && (middleName.touched || middleName.dirty)">Invalid
-                                Name</span>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Middle Name</label>
+                            <input formControlName="middleName"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent transition-all duration-200 cursor-pointer"
+                                placeholder="Enter middle name">
                         </div>
+
+                        <!-- Last Name -->
                         <div>
-                            <label class="block text-gray-700 text-sm font-bold mb-2" for="lname">Last Name</label>
-                            <input
-                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500"
-                                type="text" id="lname" name="lname" placeholder="Last Name" formControlName="lastName">
-                            <span class="text-red-500"
-                                *ngIf="lastName.errors?.['required'] && (lastName.touched || lastName.dirty)">Please
-                                Enter lastName</span>
-                            <span class="text-red-500"
-                                *ngIf="lastName.errors?.['pattern'] && (lastName.touched || lastName.dirty)">Invalid
-                                Name</span>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
+                            <input formControlName="lastName"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent transition-all duration-200 cursor-pointer"
+                                placeholder="Enter last name">
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                    <!-- Second Row -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <!-- Age -->
                         <div>
-                            <label class="block text-gray-700 text-sm font-bold mb-2" for="age">Age</label>
-                            <input
-                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500"
-                                type="text" id="age" name="age" placeholder="Enter Your Age" formControlName="age">
-                            <span class="text-red-500"
-                                *ngIf="age.errors?.['required'] && (age.touched || age.dirty)">Please Enter Your
-                                Age</span>
-                            <span class="text-red-500"
-                                *ngIf="age.errors?.['pattern'] && (age.touched || age.dirty)">Enter Only
-                                Digit</span>
-
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="fas fa-birthday-cake mr-2 text-gray-600"></i>Age
+                            </label>
+                            <input formControlName="age" type="number"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent transition-all duration-200 cursor-pointer"
+                                placeholder="Enter age">
                         </div>
 
+                        <!-- Gender -->
                         <div>
-                            <label class="block text-gray-700 text-sm font-bold mb-2" for="gender">Gender</label>
-                            <select
-                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500"
-                                id="gender" name="gender" formControlName="gender">
-                                <option selected disabled>Select your Gender</option>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="fas fa-venus-mars mr-2 text-gray-600"></i>Gender
+                            </label>
+                            <select formControlName="gender"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent transition-all duration-200 cursor-pointer">
+                                <option value="" disabled>Select gender</option>
                                 <option value="Male">Male</option>
                                 <option value="Female">Female</option>
                                 <option value="Other">Other</option>
                             </select>
-                            <span class="text-red-500"
-                                *ngIf="gender.errors?.['required'] && (gender.touched || gender.dirty)">Please
-                                Select Your Gender</span>
-
                         </div>
 
+                        <!-- Phone -->
                         <div>
-                            <label class="block text-gray-700 text-sm font-bold mb-2" for="phone">Phone No</label>
-                            <input type="text"
-                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500"
-                                id="phone" name="phone" placeholder="Enter Phone" formControlName="phone">
-                            <span class="text-red-500"
-                                *ngIf="phone.errors?.['required'] && (phone.touched || phone.dirty)">Please
-                                Enter
-                                phone_Number</span>
-                            <span class="text-red-500"
-                                *ngIf="phone.errors?.['pattern'] && (phone.touched || phone.dirty)">Enter
-                                only Digit</span>
-                            <span class="text-red-500"
-                                *ngIf="phone.errors?.['minlength'] && (phone.touched || phone.dirty)">Mobile
-                                Number Is Short</span>
-                            <span class="text-red-500"
-                                *ngIf="phone.errors?.['maxlength'] && (phone.touched || phone.dirty)">maximum
-                                10 Digit</span>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="fas fa-phone mr-2 text-gray-600"></i>Phone Number
+                            </label>
+                            <input formControlName="phone"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent transition-all duration-200 cursor-pointer"
+                                placeholder="Enter phone number">
                         </div>
                     </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                        <div>
-                            <label class="block text-gray-700 text-sm font-bold mb-2" for="state">State</label>
-                            <input
-                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500"
-                                id="state" name="state" placeholder="Select State" formControlName="state">
-                            <span class="text-red-500"
-                                *ngIf="state.errors?.['required'] && (state.touched || state.dirty)">Please Select
-                                Your State</span>
 
-                        </div>
+                    <!-- Third Row -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- State -->
                         <div>
-                            <label class="block text-gray-700 text-sm font-bold mb-2" for="city">City</label>
-                            <input
-                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500"
-                                type="text" id="city" name="city" placeholder="City" formControlName="city">
-                            <span class="text-red-500"
-                                *ngIf="city.errors?.['required'] && (city.touched || city.dirty)">Please Select
-                                Your City</span>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="fas fa-flag mr-2 text-gray-600"></i>State
+                            </label>
+                            <input formControlName="state"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent transition-all duration-200 cursor-pointer"
+                                placeholder="Enter state">
+                        </div>
+
+                        <!-- City -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="fas fa-city mr-2 text-gray-600"></i>City
+                            </label>
+                            <input formControlName="city"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent transition-all duration-200 cursor-pointer"
+                                placeholder="Enter city">
                         </div>
                     </div>
-                    <div class="grid grid-cols-1 md:grid-cols-1 gap-6 mb-6">
-                        <div>
-                            <label class="block text-gray-700 text-sm font-bold mb-2" for="address">Address</label>
-                            <textarea
-                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500"
-                                id="address" name="address" placeholder="Enter Address"
-                                formControlName="address"></textarea>
-                            <span class="text-red-500" *ngIf="address.errors?.['required'] && address.touched">Please
-                                Enter Address</span>
-                        </div>
+
+                    <!-- Address -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-home mr-2 text-gray-600"></i>Address
+                        </label>
+                        <textarea formControlName="address" rows="3"
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent transition-all duration-200 cursor-pointer"
+                            placeholder="Enter full address"></textarea>
                     </div>
-                    <button
-                        class="cursor-pointer bg-gray-600 w-full text-white py-3 px-6 rounded-lg hover:bg-gray-700 text-sm font-bold  transition duration-300"
-                        type="submit" name="sign">Update Profile</button>
+
+                    <!-- Submit Button -->
+                    <div class="pt-6 border-t border-gray-200">
+                        <button type="submit"
+                            class="w-full bg-gray-800 hover:bg-gray-900 text-white px-8 py-4 rounded-xl transition-all duration-300 font-semibold shadow-md hover:shadow-lg cursor-pointer">
+                            <i class="fas fa-save mr-2"></i>Update Profile
+                        </button>
+                    </div>
                 </form>
             </div>
         </div>
+
+        <!-- Driver Experience Modal -->
+        <div *ngIf="isExperienceModalOpen" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
+            <div class="bg-white rounded-xl w-full max-w-md shadow-2xl">
+                <div class="p-6 border-b border-gray-200">
+                    <h3 class="text-xl font-bold text-gray-800">
+                        <i class="fas fa-car mr-2"></i>Driver Experience
+                    </h3>
+                </div>
+
+              <form [formGroup]="driverExperienceForm" (ngSubmit)="submitDriverExperience()" class="p-6 space-y-6">
+    <!-- Experience Input -->
+    <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">
+            <i class="fas fa-calendar-alt mr-2 text-gray-600"></i>Experience (Years)
+        </label>
+        <input type="number" formControlName="experienceYears"
+            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent transition-all duration-200 cursor-pointer"
+            placeholder="Enter years of experience">
+        
+        <!-- Validation Messages -->
+        <div *ngIf="driverExperienceForm.get('experienceYears')?.touched" class="mt-1">
+            <span *ngIf="driverExperienceForm.get('experienceYears')?.errors?.['required']" 
+                  class="text-red-500 text-sm">Experience is required</span>
+            <span *ngIf="driverExperienceForm.get('experienceYears')?.errors?.['min']" 
+                  class="text-red-500 text-sm">Experience cannot be negative</span>
+            <span *ngIf="driverExperienceForm.get('experienceYears')?.errors?.['max']" 
+                  class="text-red-500 text-sm">Experience cannot exceed 50 years</span>
+        </div>
     </div>
 
+    <!-- Vehicle Type Select -->
+    <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">
+            <i class="fas fa-car mr-2 text-gray-600"></i>Vehicle Type
+        </label>
+        <select formControlName="vehicleType"
+            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent transition-all duration-200 cursor-pointer">
+            <option value="" disabled selected>Select vehicle type</option>
+            <option value="0">Two Wheeler</option>
+            <option value="1">Four Wheeler</option>
+            <option value="2">Both</option>
+        </select>
+        
+        <!-- Validation Message -->
+        <div *ngIf="driverExperienceForm.get('vehicleType')?.touched" class="mt-1">
+            <span *ngIf="driverExperienceForm.get('vehicleType')?.errors?.['required']" 
+                  class="text-red-500 text-sm">Vehicle type is required</span>
+        </div>
+    </div>
 
-    <!-- Upload Document Modal -->
-    <div *ngIf="isUploadModalOpen" class="fixed inset-0 bg-black/50 flex justify-center items-center z-50 px-4">
-        <div class="bg-white p-6 rounded-lg w-full max-w-md relative shadow-xl">
-            <!-- Close Button -->
-            <button type="button" (click)="UploadModalClose()"
-                class="absolute top-2 right-2 text-gray-600 hover:text-gray-900 transition-colors duration-200">
-                <i class="fa fa-times cursor-pointer"></i>
-            </button>
+    <!-- Status Select -->
+    <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">
+            <i class="fas fa-toggle-on mr-2 text-gray-600"></i>Availability Status
+        </label>
+        <select formControlName="availabilityStatus"
+            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent transition-all duration-200 cursor-pointer">
+            <option value="Available">Available</option>
+            <option value="Busy">Busy</option>
+            <option value="Inactive">Inactive</option>
+        </select>
+    </div>
 
+    <!-- Success/Error Messages -->
+    <div *ngIf="successmessage" class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
+        <i class="fas fa-check-circle mr-2"></i>{{ successmessage }}
+    </div>
+    
+    <div *ngIf="erromessage" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+        <i class="fas fa-exclamation-circle mr-2"></i>{{ erromessage }}
+    </div>
 
-            <h2 class="text-xl font-semibold text-gray-800 mb-4 text-center">Upload Documents</h2>
-            <div>
-                <!-- Upload Form -->
-                <form *ngIf="!isUploaded" [formGroup]="uploaddocumnet" (ngSubmit)="onUpload()"
-                    enctype="multipart/form-data" class="space-y-4">
-                    <!-- Driving  licence -->
-                    <div>
-                        <label class="block text-gray-700 font-medium mb-2">Driving licence</label>
-                        <input type="file" (change)="onFileChange($event, 'DLProof')" accept=".pdf,.jpg,.jpeg,.png"
-                            formControlName="DLProof"
-                            class="w-full border-2 border-gray-300 p-2 rounded-md cursor-pointer" />
-                        <small class="text-green-500" *ngIf="uploadedFileNames.DLProof">
-                            Previously uploaded: {{ uploadedFileNames.DLProof }}
-                        </small>
-                    </div>
-                    <!-- <span class="text-red-500"
-                        *ngIf="DLProof.errors?.['required'] && (DLProof.touched || DLProof.dirty)">Please
-                        Upload Driving licence</span> -->
-                    <!-- Address Proof -->
-                    <div>
-                        <label class="block text-gray-700 font-medium mb-2">Address Proof</label>
-                        <input type="file" (change)="onFileChange($event, 'AddressProof')" accept=".pdf,.jpg,.jpeg,.png"
-                            formControlName="AddressProof"
-                            class="w-full border-2 border-gray-300 p-2 rounded-md cursor-pointer" />
-                            <small class="text-green-500" *ngIf="uploadedFileNames.AddressProof">
-                            Previously uploaded: {{ uploadedFileNames.AddressProof }}
-                        </small>
-                    </div>
-                    <!-- <span class="text-red-500"
-                        *ngIf="AddressProof.errors?.['required'] && (AddressProof.touched || AddressProof.dirty)">Please
-                        Upload Current Address Proof </span> -->
-                    <!-- Age Proof -->
-                    <div>
-                        <label class="block text-gray-700 font-medium mb-2">Age Proof</label>
-                        <input type="file" (change)="onFileChange($event, 'AgeProof')" accept=".pdf,.jpg,.jpeg,.png"
-                            formControlName="AgeProof"
-                            class="w-full border-2 border-gray-300 p-2 rounded-md cursor-pointer" />
-                            <small class="text-green-500  " *ngIf="uploadedFileNames.AgeProof">
-                            Previously uploaded: {{ uploadedFileNames.AgeProof }}
-                        </small>
-                    </div>
-                    <!-- <span class="text-red-500"
-                        *ngIf="AgeProof.errors?.['required'] && (AgeProof.touched || AgeProof.dirty)">Please
-                        Upload Age Proof</span> -->
-                    <!-- Upload Button -->
-                    <div class="flex justify-center mt-6">
-                        <button type="submit"
-                            class="bg-gray-700 text-white px-4 py-2 rounded hover:bg-gray-800 transition-all disabled:opacity-50 disabled:cursor-not-allowed">
-                            Upload
+    <!-- Action Buttons -->
+    <div class="flex gap-4 pt-4">
+        <button type="button" (click)="closeExperienceModal()"
+            class="flex-1 border border-gray-300 text-gray-700 hover:bg-gray-50 px-6 py-3 rounded-xl transition-colors duration-200 font-medium cursor-pointer">
+            Cancel
+        </button>
+        <button type="submit"
+            class="flex-1 bg-gray-800 hover:bg-gray-900 text-white px-6 py-3 rounded-xl transition-all duration-300 font-medium cursor-pointer">
+            <i class="fas fa-save mr-2"></i>Save Experience
+        </button>
+    </div>
+</form>
+            </div>
+        </div>
+
+        <!-- Add Document Modal -->
+        <div *ngIf="isAddDocumentModalOpen" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
+            <div class="bg-white rounded-xl w-full max-w-md shadow-2xl">
+                <div class="p-6 border-b border-gray-200">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-xl font-bold text-gray-800">
+                            <i class="fas fa-file-upload mr-2"></i>Upload Document
+                        </h3>
+                        <button (click)="closeAddDocumentModal()"
+                            class="text-gray-500 hover:text-gray-700 transition-colors duration-200 cursor-pointer">
+                            <i class="fas fa-times text-xl"></i>
                         </button>
                     </div>
-                    <div class="flex justify-center items-center">
-                        <span class="text-md text-red-500">{{erromessage}}</span>
-                        <span class="text-md text-green-500">{{successmessage}}</span>
+                </div>
+
+                <form (submit)="submitNewDocument(); $event.preventDefault()" class="p-6 space-y-6">
+                    <!-- Document Type -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-file-alt mr-2 text-gray-600"></i>Document Type
+                        </label>
+                        <select [(ngModel)]="newDocumentType" [ngModelOptions]="{ standalone: true }"
+                            name="documentType" required
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent transition-all duration-200 cursor-pointer">
+                            <option value="" disabled>Select document type</option>
+                            <option *ngFor="let type of remainingDocumentTypes" [value]="type">
+                                {{ type }}
+                            </option>
+                        </select>
                     </div>
-                    <p class="text-md flex justify-center text-gray-700 mt-1">Supported formats: PDF, JPG, PNG</p>
+
+                    <!-- File Upload -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-upload mr-2 text-gray-600"></i>Upload File
+                        </label>
+                        <div
+                            class="border-2 border-dashed border-gray-300 rounded-lg p-4 hover:border-gray-400 transition-colors duration-300">
+                            <input type="file" (change)="onDocumentFileSelected($event)" accept=".jpg,.jpeg,.png,.pdf"
+                                required class="w-full cursor-pointer">
+                            <p class="text-sm text-gray-500 mt-2">Supports JPG, PNG, PDF • Max 5MB</p>
+                        </div>
+                    </div>
+
+                    <!-- Upload Button -->
+                    <div class="pt-4">
+                        <button type="submit"
+                            class="w-full bg-gray-800 hover:bg-gray-900 text-white px-8 py-3 rounded-xl transition-all duration-300 font-medium shadow-md hover:shadow-lg cursor-pointer">
+                            <i class="fas fa-cloud-upload-alt mr-2"></i>Upload Document
+                        </button>
+                    </div>
                 </form>
-                <!-- Success message after upload -->
-                <div *ngIf="isUploaded" class="text-center mt-4 p-10">
-                    <p class="text-green-600 text-lg font-semibold animate-fade-in">📁 You've already uploaded all
-                        required documents.
-                        To upload new ones, please delete the existing documents first.</p>
+            </div>
+        </div>
+        <!-- Delete Confirmation Modal -->
+        <div *ngIf="isDeleteConfirmOpen" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
+            <div class="bg-white rounded-xl w-full max-w-sm shadow-2xl">
+                <div class="p-6 text-center">
+                    <!-- Warning Icon -->
+                    <div class="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-exclamation-triangle text-red-500 text-2xl cursor-pointer"></i>
+                    </div>
+
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">Confirm Delete</h3>
+                    <p class="text-gray-600 mb-6">Are you sure you want to delete this document? This action cannot be
+                        undone.</p>
+
+                    <div class="flex gap-4">
+                        <button (click)="cancelDelete()"
+                            class="flex-1 border border-gray-300 text-gray-700 hover:bg-gray-50 px-6 py-3 rounded-xl transition-colors duration-200 font-medium cursor-pointer">
+                            Cancel
+                        </button>
+                        <button (click)="confirmDeleteDocument()"
+                            class="flex-1 bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-xl transition-all duration-300 font-medium cursor-pointer">
+                            <i class="fas fa-trash mr-2"></i>Delete
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    </main>
+</body>
 
-
-</section>~
+</html>

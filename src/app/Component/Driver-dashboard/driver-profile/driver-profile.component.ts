@@ -1,35 +1,77 @@
 import { Component, HostListener, OnInit } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MyServiceService } from '../../../../../my-service.service';
 import { jwtDecode } from 'jwt-decode';
 import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-driver-profile',
-  imports: [CommonModule,ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule,FormsModule],
   templateUrl: './driver-profile.component.html',
   styleUrl: './driver-profile.component.css'
 })
-export class DriverProfileComponent implements OnInit{
+export class DriverProfileComponent implements OnInit {
 
- profiledata: any;
+  profiledata: any;
   isImageUploadModalOpen: boolean = false;
   isEditProfileModalOpen: boolean = false;
   selectedImage: File | null = null;
   imagePreviewUrl: string = '';
-  isUploadModalOpen: boolean = false;
   erromessage: any;
   successmessage: any;
   selectedFiles: { [key: string]: File } = {};
   hasUploaded: boolean = false;
   isUploaded: boolean = false;
   uploadedDocData: any = null;
+  isExperienceModalOpen = false;
+  driverExperienceData: any = null;
 
-  uploadedFileNames = {
-    AgeProof: '',
-    AddressProof: '',
-    DLProof: ''
+
+  // Document related
+  documents: any[] = [];
+  isDocumentModalOpen: boolean = false;
+  documentForm: FormGroup = new FormGroup({
+    title: new FormControl('', [Validators.required]),
+    file: new FormControl(null, [Validators.required])
+  });
+  selectedDocumentFile: File | null = null;
+  editDocumentId: number | null = null;
+  isAddDocumentModalOpen = false;
+  newDocumentType = '';
+  newDocumentFile: File | null = null;
+documentTypeMap: { [key: number]: string } = {
+    0: 'License',
+    1: 'IDProof',
+    2: 'AddressProof'
   };
+  // All possible document types
+ allDocumentTypes: string[] = [
+  'License',
+  'IDProof',
+  'AddressProof'
+];
+
+mandatoryDocuments: string[] = [
+  'License',
+  'IDProof',
+  'AddressProof'
+];
+vehicleTypeMap: { [key: number]: string } = {
+  0: 'Two Wheeler',
+  1: 'Four Wheeler',
+  2: 'Both'
+};
+
+missingMandatoryDocuments: string[] = [];
+allMandatoryUploaded = false;
+
+  remainingDocumentTypes: string[] = [];
+
+  isDeleteConfirmOpen = false;
+  documentToDeleteId: number | null = null;
+  errormessage: any;
+  driverId: number = 0;
+
 
 
   updateUserForm: FormGroup = new FormGroup({
@@ -44,12 +86,56 @@ export class DriverProfileComponent implements OnInit{
     address: new FormControl("", [Validators.required]),
   });
 
+  //driver exprience
+  driverExperienceForm: FormGroup = new FormGroup({
+    experienceYears: new FormControl('', [
+      Validators.required,
+      Validators.min(0),
+      Validators.max(50)
+    ]),
+       vehicleType: new FormControl('0', Validators.required), 
+    availabilityStatus: new FormControl('Available', Validators.required)
+  });
+  
   constructor(private services: MyServiceService) { }
 
   ngOnInit(): void {
-    this.loadUserDocuments();
     this.loadUserProfile();
+    this.getDriverExperience();
+    
   }
+
+ getDriverExperience() {
+  this.services.getDriverExprience().subscribe({
+    next: (res) => {
+      this.driverExperienceData = res;
+
+      if (res && res.driverId) {
+        this.driverId = res.driverId;
+        this.loadDocuments();
+      }
+
+      // YEH LINE CORRECT KARO:
+      if (res) {
+        this.driverExperienceForm.patchValue({
+          experienceYears: res.experienceYears || '',
+          vehicleType: res.vehicleTypes?.toString() || res.vehicleType?.toString() || '', // Convert to string
+          availabilityStatus: res.availabilityStatus || 'Available'
+        });
+      }
+    },
+    error: () => {
+      this.driverExperienceData = null;
+      // Form reset karo agar data nahi hai
+      this.driverExperienceForm.reset({
+        experienceYears: '',
+        vehicleType: '',
+        availabilityStatus: 'Available'
+      });
+    }
+  });
+}
+
 
   loadUserProfile(): void {
     const token = sessionStorage.getItem('token');
@@ -60,13 +146,14 @@ export class DriverProfileComponent implements OnInit{
         this.fetchUserProfile(userId);
       }
     }
-  } 
+  }
+
 
   fetchUserProfile(userId: number): void {
     this.services.UserProfiledata(userId).subscribe({
       next: (res) => {
         this.profiledata = res.data;
-        // console.log("response data",this.profiledata);
+        console.log("response data",this.profiledata);
       },
       error: (err) => {
         console.error("Failed to fetch profile", err);
@@ -166,10 +253,127 @@ export class DriverProfileComponent implements OnInit{
     }
   }
 
+
+
+loadDocuments(): void {
+  this.services.getDriverDocuments(this.driverId).subscribe({
+    next: (res: any) => {
+      this.documents = res.data || [];
+
+      const uploadedTypes = this.documents.map(
+  (d: any) => this.documentTypeMap[d.documentType]
+);
+
+
+      // dropdown logic (already correct)
+      this.remainingDocumentTypes = this.allDocumentTypes.filter(
+        type => !uploadedTypes.includes(type)
+      );
+
+      // mandatory missing logic
+      this.missingMandatoryDocuments = this.mandatoryDocuments.filter(
+        doc => !uploadedTypes.includes(doc)
+      );
+
+      this.allMandatoryUploaded = this.missingMandatoryDocuments.length === 0;
+
+      // safety
+      if (!this.remainingDocumentTypes.includes(this.newDocumentType)) {
+        this.newDocumentType = '';
+      }
+    },
+    error: () => {
+      console.error('Failed to load documents');
+    }
+  });
+}
+
+
+
+
+  // Only one needed for PDF opening
+  openPdf(url: string) {
+    window.open(url, '_blank');
+  }
+
+
+
+  openDeleteConfirm(id: number) {
+    this.documentToDeleteId = id;
+    this.isDeleteConfirmOpen = true;
+  }
+
+  confirmDeleteDocument() {
+    if (!this.documentToDeleteId) return;
+
+    this.services.deleteDriverDocument(this.documentToDeleteId).subscribe({
+      next: () => {
+        this.loadDocuments();
+        this.isDeleteConfirmOpen = false;
+        this.documentToDeleteId = null;
+      },
+      error: (err) => {
+        console.error("Delete failed:", err);
+        this.errormessage = "Failed to delete document!";
+      }
+    });
+  }
+
+  cancelDelete() {
+    this.isDeleteConfirmOpen = false;
+    this.documentToDeleteId = null;
+  }
+
+
+
+  // Adddocumnet   Modal Methods
+  openAddDocumentModal() {
+    this.isAddDocumentModalOpen = true;
+  }
+
+  closeAddDocumentModal() {
+    this.isAddDocumentModalOpen = false;
+    this.newDocumentType = '';
+    this.newDocumentFile = null;
+  }
+
+  onDocumentFileSelected(event: any) {
+    if (event.target.files.length > 0) {
+      this.newDocumentFile = event.target.files[0];
+    }
+  }
+
+  submitNewDocument() {
+    if (!this.newDocumentType || !this.newDocumentFile) {
+      this.errormessage = "Please enter document type & choose file.";
+      return;
+    }
+
+    
+    const formData = new FormData();
+    formData.append("DriverId", this.driverId.toString());
+    formData.append("DocumentType", this.newDocumentType);
+    formData.append("DocumentFile", this.newDocumentFile);
+
+
+    this.services.addDriverDocument(formData).subscribe({
+      next: () => {
+        this.closeAddDocumentModal();
+        this.loadDocuments();
+      },
+      error: (err) => console.error("Document Upload Failed:", err)
+    });
+  }
+
+
   @HostListener('document:keydown', ['$event'])
   onKeyDown(event: KeyboardEvent): void {
     if (event.key === 'Escape') {
       this.closeModals();
+      this.closeAddDocumentModal();
+      this.closeEditProfileModal();
+      this.closeExperienceModal();
+      this.closeImageUploadModal();
     }
   }
 
@@ -204,189 +408,85 @@ export class DriverProfileComponent implements OnInit{
 
 
   // get uploaded documnet 
-  loadUserDocuments() {
-    const token = sessionStorage.getItem('token');
-    if (token) {
-      const decode: any = jwtDecode(token);
-      const userId = decode.UserId || decode.userId;
 
-      this.services.getCustomerDocument(userId).subscribe({
-        next: (res) => {
-          this.uploadedDocData = res;
-          console.log("response"+res);
-          // this.uploaddocumnet.reset();
 
-          if (res.ageProofPath) {
-            this.uploadedFileNames.AgeProof = this.extractFileName(res.ageProofPath);
-          } else {
-            this.uploadedFileNames.AgeProof = '';
-          }
 
-          if (res.addressProofPath) {
-            this.uploadedFileNames.AddressProof = this.extractFileName(res.addressProofPath);
-          } else {
-            this.uploadedFileNames.AddressProof = '';
-          }
-
-          if (res.dlImagePath) {
-            this.uploadedFileNames.DLProof = this.extractFileName(res.dlImagePath);
-          } else {
-            this.uploadedFileNames.DLProof = '';
-          }
-        },
-        error: (err) => {
-          console.log("No documents found");
-        }
-      });
-    }
+  submitDriverExperience() {
+  if (this.driverExperienceForm.invalid) {
+    this.driverExperienceForm.markAllAsTouched();
+    
+    // Debug ke liye console me form values dekho
+    console.log('Form invalid:', this.driverExperienceForm.value);
+    console.log('Form errors:', this.driverExperienceForm.errors);
+    console.log('Vehicle Type Control:', this.driverExperienceForm.get('vehicleType'));
+    
+    return;
   }
 
+  // Form values ko check karo
+  const formValues = this.driverExperienceForm.value;
+  
+  // Vehicle type ko number me convert karo
+  const formData = {
+    experienceYears: Number(formValues.experienceYears),
+    vehicleTypes: Number(formValues.vehicleType),
+    availabilityStatus: formValues.availabilityStatus
+  };
+  
+  
 
-  // get image as type of pdf and image 
-  getFileType(path: string): 'image' | 'pdf' | 'unknown' {
-    if (!path) return 'unknown';
-    const ext = path.split('.').pop()?.toLowerCase();
-    if (['jpg', 'jpeg', 'png'].includes(ext!)) return 'image';
-    if (ext === 'pdf') return 'pdf';
-    return 'unknown';
-  }
-
-  //upload documnet section code
-  uploaddocumnet: FormGroup = new FormGroup({
-    DLProof: new FormControl("", [Validators.required]),
-    AddressProof: new FormControl("", [Validators.required]),
-    AgeProof: new FormControl("", [Validators.required]),
-  });
-
-
-  get DLProof() { return this.uploaddocumnet.get("DLProof") as FormControl; }
-  get AddressProof() { return this.uploaddocumnet.get("AddressProof") as FormControl; }
-  get AgeProof() { return this.uploaddocumnet.get("AgeProof") as FormControl; }
-
-
-  onFileChange(event: any, field: string) {
-    const file = event.target.files[0];
-    if (!file) return;
-
-    const allowedExtensions = ['.jpg', '.jpeg', '.png', '.pdf'];
-    const maxFileSize = 5 * 1024 * 1024; // 5MB
-
-    const ext = file.name.substring(file.name.lastIndexOf('.')).toLowerCase();
-
-    if (!allowedExtensions.includes(ext)) {
-      this.erromessage = `Invalid file type for ${field}. Allowed: JPG, JPEG, PNG, PDF.`;
-      this.uploaddocumnet.get(field)?.setErrors({ invalidExtension: true });
-      this.selectedFiles[field] = file;
-      this.uploaddocumnet.get(field)?.markAsTouched();
-      this.uploaddocumnet.get(field)?.updateValueAndValidity();
-      return;
-    }
-
-    if (file.size > maxFileSize) {
-      this.erromessage = `File size for ${field} cannot exceed 5 MB.`;
-      this.uploaddocumnet.get(field)?.setErrors({ maxSizeExceeded: true });
-      this.selectedFiles[field] = file;
-      this.uploaddocumnet.get(field)?.markAsTouched();
-      this.uploaddocumnet.get(field)?.updateValueAndValidity();
-      return;
-    }
-
-    // Clear previous error message if validation passed
-    this.erromessage = null;
-
-    this.selectedFiles[field] = file;
-    this.uploaddocumnet.get(field)?.setErrors(null);
-    this.uploaddocumnet.get(field)?.markAsTouched();
-    this.uploaddocumnet.get(field)?.updateValueAndValidity();
-  }
-
-
-  onUpload() {
-    const token = sessionStorage.getItem('token');
-    if (token) {
-      const decode: any = jwtDecode(token);
-      const userId = decode.UserId || decode.userId;
-
-
-      const formData = new FormData();
-      formData.append("UserId", userId.toString());
-      formData.append("AgeProof", this.selectedFiles["AgeProof"]);
-      formData.append("AddressProof", this.selectedFiles["AddressProof"]);
-      formData.append("DLImage", this.selectedFiles["DLProof"]);
-      formData.append("Status", "Active");
-
-      // for (let pair of formData.entries()) {
-      //   console.log(pair[0] + ', ' + pair[1]);
-      // }
-      this.services.uploadDocuments(formData).subscribe({
-        next: (res) => {
-          this.successmessage = "Documents uploaded successfully!";
-        
-        },
-        error: (err) => {
-          this.erromessage = "Failed to upload documents. Please try again.";
-          this.successmessage = null;
-        }
-      });
-    }
-  }
-
-
-  UploadModalClose() {
-    this.isUploadModalOpen = false;
-    this.loadUserDocuments();
-  }
-
-  extractFileName(path: string): string {
-    if (!path) return '';
-    return path.split('/').pop() || '';
-  }
-
-  UploadModalOpen() {
-    this.isUploadModalOpen = true;
-    this.successmessage = null;
-    this.erromessage = null;
-    this.selectedFiles = {};
-
-    const token = sessionStorage.getItem('token');
-    if (!token) return;
-
-    const decode: any = jwtDecode(token);
-    const userId = decode.UserId || decode.userId;
-
-    //  First fetch document data
-
-    this.loadUserDocuments();
-    //  Check full-document upload block
-    this.services.checkDocumentsUploaded(userId).subscribe(res => {
-      if (res.exists) {
-        this.erromessage = "You have already uploaded documents. Please delete existing documents to upload new ones.";
-        this.isUploaded = true;
-      } else {
+  this.services.AddUpdateDriverExprience(formData)
+    .subscribe({
+      next: (response) => {
+        this.successmessage = 'Experience saved successfully';
         this.erromessage = null;
-        this.isUploaded = false;
+        
+        setTimeout(() => {
+          this.closeExperienceModal();
+          this.getDriverExperience();
+        }, 1500);
+      },
+      error: (error) => {
+        this.erromessage = 'Failed to save experience';
+        this.successmessage = null;
       }
     });
-  }
+}
 
-
-  deleteDocumentField(fieldName: string): void {
-    const token = sessionStorage.getItem('token');
-    if (!token) return;
-    const decode: any = jwtDecode(token);
-    const userId = decode.UserId || decode.userId;
-
-    this.services.updateUserDocumentFieldToNull(userId, fieldName).subscribe({
-      next: (res) => {
-        console.log('Document field null successfully', res);
-        this.loadUserDocuments() // UI refresh
-      },
-      error: (err) => console.error('Error:', err)
+openExperienceModal() {
+  this.isExperienceModalOpen = true;
+  this.successmessage = null;
+  this.erromessage = null;
+  
+  // Agar existing data hai toh form populate karo
+  if (this.driverExperienceData) {
+    this.driverExperienceForm.patchValue({
+      experienceYears: this.driverExperienceData.experienceYears || '',
+      vehicleType: this.driverExperienceData.vehicleType?.toString() || '', // Convert to string
+      availabilityStatus: this.driverExperienceData.availabilityStatus || 'Available'
+    });
+  } else {
+    // New entry ke liye form reset karo
+    this.driverExperienceForm.reset({
+      experienceYears: '',
+      vehicleType: '',
+      availabilityStatus: 'Available'
     });
   }
-    @HostListener('document:keydown.escape', ['$event'])
-  onEscapePress(event: KeyboardEvent) {
-    this.UploadModalClose();
+}
+
+closeExperienceModal() {
+  this.isExperienceModalOpen = false;
+  this.successmessage = null;
+  this.erromessage = null;
+}
+
+  
+
+
+  @HostListener('document:keydown.escape', ['$event'])
+  onEscapePress(event: any) {
+    // this.UploadModalClose();
   }
 }
 
