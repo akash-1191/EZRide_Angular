@@ -64,7 +64,7 @@ export class ContactmessaegComponent implements OnInit {
     this.responseMessage = '';
   }
 
-  sendMessage() {
+   sendMessage() { 
     if (!this.phone || !this.message.trim()) {
       this.responseMessage = 'Please enter both phone number and message.';
       return;
@@ -76,6 +76,7 @@ export class ContactmessaegComponent implements OnInit {
     }
 
     let formattedPhone = this.phone.startsWith('+') ? this.phone : '91' + this.phone;
+
 
     this.isSending = true;
 

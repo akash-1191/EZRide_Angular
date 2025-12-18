@@ -329,53 +329,73 @@
                         Select Driver
                     </h3>
 
-                    <!-- Driver Card -->
-                    <div *ngFor="let driver of availableDrivers"
-                        class="border rounded-lg p-4 mb-3 flex justify-between items-center hover:shadow">
+                    <!-- DRIVER LIST -->
 
-                        <!-- Left -->
-                        <div class="flex items-center gap-3">
-                            <img [src]="driver.profileimage ? 'http://localhost:7188/' + driver.profileimage : 'assets/user.png'"
-                                class="w-12 h-12 rounded-full object-cover">
-
-                            <div>
-                                <p class="font-semibold">
-                                    {{ driver.firstname }} {{ driver.lastname }}
-                                </p>
-                                <p class="text-sm text-gray-500">
-                                    {{ driver.experienceYears }} yrs experience
-                                </p>
-
-                                <!-- Stars -->
-                                <div class="flex mt-1">
-                                    <ng-container *ngIf="driver.reviews?.length > 0; else emptyStars">
-                                        <span *ngFor="let i of [1,2,3,4,5]" class="text-yellow-400 text-sm">
-                                            ★
-                                        </span>
-                                    </ng-container>
-
-                                    <ng-template #emptyStars>
-                                        <span *ngFor="let i of [1,2,3,4,5]" class="text-gray-300 text-sm">
-                                            ★
-                                        </span>
-                                    </ng-template>
-                                </div>
-                            </div>
+                    <ng-container *ngIf="availableDrivers.length > 0; else noDrivers">
+                        <div *ngIf="bookingForm.get('driveBasis')?.value === 'perKm'"
+                            class="bg-yellow-50 border border-yellow-300 text-yellow-800 p-3 rounded mb-3">
+                            ⚠ Per KM booking is allowed only with Driver
                         </div>
 
-                        <!-- Right -->
-                        <button (click)="onDriverSelect(driver)" class="bg-blue-600 cursor-pointer  hover:bg-blue-700 text-white px-4 py-2 rounded">
-                            Select
-                        </button>
-                    </div>
+                        <!-- Driver Card -->
+                        <div *ngFor="let driver of availableDrivers"
+                            class="border rounded-lg p-4 mb-3 flex justify-between items-center hover:shadow">
+
+                            <!-- Left -->
+                            <div class="flex items-center gap-3">
+                                <img [src]="driver.profileImage 
+              ? 'http://localhost:7188' + driver.profileImage 
+              : 'assets/user.png'" class="w-12 h-12 rounded-full object-cover">
+
+                                <div>
+                                    <p class="font-semibold">
+                                        {{ driver.firstname }} {{ driver.lastname }}
+                                    </p>
+                                    <p class="text-sm text-gray-500">
+                                        {{ driver.experienceYears }} yrs experience
+                                    </p>
+
+                                    <!-- Stars -->
+                                    <div class="flex mt-1">
+                                        <ng-container *ngIf="driver.reviews?.length > 0; else emptyStars">
+                                            <span *ngFor="let i of [1,2,3,4,5]" class="text-yellow-400 text-sm">★</span>
+                                        </ng-container>
+
+                                        <ng-template #emptyStars>
+                                            <span *ngFor="let i of [1,2,3,4,5]" class="text-gray-300 text-sm">★</span>
+                                        </ng-template>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Right -->
+                            <button (click)="onDriverSelect(driver)"
+                                class="bg-blue-600 cursor-pointer hover:bg-blue-700 text-white px-4 py-2 rounded">
+                                Select
+                            </button>
+                        </div>
+
+                    </ng-container>
+
+                    <!-- ❌ NO DRIVER MESSAGE -->
+                    <ng-template #noDrivers>
+                        <div class="text-center py-6 text-red-600 font-semibold">
+                            ❌ Sorry, drivers are not available at this time
+                        </div>
+                    </ng-template>
+
 
                     <!-- Skip -->
                     <div class="text-center mt-4">
-  <button (click)="onSkip()"
-          class="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-6 rounded-md transition duration-300 ease-in-out cursor-pointer">
-    Skip & Continue without Driver
-  </button>
-</div>
+                        <button (click)="onSkip()" [disabled]="bookingForm.get('driveBasis')?.value === 'perKm'"
+                            [ngClass]="{
+      'bg-red-600 hover:bg-red-700 cursor-pointer': bookingForm.get('driveBasis')?.value !== 'perKm',
+      'bg-gray-300 text-gray-500 cursor-not-allowed': bookingForm.get('driveBasis')?.value === 'perKm'
+    }" class="font-semibold py-2 px-6 rounded-md transition duration-300 ease-in-out">
+                            Skip & Continue without Driver
+                        </button>
+                    </div>
+
 
 
                 </div>

@@ -17,7 +17,7 @@
                     <th class="px-4 py-2">Sr No.</th>
                     <th class="px-4 py-2">CustomerName</th>
                     <th class="px-4 py-2">PhoneNumber</th>
-                    <th class="px-4 py-2">Car Name</th>
+                    <th class="px-4 py-2">Vehicle Name</th>
                     <th class="px-4 py-2">Reg.No.</th>
                     <th class="px-4 py-2">Security Amount</th>
                     <th class="px-4 py-2">Transction Id</th>
@@ -33,9 +33,9 @@
                     <td class="px-4 py-4">{{i+1}}</td>
                     <td class="px-4 py-4">{{userBookingData.firstName}} {{userBookingData.lastName}}</td>
                     <td class="px-4 py-4">{{userBookingData.phone}}</td>
-                    <td class="px-4 py-4">{{userBookingData.carName}}</td>
+                    <td class="px-4 py-4">{{userBookingData.carName || userBookingData.bikeName}}</td>
                     <td class="px-4 py-4">{{userBookingData.registrationNo}}</td>
-                    <td class="px-4 py-4">{{ userBookingData.securityDepositAmount}}</td>
+                    <td class="px-4 py-4">{{ userBookingData.vehicleSecurityDepositAmount}}</td>
                     <td class="px-4 py-4"> {{ userBookingData.transactionId}}</td>
 
                     <td class="px-4 py-4"> <span class="bg-green-100 text-green-800">{{ userBookingData.bookingStatus
@@ -47,28 +47,13 @@
                         <button title="View Details" (click)="openModal(userBookingData)">
                             <i class="fas fa-eye text-blue-500 text-lg cursor-pointer"></i>
                         </button>
-                        <!-- <button title="Cancel Booking" 
-                            class="px-3 py-1 text-sm font-semibold text-white bg-red-600 hover:bg-red-700 rounded">
-                            Cancel
-                        </button> -->
+
 
                         <button *ngIf="userBookingData.securityDepositStatus !== 'Refunded'"
-                            (click)="openRazorpay(userBookingData.securityDepositAmount, userBookingData.bookingId)"
+                            (click)="openRazorpay(userBookingData.vehicleSecurityDepositAmount, userBookingData.bookingId)"
                             class="px-3 py-1 bg-green-600 text-white rounded-md hover:bg-green-700 transition cursor-pointer">
                             Pay
                         </button>
-<!-- <div *ngIf="userBookingData">
- 
- <button *ngIf="userBookingData.securityDepositStatus !== 'Refunded'"
-        (click)="openRazorpay(userBookingData.totalAmount, userBookingData.bookingId)"
-                            class="px-3 py-1 bg-green-600 text-white rounded-md hover:bg-green-700 transition cursor-pointer">
-        
-  Pay
-</button>
-</div> -->
-
-       
-
                     </td>
                 </tr>
 
@@ -197,7 +182,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <p><span class="font-semibold">Deposit Status:</span> {{selectedBooking.securityDepositStatus ||
                         'N/A'}}</p>
-                    <p><span class="font-semibold">Deposit Amount:</span> ₹{{selectedBooking.securityDepositAmount ||
+                    <p><span class="font-semibold">Deposit Amount:</span> ₹{{selectedBooking.vehicleSecurityDepositAmount ||
                         0}}</p>
                     <p><span class="font-semibold">Deposit Created At:</span>
                         {{selectedBooking.securityDepositCreatedAt?(selectedBooking.securityDepositCreatedAt |

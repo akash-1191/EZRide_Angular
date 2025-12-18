@@ -3,7 +3,7 @@ import { MyServiceService } from '../../../../../my-service.service';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import {environment } from '../../.../../../../environments/environment'
+import { environment } from '../../.../../../../environments/environment'
 
 
 @Component({
@@ -13,7 +13,7 @@ import {environment } from '../../.../../../../environments/environment'
   styleUrl: './securitydeposit-refaund-admin.component.css'
 })
 
-export class SecuritydepositRefaundAdminComponent implements OnInit{
+export class SecuritydepositRefaundAdminComponent implements OnInit {
   booking: any;
   currentPage: number = 1;
   bookingdetails: any[] = [];
@@ -41,41 +41,25 @@ export class SecuritydepositRefaundAdminComponent implements OnInit{
   }
 
 
-  // loadAllData(): void {
-  //   this.services.getAllSecurityrefaund().subscribe({
-  //     next: (res) => {
-  //       const allBookings = res;
-  //       console.log("All bookings with security deposit refund:", allBookings);
-  //       this.bookingdetails = allBookings;
-  //      this.bookingId=res.bookingId;
-  //       console.log(this.bookingdetails);
-  //   console.log("bookig id is:",this.bookingId);
-
-  //     },
-  //     error: (err) => {
-  //       console.log("Something went wrong");
-  //     }
-  //   });
-  // }
 
   loadAllData(): void {
-  this.services.getAllSecurityrefaund().subscribe({
-    next: (res: any[]) => {
-      this.bookingdetails = res;
+    this.services.getAllSecurityrefaund().subscribe({
+      next: (res: any[]) => {
+        this.bookingdetails = res;
 
-      if (res.length > 0) {
-        this.bookingId = res[0].bookingId;
-      } else {
-        this.bookingId = null;
+        if (res.length > 0) {
+          this.bookingId = res[0].bookingId;
+        } else {
+          this.bookingId = null;
+        }
+        console.log("All booking data:", this.bookingdetails);
+        // console.log("booking id is:", this.bookingId);
+      },
+      error: (err) => {
+        console.log("Something went wrong", err);
       }
-
-      console.log("booking id is:", this.bookingId);
-    },
-    error: (err) => {
-      console.log("Something went wrong", err);
-    }
-  });
-}
+    });
+  }
 
   closeModal(): void {
     this.showModal = false;
@@ -114,39 +98,57 @@ export class SecuritydepositRefaundAdminComponent implements OnInit{
 
 
 
-  
-openRazorpay(amount: number,bookingId:any) {
-  this.services.createSecurityDepositOrder(amount).subscribe((data) => {
-    const options = {
-      key: environment.SECRET_KEY_Razorpay,
-      amount: data.amount,
-      currency: "INR",
-      name: 'EZRide - Security Deposit',
-      description: 'Refundable Security Deposit',
-      order_id: data.orderId,
-      handler: (response: any) => {
-        console.log('Payment successful', response);
-        // Send this response to server to verify and save
-        this.refundDeposit(bookingId);
-      },
-       prefill: {
-            name: 'Akash',
-            email: 'ezride123@gmail.com',
-            contact: '+91 6355923492'
-          },
-      theme: {
-        color: '#F37254'
-      }
-    };
 
-    const rzp = new (window as any).Razorpay(options);
-    rzp.open();
-  });
-}
+  openRazorpay(amount: number, bookingId: any) {
+
+    this.services.createSecurityDepositOrder(amount).subscribe((data) => {
+      const options = {
+        key: environment.SECRET_KEY_Razorpay,
+        amount: data.amount,
+        currency: "INR",
+        name: 'EZRide - Security Deposit',
+        description: 'Refundable Security Deposit',
+        order_id: data.orderId,
+        // handler: (response: any) => {
+        //   console.log('Payment successful', response);
+        //   // Send this response to server to verify and save
+        //   this.refundDeposit(bookingId);
+        // }
+        handler: (response: any) => {
+          console.log('Payment successful', response);
+
+          this.services.saveSecurityDeposit({
+            bookingId: bookingId,
+            amount: amount
+          }).subscribe({
+            next: () => {
+              console.log('Security deposit saved');
+               this.refundDeposit(bookingId);
+            },
+            error: (err) => {
+              console.error('Failed to save deposit', err);
+            }
+          });
+        },
+        prefill: {
+          name: 'Akash',
+          email: 'ezride123@gmail.com',
+          contact: '+91 6355923492'
+        },
+        theme: {
+          color: '#F37254'
+        }
+      };
+
+      console.log('Razorpay order data:', options);
+      const rzp = new (window as any).Razorpay(options);
+      rzp.open();
+    });
+  }
 
 
-  refundDeposit(bookingId:number) {
-    console.log("booking dta is the inside",bookingId);
+  refundDeposit(bookingId: number) {
+    console.log("booking dta is the inside", bookingId);
     this.services.refundSecurityDeposit(bookingId).subscribe({
       next: (res) => {
         console.log('Refund Successful ');
@@ -154,7 +156,7 @@ openRazorpay(amount: number,bookingId:any) {
       },
       error: (err) => {
         console.error('Error refunding deposit :', err);
-        
+
       }
     });
 

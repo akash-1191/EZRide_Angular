@@ -674,7 +674,13 @@ export class MyServiceService {
   createSecurityDepositOrder(amount: number): Observable<any> {
     return this.http.post('http://localhost:7188/api/create-security-deposit-order', { amount });
   }
-
+//save security amount data
+  saveSecurityDeposit(data: { bookingId: number; amount: number }) {
+  return this.http.post(
+    'http://localhost:7188/api/save-security-deposit',
+    data
+  );
+}
 
   //after payment change the status of th esecurity deposit table 
 
@@ -1074,10 +1080,24 @@ export class MyServiceService {
 
 
   // add driver appprove
-  getdriverdata(): Observable<any> {
-    const url = 'http://localhost:7188/api/getAllDriversWithReviews';
-    return this.http.get(url);
-  }
+  // getdriverdata(): Observable<any> {
+  //   const url = 'http://localhost:7188/api/getAllDriversWithReviews';
+  //   return this.http.get(url);
+  // }
+
+  getAvailableDrivers(startTime: string, endTime: string, vehicleType: string) {
+  return this.http.get<any[]>(
+    `http://localhost:7188/api/available-drivers`,
+    {
+      params: {
+        startTime,
+        endTime,
+        vehicleType
+      }
+    }
+  );
+}
+
 
 
   // create booking driver 
@@ -1104,6 +1124,17 @@ export class MyServiceService {
     return this.http.get<any>(userdataurl, { headers });
   }
 
+  AdminGetAallDriverdetailsbyid(driverId: number): Observable<any> {
+    const token = sessionStorage.getItem('token');
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
+    const userdataurl = `http://localhost:7188/api/AdminDriver/DrivertripsDetails/${driverId}`;
+    return this.http.get<any>(userdataurl, { headers });
+  }
+
+
 
   //drive get all customer booking 
   driverGetAallbooking(): Observable<any> {
@@ -1118,29 +1149,29 @@ export class MyServiceService {
 
   //drive update status is bust
   driverUpdateStatusBusy(driverBookingId: number): Observable<any> {
-  const token = sessionStorage.getItem('token');
-  const headers = new HttpHeaders({
-    Authorization: `Bearer ${token}`,
-    'Content-Type': 'application/json'
-  });
-  const url =`http://localhost:7188/api/DriverDashboard/UpdateDriverTripStatus?driverBookingId=${driverBookingId}`;
+    const token = sessionStorage.getItem('token');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
+    const url = `http://localhost:7188/api/DriverDashboard/UpdateDriverTripStatus?driverBookingId=${driverBookingId}`;
 
-  return this.http.post<any>(url, {}, { headers });
-}
+    return this.http.post<any>(url, {}, { headers });
+  }
 
- driverUpdateStatuscompleted(driverBookingId: number): Observable<any> {
-  const token = sessionStorage.getItem('token');
-  const headers = new HttpHeaders({
-    Authorization: `Bearer ${token}`,
-    'Content-Type': 'application/json'
-  });
-  const url =`http://localhost:7188/api/DriverDashboard/UpdateDriverTripStatusComplete?driverBookingId=${driverBookingId}`;
+  driverUpdateStatuscompleted(driverBookingId: number): Observable<any> {
+    const token = sessionStorage.getItem('token');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
+    const url = `http://localhost:7188/api/DriverDashboard/UpdateDriverTripStatusComplete?driverBookingId=${driverBookingId}`;
 
-  return this.http.post<any>(url, {}, { headers });
-}
+    return this.http.post<any>(url, {}, { headers });
+  }
 
 
-  
+
   // //drive update status is bust
   // driverUpdateStatusInactive(): Observable<any> {
   //   const token = sessionStorage.getItem('token');
@@ -1152,6 +1183,85 @@ export class MyServiceService {
   //   return this.http.get<any>(userdataurl, { headers });
   // }
 
+
+  updatePerDayRate(driverId: number, perDayRate: number): Observable<any> {
+    const token = sessionStorage.getItem('token');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
+    const payload = {
+      driverId: driverId,
+      perDayRate: perDayRate
+    };
+    const url = 'http://localhost:7188/api/AdminDriver/UpdatePerDayRate';
+    return this.http.put(url, payload, { headers });
+  }
+
+
+
+  // paymane to the driver 
+
+  createDriverPaymentOrder(amount: number): Observable<any> {
+    const token = sessionStorage.getItem('token');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
+    const url = 'http://localhost:7188/api/DriverPayments/CreateOrder';
+    return this.http.post<any>(url, { Amount: amount }, { headers });
+  }
+
+  // Verify Razorpay Payment
+  verifyDriverPayment(paymentData: any): Observable<any> {
+    const token = sessionStorage.getItem('token');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
+    const url = `http://localhost:7188/api/DriverPayments/VerifyPayment`;
+    return this.http.post<any>(url, paymentData, { headers });
+  }
+
+
+  getpaymenttabledriver(): Observable<any> {
+    const token = sessionStorage.getItem('token');
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
+    const userdataurl = 'http://localhost:7188/api/AdminDriver/AllPaidDriversPaymentReport';
+    return this.http.get<any>(userdataurl, { headers });
+  }
+
+
+
+  getpaymenttablebydriver(): Observable<any> {
+    const token = sessionStorage.getItem('token');
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
+    const userdataurl = 'http://localhost:7188/api/DriverDashboard/driver/paid-payments';
+    return this.http.get<any>(userdataurl, { headers });
+  }
+
+
+ forgotPassword(email: string): Observable<string> {
+  return this.http.post(
+    'http://localhost:7188/api/Resetpassword/forgot-password',
+    { email },
+    { responseType: 'text' }  
+  );
+}
+
+resetPassword(data: any): Observable<string> {
+  return this.http.post(
+    'http://localhost:7188/api/Resetpassword/reset-password',
+    data,
+    { responseType: 'text' }   
+  );
+}
 }
 
 

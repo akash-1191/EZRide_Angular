@@ -35,11 +35,17 @@ export class ChatOwnerComponent implements OnInit, OnDestroy {
     private auth: AuthService
   ) {}
 
+  // async ngOnInit(): Promise<void> {
+  //   this.initializeSignalR();
+  //   await this.loadConversations();
+  //   this.setupSubscriptions();
+  // }
+
+
   async ngOnInit(): Promise<void> {
-    this.initializeSignalR();
-    await this.loadConversations();
-    this.setupSubscriptions();
-  }
+  await this.initializeSignalR();
+  this.setupSubscriptions();
+}
 
   // private async initializeSignalR(): Promise<void> {
   //   const token = this.auth.getToken();
@@ -60,55 +66,23 @@ export class ChatOwnerComponent implements OnInit, OnDestroy {
   //     console.error(' Failed to initialize SignalR:', error);
   //   }
   // }
+ 
   private async initializeSignalR(): Promise<void> {
   const token = sessionStorage.getItem('token');
   if (!token) {
     console.error('No token found');
-    alert('Please login first!');
     return;
   }
 
   try {
-    // Clean token for SignalR
     const cleanToken = token.replace('Bearer ', '');
-    
-    console.log('🔄 Starting SignalR connection...');
-    
-    // Start SignalR with retry
-    let retryCount = 0;
-    const maxRetries = 3;
-    
-    while (retryCount < maxRetries) {
-      try {
-        const connected = await this.chatService.startConnection(cleanToken);
-        
-        if (connected) {
-          this.isConnected = true;
-          console.log('✅ SignalR connected successfully');
-          break;
-        }
-      } catch (error) {
-        retryCount++;
-        console.log(`🔄 Retry ${retryCount}/${maxRetries}...`);
-        
-        if (retryCount === maxRetries) {
-          throw error;
-        }
-        
-        // Wait before retry
-        await new Promise(resolve => setTimeout(resolve, 1000 * retryCount));
-      }
-    }
-    
-    // Load conversations
+    await this.chatService.startConnection(cleanToken);
+    this.isConnected = this.chatService.isConnected();
+
     await this.loadConversations();
-    
   } catch (error) {
-    console.error('❌ Chat initialization failed:', error);
+    console.error('Chat initialization failed:', error);
     this.isConnected = false;
-    
-    // Show user-friendly message
-    alert('Unable to connect to chat service. Please refresh the page.');
   }
 }
 
@@ -163,47 +137,30 @@ export class ChatOwnerComponent implements OnInit, OnDestroy {
     this.subscriptions.push(connSub, msgSub);
   }
 
-  async selectConversation(conversation: Conversation): Promise<void> {
+async selectConversation(conversation: Conversation): Promise<void> {
   if (this.selectedConversation?.conversationId === conversation.conversationId) {
     return;
   }
 
-  // Leave previous conversation
   if (this.selectedConversation) {
     await this.chatService.leaveConversation(this.selectedConversation.conversationId);
   }
 
   this.selectedConversation = conversation;
   this.messages = [];
-  
+
   try {
-    // Small delay to ensure UI updates
-    await new Promise(resolve => setTimeout(resolve, 50));
-    
-    // Check connection status
-    if (!this.chatService.isConnected()) {
-      console.log('🔄 Reconnecting SignalR...');
-      const token = sessionStorage.getItem('token')?.replace('Bearer ', '') || '';
-      await this.chatService.startConnection(token);
-    }
-    
-    // Join SignalR group
     await this.chatService.joinConversation(conversation.conversationId);
-    
-    // Load messages
     await this.loadMessages();
-    
-    // Mark messages as read
     await this.markMessagesRead();
-    
-    // Scroll to bottom
+    conversation.unreadCount = 0;
+
     setTimeout(() => this.scrollToBottom(), 100);
-    
   } catch (error) {
     console.error('Error selecting conversation:', error);
-    // alert('Failed to join conversation. Please try again.');
   }
 }
+
 
 
   private async loadMessages(): Promise<void> {
@@ -260,36 +217,45 @@ export class ChatOwnerComponent implements OnInit, OnDestroy {
     }
   }
 
-  private handleNewMessage(message: Message): void {
-    // Convert timestamp
-    message.timestamp = new Date(message.timestamp);
-    message.isSentByMe = message.senderId === this.auth.getUserId();
-    
-    // Update or add message
-    const existingIndex = this.messages.findIndex(m => m.messageId === message.messageId);
-    
-    if (existingIndex >= 0) {
-      // Update existing message (e.g., status update)
-      this.messages[existingIndex] = message;
-    } else {
-      // Add new message
-      this.messages.push(message);
-      
-      // Update conversation last message
-      if (this.selectedConversation?.conversationId === message.conversationId) {
-        this.updateConversationLastMessage(message);
-      }
-    }
-    
+ private handleNewMessage(message: Message): void {
+  message.timestamp = new Date(message.timestamp);
+  message.isSentByMe = message.senderId === this.auth.getUserId();
+
+  // 1️⃣ Messages panel
+  if (this.selectedConversation?.conversationId === message.conversationId) {
+    this.messages.push(message);
     this.scrollToBottom();
+    this.markMessagesRead();
   }
+
+  // 2️⃣ Conversation list update
+  const conv = this.conversations.find(
+    c => c.conversationId === message.conversationId
+  );
+
+  if (conv) {
+    conv.lastMessage = message;
+
+    if (!this.selectedConversation ||
+        this.selectedConversation.conversationId !== message.conversationId) {
+      conv.unreadCount += 1;
+    }
+
+    // Move to top
+    this.conversations = [
+      conv,
+      ...this.conversations.filter(c => c.conversationId !== conv.conversationId)
+    ];
+  }
+}
+
 
   private handleMessageDelivered(conversationId: number): void {
     if (this.selectedConversation?.conversationId === conversationId) {
       this.messages.forEach(msg => {
-        if (msg.status === 'Sent' && !msg.isSentByMe) {
-          msg.status = 'Delivered';
-        }
+        if (msg.isSentByMe && msg.status === 'Sent') {
+  msg.status = 'Delivered';
+}
       });
     }
   }
@@ -387,7 +353,7 @@ async reconnect(): Promise<void> {
       }
     }
   } catch (error) {
-    console.error('❌ Reconnect failed:', error);
+    console.error(' Reconnect failed:', error);
     alert('Reconnect failed. Please refresh the page.');
   }
 }

@@ -317,6 +317,9 @@ export class BookingRequestComponent implements OnInit {
         this.suseccmsg = res.message;
         // alert(res.message || 'OTP verified successfully!');  
         this.clearTimer();
+         this.closeModal();
+         this.OTPcloseModal();
+        this.loadAllData();
       },
       error: (err) => {
         console.error('OTP verification failed', err);

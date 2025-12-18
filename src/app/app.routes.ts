@@ -41,7 +41,6 @@ import { VerifyownerComponent } from './Component/admin-dashboard/verifyowner/ve
 import { AprovedOwnerComponent } from './Component/admin-dashboard/aproved-owner/aproved-owner.component';
 import { SetRentComponent } from './Component/admin-dashboard/set-rent/set-rent.component';
 import { ChatOwnerComponent } from './Component/owner-dashboard/chat-owner/chat-owner.component';
-import { ChatAdminComponent } from './Component/admin-dashboard/chat-admin/chat-admin.component';
 import { OwnerPaymentComponent } from './Component/admin-dashboard/owner-payment/owner-payment.component';
 import { PaymentdetailsComponent } from './Component/owner-dashboard/paymentdetails/paymentdetails.component';
 import { DriverrequestComponent } from './Component/admin-dashboard/driverrequest/driverrequest.component';
@@ -50,6 +49,12 @@ import { OngoingtripComponent } from './Component/admin-dashboard/ongoingtrip/on
 import { BokingTripComponent } from './Component/Driver-dashboard/boking-trip/boking-trip.component';
 import { CurrentTripComponent } from './Component/Driver-dashboard/current-trip/current-trip.component';
 import { ChatDriverComponent } from './Component/Driver-dashboard/chat-driver/chat-driver.component';
+import { DriverbookigDataComponent } from './Component/admin-dashboard/driverbookig-data/driverbookig-data.component';
+import { DriverpaymentdrtailsComponent } from './Component/admin-dashboard/driverpaymentdrtails/driverpaymentdrtails.component';
+import { ConversationsComponent } from './Component/admin-dashboard/conversations/conversations.component';
+import { DriverPaymentDetailsComponent } from './Component/Driver-dashboard/driver-payment-details/driver-payment-details.component';
+import { ForgotPasswordComponent } from './Component/forgot-password/forgot-password.component';
+import { ResetPasswordComponent } from './Component/reset-password/reset-password.component';
 
 
 
@@ -85,7 +90,10 @@ export const routes: Routes = [
         path: 'unauthorized', component: UnauthorizedComponent
       },
       { path: 'help', component: HelpComponent },
-      { path: 'services', component: ServiceComponent }
+      { path: 'services', component: ServiceComponent },
+      { path: 'forgot-password', component: ForgotPasswordComponent },
+      { path: 'reset-password', component: ResetPasswordComponent }
+
     ]
   },
 
@@ -131,11 +139,12 @@ export const routes: Routes = [
     canActivate: [authGuard],
     data: { expectedRole: 'Driver' },
     children: [
+      { path: '', redirectTo: 'BookingTrip', pathMatch: 'full' },
       { path: "driverProfile", component: DriverProfileComponent },
       { path: "BookingTrip", component: BokingTripComponent },
       { path: "Current_Rides", component: CurrentTripComponent },
-      { path: "adminChat", component: ChatDriverComponent }
-
+      { path: "adminChat", component: ChatDriverComponent },
+      { path: "paymentDetails", component: DriverPaymentDetailsComponent }
 
     ]
   },
@@ -157,11 +166,14 @@ export const routes: Routes = [
       { path: "verify-owners", component: VerifyownerComponent },
       { path: 'approve-owner', component: AprovedOwnerComponent },
       { path: "set-rents/:id", component: SetRentComponent },
-      { path: "Admin-Chat", component: ChatAdminComponent },
+      { path: "Admin-Chat", component: ConversationsComponent },
       { path: "pay-owners", component: OwnerPaymentComponent },
       { path: "driverrequest", component: DriverrequestComponent },
       { path: "verify-drivers", component: VerifiedDriverComponent },
-      { path: "ongoing-trips", component: OngoingtripComponent }
+      { path: "ongoing-trips", component: OngoingtripComponent },
+      { path: "driverbookingdata/:id", component: DriverbookigDataComponent },
+      { path: "driver-payments", component: DriverpaymentdrtailsComponent }
+
 
 
 

@@ -43,7 +43,7 @@
                     <th class="px-4 py-2">Sr No.</th>
                     <th class="px-4 py-2">CustomerName</th>
                     <th class="px-4 py-2">PhoneNumber</th>
-                    <th class="px-4 py-2">Car Name</th>
+                    <th class="px-4 py-2">vehicle Name</th>
                     <th class="px-4 py-2">Reg.No.</th>
                     <th class="px-4 py-2">Pickup Date</th>
                     <th class="px-4 py-2">Pickup Time</th>
@@ -60,7 +60,7 @@
                     <td class="px-4 py-4">{{i+1}}</td>
                     <td class="px-4 py-4">{{userBookingData.firstName}} {{userBookingData.lastName}}</td>
                     <td class="px-4 py-4">{{userBookingData.phone}}</td>
-                    <td class="px-4 py-4">{{userBookingData.carName}}</td>
+                    <td class="px-4 py-4">{{userBookingData.carName || userBookingData.bikeName}}</td>
                     <td class="px-4 py-4">{{userBookingData.registrationNo}}</td>
                     <td class="px-4 py-4">{{ userBookingData.startTime | date: 'dd-MM-yyyy' }}</td>
                     <td class="px-4 py-4"> {{ userBookingData.startTime | date: 'hh:mm a' }}</td>
@@ -209,8 +209,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <p><span class="font-semibold">Deposit Status:</span> {{selectedBooking.securityDepositStatus ||
                         'N/A'}}</p>
-                    <p><span class="font-semibold">Deposit Amount:</span> ₹{{selectedBooking.securityDepositAmount ||
-                        0}}</p>
+                    <p><span class="font-semibold">Deposit Amount:</span> ₹ {{selectedBooking.vehicleSecurityDepositAmount || 'N/A'}}</p>
                     <p><span class="font-semibold">Deposit Created At:</span>
                         {{selectedBooking.securityDepositCreatedAt?(selectedBooking.securityDepositCreatedAt |
                         date:'dd/MM/yyyy, h:mm a'):'N/A'}}</p>

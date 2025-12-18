@@ -581,7 +581,7 @@
         <div><strong>Vehicle AvailableDays:</strong> {{ selectedVehicleForView.availableDays || '-' }}</div>
         <div><strong>EffectiveFrom:</strong> {{ selectedVehicleForView.effectiveFrom || '-' }}</div>
         <div><strong>EffectiveTo:</strong> {{ selectedVehicleForView.effectiveTo || '-' }}</div>
-        <div><strong>status :</strong> {{ selectedVehicleForView.Status || '-' }}</div>
+        <div><strong>status :</strong> <span class="bg-green-500 text-white px-2 py-1 rounded"> {{ selectedVehicleForView?.vehiclestatus === true ? 'Approved' : '-' }}</span></div>
         <div class="text-red-500"><strong>RejectResion :</strong> {{ selectedVehicleForView.rejectresion || '-' }}</div>
         
 

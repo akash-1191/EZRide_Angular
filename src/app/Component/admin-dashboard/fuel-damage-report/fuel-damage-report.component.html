@@ -17,7 +17,7 @@
                     <th class="px-4 py-2">Sr No.</th>
                     <th class="px-4 py-2">CustomerName</th>
                     <th class="px-4 py-2">PhoneNumber</th>
-                    <th class="px-4 py-2">Car Name</th>
+                    <th class="px-4 py-2">Vehicle Name</th>
                     <th class="px-4 py-2">Reg.No.</th>
                     <th class="px-4 py-2">Damage Charge</th>
                     <th class="px-4 py-2">Fuel Charge</th>
@@ -33,7 +33,7 @@
                     <td class="px-4 py-4">{{i+1}}</td>
                     <td class="px-4 py-4">{{userBookingData.firstName}} {{userBookingData.lastName}}</td>
                     <td class="px-4 py-4">{{userBookingData.phone}}</td>
-                    <td class="px-4 py-4">{{userBookingData.carName}}</td>
+                    <td class="px-4 py-4">{{userBookingData.carName || userBookingData.bikeName}}</td>
                     <td class="px-4 py-4">{{userBookingData.registrationNo}}</td>
                     <td class="px-4 py-4">{{ userBookingData.securityDepositAmount}}</td>
                     <td class="px-4 py-4"> {{ userBookingData.transactionId}}</td>

@@ -40,7 +40,7 @@ export class CurrentTripComponent implements OnInit {
     
     this.services.driverGetAallbooking().subscribe({
       next: (response) => {
-        console.log('API Response:', response);
+        // console.log('API Response:', response);
         
         if (response.success && response.data) {
           this.trips = response.data;

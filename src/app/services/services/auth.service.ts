@@ -1,20 +1,21 @@
 import { Injectable } from '@angular/core';
 
+
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
 
-  constructor() { }
+constructor(
+) {}
 
   getToken(): string | null {
   let token = sessionStorage.getItem('token');
   console.log(' Retrieved token:', token);
-  
-  // Agar token hai but Bearer prefix nahi hai to add karo
+
   if (token && !token.startsWith('Bearer ')) {
     token = 'Bearer ' + token;
-    sessionStorage.setItem('token', token); // Update storage
+    sessionStorage.setItem('token', token); 
   }
   
   return token;

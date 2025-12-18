@@ -117,6 +117,9 @@ export class ChatAdminComponent implements OnInit, OnDestroy {
         this.handleNewMessage(event.payload);
       }
     });
+const connSub = this.chatService.connectionStatus$.subscribe(status => {
+  this.isConnected = status;
+});
 
     this.subscriptions.push(msgSub);
   }
@@ -200,6 +203,7 @@ export class ChatAdminComponent implements OnInit, OnDestroy {
       
       // Mark messages as read
       await this.markMessagesRead();
+      conversation.unreadCount = 0;
       
       // Scroll to bottom
       setTimeout(() => this.scrollToBottom(), 100);
@@ -230,58 +234,69 @@ export class ChatAdminComponent implements OnInit, OnDestroy {
 
   // =============== MESSAGING ===============
   
-  async sendMessage(): Promise<void> {
-    if (!this.messageText.trim() || !this.selectedConversation) {
-      return;
-    }
-
-    const text = this.messageText.trim();
-    this.messageText = '';
-
-    try {
-      await this.chatService.sendMessage(this.selectedConversation.conversationId, text);
-      
-      // Optimistically add message to UI
-      const tempMessage: Message = {
-        messageId: 0,
-        conversationId: this.selectedConversation.conversationId,
-        senderId: this.currentUserId,
-        senderName: 'Admin',
-        senderRole: 'Admin',
-        messageText: text,
-        timestamp: new Date(),
-        status: 'Sending...',
-        isSentByMe: true
-      };
-      
-      this.messages.push(tempMessage);
-      this.scrollToBottom();
-      
-    } catch (error) {
-      console.error('Error sending message:', error);
-      this.messageText = text; // Restore if failed
-    }
+ async sendMessage(): Promise<void> {
+  if (!this.messageText.trim() || !this.selectedConversation) {
+    return;
   }
+
+  const text = this.messageText.trim();
+  this.messageText = '';
+
+  try {
+    await this.chatService.sendMessage(
+      this.selectedConversation.conversationId,
+      text
+    );
+  } catch (error) {
+    console.error('Error sending message:', error);
+    this.messageText = text; // restore on failure
+  }
+}
+
 
   private handleNewMessage(message: Message): void {
-    if (!message) return;
-    
-    message.timestamp = new Date(message.timestamp);
-    message.isSentByMe = message.senderId === this.currentUserId;
-    
-    // Add message if for current conversation
-    if (this.selectedConversation?.conversationId === message.conversationId) {
-      const existingIndex = this.messages.findIndex(m => m.messageId === message.messageId);
-      
-      if (existingIndex >= 0) {
-        this.messages[existingIndex] = message;
-      } else {
-        this.messages.push(message);
-      }
-      
-      this.scrollToBottom();
+  if (!message) return;
+
+  message.timestamp = new Date(message.timestamp);
+  message.isSentByMe = message.senderId === this.currentUserId;
+
+  // 1️⃣ Update message list (if current conversation)
+  if (this.selectedConversation?.conversationId === message.conversationId) {
+    const existingIndex = this.messages.findIndex(
+      m => m.messageId === message.messageId
+    );
+
+    if (existingIndex >= 0) {
+      this.messages[existingIndex] = message;
+    } else {
+      this.messages.push(message);
     }
+
+    this.scrollToBottom();
+    this.markMessagesRead();
   }
+
+  // 2️⃣ Update conversation list
+  const conv = this.conversations.find(
+    c => c.conversationId === message.conversationId
+  );
+
+  if (conv) {
+    conv.lastMessage = message;
+
+    if (!this.selectedConversation ||
+        this.selectedConversation.conversationId !== message.conversationId) {
+      conv.unreadCount += 1;
+    }
+
+    // Move conversation to top
+    this.conversations = [
+      conv,
+      ...this.conversations.filter(c => c.conversationId !== conv.conversationId)
+    ];
+  }
+}
+
 
   private async markMessagesRead(): Promise<void> {
     if (!this.selectedConversation) return;

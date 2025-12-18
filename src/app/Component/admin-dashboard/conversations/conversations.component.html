@@ -1,0 +1,264 @@
+<div class="flex flex-col h-screen bg-gray-300 p-4">
+  <!-- Header -->
+  <div class="flex justify-between items-center mb-6 p-4 bg-white rounded-xl shadow-sm">
+    <div class="flex items-center gap-3">
+      <div class="p-2 bg-blue-100 rounded-lg">
+        <span class="text-2xl">💬</span>
+      </div>
+      <div>
+        <h3 class="text-xl font-bold text-gray-800">Admin Chat Dashboard</h3>
+        <p class="text-sm text-gray-500">Communicate with users in real-time</p>
+      </div>
+    </div>
+    
+    <div class="flex items-center gap-3">
+      <div class="flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium"
+           [class]="isConnected ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'">
+        <div class="w-2 h-2 rounded-full"
+             [class]="isConnected ? 'bg-green-500' : 'bg-red-500'"></div>
+        {{ isConnected ? 'Online' : 'Offline' }}
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Chat Layout -->
+  <div class="flex-1 flex flex-col lg:flex-row gap-4 overflow-hidden">
+    <!-- Left Panel: User Selection -->
+    <div class="lg:w-1/4 flex flex-col bg-white rounded-xl shadow-sm overflow-hidden">
+      <div class="p-4 border-b">
+        <h4 class="font-semibold text-gray-800 mb-3">Select User Type</h4>
+        
+        <div class="flex gap-2 mb-4">
+          <button 
+            class="flex-1 px-3 py-2 text-sm font-medium rounded-lg transition-all"
+            [class]="selectedUserType === 'owner' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'"
+            (click)="selectedUserType = 'owner'; onUserTypeChange()">
+            Owners
+          </button>
+          <!-- <button 
+            class="flex-1 px-3 py-2 text-sm font-medium rounded-lg transition-all"
+            [class]="selectedUserType === 'customer' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'"
+            (click)="selectedUserType = 'customer'; onUserTypeChange()">
+            Customers
+          </button> -->
+          <button 
+            class="flex-1 px-3 py-2 text-sm font-medium rounded-lg transition-all"
+            [class]="selectedUserType === 'driver' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'"
+            (click)="selectedUserType = 'driver'; onUserTypeChange()">
+            Drivers
+          </button>
+        </div>
+
+        <!-- Users List -->
+        <div class="flex-1 overflow-y-auto">
+          <h5 class="font-medium text-gray-700 mb-2 text-sm">
+            <span *ngIf="selectedUserType === 'owner'">Vehicle Owners</span>
+            <span *ngIf="selectedUserType === 'customer'">Customers</span>
+            <span *ngIf="selectedUserType === 'driver'">Drivers</span>
+          </h5>
+          
+          <div *ngIf="loading" class="flex justify-center items-center py-8">
+            <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
+          </div>
+          
+          <div class="space-y-2">
+            <div *ngFor="let user of getCurrentUserList()"
+                 class="flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-all"
+                 [class]="selectedUserId === user.userId ? 'bg-blue-50 border-l-4 border-blue-500' : 'bg-gray-50 hover:bg-gray-100'"
+                 (click)="selectUser(user.userId)">
+              
+              <div class="shrink-0 w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                <span class="font-semibold text-blue-600">
+                  {{ user.firstName?.charAt(0) || user.name?.charAt(0) || user.fullName?.charAt(0) || 'U' }}
+                </span>
+              </div>
+              
+              <div class="flex-1 min-w-0">
+                <p class="font-medium text-gray-800 truncate">
+                  {{ user.fullName || user.name || (user.firstName + ' ' + user.lastName) || 'Unknown User' }}
+                </p>
+                <p class="text-xs text-gray-500 truncate">{{ user.email || 'No email' }}</p>
+              </div>
+              
+              <div class="w-2 h-2 rounded-full bg-green-500"></div>
+            </div>
+            
+            <div *ngIf="getCurrentUserList().length === 0 && !loading"
+                 class="text-center py-6 text-gray-500 text-sm">
+              No {{ selectedUserType }}s found
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Middle Panel: Conversations -->
+    <div class="lg:w-1/3 flex flex-col bg-white rounded-xl shadow-sm overflow-hidden">
+      <div class="p-4 border-b">
+        <div class="flex justify-between items-center">
+          <h4 class="font-semibold text-gray-800">Recent Conversations</h4>
+          <span class="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
+            {{ conversations.length }} total
+          </span>
+        </div>
+      </div>
+      
+      <div class="flex-1 overflow-y-auto">
+        <div *ngIf="conversations.length === 0" class="flex flex-col items-center justify-center h-full p-6 text-center">
+          <div class="text-4xl mb-3">💬</div>
+          <p class="text-gray-600 font-medium">No conversations yet</p>
+          <p class="text-gray-500 text-sm mt-1">Select a user to start chatting</p>
+        </div>
+        
+        <div class="divide-y divide-gray-100">
+          <div *ngFor="let conv of conversations" 
+               class="flex items-center gap-3 p-4 cursor-pointer transition-all"
+               [class]="selectedConversation?.conversationId === conv.conversationId ? 'bg-blue-50' : 'hover:bg-gray-50'"
+               (click)="selectConversation(conv)">
+            
+            <div class="shrink-0">
+              <div class="w-12 h-12 rounded-full flex items-center justify-center text-lg font-semibold"
+                   [class]="conv.otherUserRole === 'Owner' || conv.otherUserRole === 'OWNER' ? 'bg-blue-100 text-blue-600' : 
+                            conv.otherUserRole === 'Customer' || conv.otherUserRole === 'CUSTOMER' ? 'bg-green-100 text-green-600' : 
+                            'bg-purple-100 text-purple-600'">
+                {{ conv.otherUserName.charAt(0) || 'U' }}
+              </div>
+            </div>
+            
+            <div class="flex-1 min-w-0">
+              <div class="flex justify-between items-start mb-1">
+                <div class="font-medium text-gray-800 truncate">{{ conv.otherUserName }}</div>
+                <span class="text-xs font-medium px-2 py-0.5 rounded-full"
+                      [class]="conv.otherUserRole === 'Owner' || conv.otherUserRole === 'OWNER' ? 'bg-blue-100 text-blue-800' : 
+                               conv.otherUserRole === 'Customer' || conv.otherUserRole === 'CUSTOMER' ? 'bg-green-100 text-green-800' : 
+                               'bg-purple-100 text-purple-800'">
+                  {{ conv.otherUserRole }}
+                </span>
+              </div>
+              
+              <p *ngIf="conv.lastMessage" class="text-sm text-gray-600 truncate mb-1">
+                {{ conv.lastMessage.messageText | slice:0:50 }}
+                {{ conv.lastMessage.messageText.length > 50 ? '...' : '' }}
+              </p>
+              
+              <div class="flex justify-between items-center">
+                <span class="text-xs text-gray-500">
+                  {{ conv.lastMessage ? (conv.lastMessage.timestamp | date:'shortTime') : 'No messages' }}
+                </span>
+                <span *ngIf="conv.unreadCount > 0" 
+                      class="bg-red-500 text-white text-xs font-bold rounded-full min-w-5 h-5 flex items-center justify-center px-1.5">
+                  {{ conv.unreadCount }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Panel: Chat Messages -->
+    <div class="lg:w-2/5 flex flex-col bg-white rounded-xl shadow-sm overflow-hidden" *ngIf="selectedConversation">
+      <!-- Chat Header -->
+      <div class="p-4 border-b flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
+            <span class="font-semibold text-blue-600">{{ selectedConversation.otherUserName.charAt(0) || 'U' }}</span>
+          </div>
+          <div>
+            <h3 class="font-bold text-gray-800">{{ selectedConversation.otherUserName }}</h3>
+            <div class="flex items-center gap-2">
+              <span class="text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-700">
+                {{ selectedConversation.otherUserRole }}
+              </span>
+              <span class="text-xs text-gray-500">• Online</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Messages Container -->
+      <div #messageContainer class="flex-1 overflow-y-auto p-4 bg-gray-50 space-y-4">
+        <div *ngIf="messages.length === 0" class="flex flex-col items-center justify-center h-full text-center py-12">
+          <div class="text-6xl mb-4 opacity-20">💬</div>
+          <h4 class="text-xl font-semibold text-gray-700 mb-2">Start a conversation</h4>
+          <p class="text-gray-500 max-w-md">
+            Send your first message to {{ selectedConversation.otherUserName }}
+          </p>
+        </div>
+        
+        <div *ngFor="let msg of messages" 
+             class="flex"
+             [class]="msg.isSentByMe ? 'justify-end' : 'justify-start'">
+          
+          <div class="max-w-[80%] lg:max-w-[70%] rounded-2xl shadow-sm p-3"
+               [class]="msg.isSentByMe ? 'bg-blue-600 text-white' : 'bg-white border border-gray-200 text-gray-800'">
+            
+            <div *ngIf="!msg.isSentByMe" class="flex items-center gap-2 mb-1">
+              <span class="font-semibold text-sm">{{ msg.senderName }}</span>
+              <span class="text-xs px-1.5 py-0.5 rounded bg-gray-100">{{ msg.senderRole }}</span>
+            </div>
+            
+            <p class="text-sm mb-2">{{ msg.messageText }}</p>
+            
+            <div class="flex justify-between items-center">
+              <span class="text-xs opacity-80">
+                {{ formatTime(msg.timestamp) }}
+              </span>
+              <span *ngIf="msg.isSentByMe" class="text-xs ml-2">
+                <span *ngIf="msg.status === 'Sending...'">🕒</span>
+                <span *ngIf="msg.status === 'Sent'">✓</span>
+                <span *ngIf="msg.status === 'Delivered'">✓✓</span>
+                <span *ngIf="msg.status === 'Read'">👁️</span>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Message Input -->
+      <div class="p-4 border-t bg-white">
+        <div class="flex gap-3">
+          <div class="flex-1 relative">
+            <input 
+              type="text" 
+              [(ngModel)]="messageText" 
+              placeholder="Type your message here..."
+              (keyup.enter)="sendMessage()"
+              [disabled]="!isConnected"
+              class="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed">
+          </div>
+          
+          <button 
+            (click)="sendMessage()" 
+            [disabled]="!messageText.trim() || !isConnected"
+            class="px-5 bg-blue-600 text-white cursor-pointer rounded-full font-medium hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors flex items-center gap-2">
+            <span>Send</span>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+            </svg>
+          </button>
+        </div>
+        
+        <div class="flex justify-center mt-3">
+          <p class="text-xs text-gray-500">
+            Press Enter to send • Shift+Enter for new line
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- No Selection View -->
+    <div class="lg:w-2/5 flex flex-col items-center justify-center bg-white rounded-xl shadow-sm p-8" *ngIf="!selectedConversation">
+      <div class="text-8xl text-gray-200 mb-6">💬</div>
+      <h4 class="text-2xl font-bold text-gray-700 mb-2">No conversation selected</h4>
+      <p class="text-gray-500 text-center max-w-sm mb-8">
+        Select a user from the list or choose an existing conversation to start chatting
+      </p>
+      <div class="flex gap-3">
+        <div class="w-3 h-3 rounded-full bg-gray-300 animate-pulse"></div>
+        <div class="w-3 h-3 rounded-full bg-gray-300 animate-pulse" style="animation-delay: 200ms"></div>
+        <div class="w-3 h-3 rounded-full bg-gray-300 animate-pulse" style="animation-delay: 400ms"></div>
+      </div>
+    </div>
+  </div>
+</div>

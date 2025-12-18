@@ -75,6 +75,7 @@ export class MyVehicleComponent implements OnInit {
     this.service.getAllVehiclesbyowner().subscribe({
       next: (res) => {
         this.allVehicles = res;
+        // console.log(this.allVehicles);
         this.bikeVehicles = this.allVehicles.filter(v => v.vehicletype === 'Bike');
         this.carVehicles = this.allVehicles.filter(v => v.vehicletype === 'Car');
         this.fetchFirstImageForEachVehicle();

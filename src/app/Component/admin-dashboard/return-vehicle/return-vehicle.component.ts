@@ -233,6 +233,7 @@ export class ReturnVehicleComponent {
       next: (res) => {
         console.log(res.message || 'Booking marked as completed!');
         this.closeFuelModal();
+        this.loadAllData();
       },
       error: (err) => {
         alert('Failed to update status');

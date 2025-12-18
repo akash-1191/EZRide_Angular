@@ -28,7 +28,7 @@ export class BookingPageComponent implements OnInit {
 
 
 
-
+selectedDriver: any = null;
   activeTab: 'en' | 'hi' = 'en';
   isImageUploaded: boolean = false;
   imageFile: File | null = null;
@@ -46,6 +46,7 @@ export class BookingPageComponent implements OnInit {
     securityAmount: 0,
     totalAmount: 0
   };
+
   bookedDates: Set<string> = new Set();
   bookedSlots: { startDateTime: string, endDateTime: string }[] = [];
   availabilityColor: 'green' | 'red' | null = null;
@@ -80,29 +81,74 @@ export class BookingPageComponent implements OnInit {
     this.initCheckboxes();
   }
  // Filter drivers based on the selected vehicle type (Car/Bike)
-loadDriverDetails() {
-    this.service.getdriverdata().subscribe({
-      next: (res) => {
-        // Filter drivers based on the selected vehicle type (Car/Bike)
-      if (this.vehicleDetails?.type === 'Car') {
-        // For Car, filter drivers that can drive FourWheeler or Both
-        this.availableDrivers = res.filter((driver: any) => 
-          driver.vehicleType === 'FourWheeler' || driver.vehicleType === 'Both'
-        );
-      } else if (this.vehicleDetails?.type === 'Bike') {
-        // For Bike, filter drivers that can drive TwoWheeler or Both
-        this.availableDrivers = res.filter((driver: any) => 
-          driver.vehicleType === 'TwoWheeler' || driver.vehicleType === 'Both'
-        );
-      }
-        // console.log("Filtered driver data for", this.vehicleDetails?.type, ":", this.availableDrivers);
-      },
-      error: (err) => console.error('Error fetching driver data', err),
-    });
+loadAvailableDrivers() {
+ 
+  if (!this.bookingForm) {
+    return;
   }
+
+  const pickupDate = this.bookingForm.get('pickupDate')?.value;
+  const pickupTime = this.bookingForm.get('pickupTime')?.value;
+  const dropoffDate = this.bookingForm.get('dropoffDate')?.value;
+  const dropoffTime = this.bookingForm.get('dropoffTime')?.value;
+
+
+  //  Date/time missing check
+  if (!pickupDate || !pickupTime || !dropoffDate || !dropoffTime) {
+    this.availableDrivers = [];
+    return;
+  }
+
+  // Date objects
+  const start = new Date(pickupDate);
+  const end = new Date(dropoffDate);
+
+  // Time parse (AM/PM + 24h both)
+  const pickupParsed = this.convertTimeTo24Hour(pickupTime);
+  const dropoffParsed = this.convertTimeTo24Hour(dropoffTime);
+
+  if (!pickupParsed || !dropoffParsed) {
+    this.availableDrivers = [];
+    return;
+  }
+
+  start.setHours(pickupParsed.hours, pickupParsed.minutes, 0, 0);
+  end.setHours(dropoffParsed.hours, dropoffParsed.minutes, 0, 0);
+
+  //  Final safety check
+  if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+    this.availableDrivers = [];
+    return;
+  }
+
+ 
+  // Vehicle type
+  const vehicleType = this.vehicleDetails?.type;
+ 
+  if (!vehicleType) return;
+
+  //  API call
+  this.service.getAvailableDrivers(
+    start.toISOString(),
+    end.toISOString(),
+    vehicleType
+  ).subscribe({
+    next: (res) => {
+      this.availableDrivers = res;
+    },
+    error: (err) => {
+      console.error(' API ERROR:', err);
+      this.availableDrivers = [];
+    }
+  });
+}
 
   // When skip is clicked, show terms and conditions
   onSkip() {
+     if (this.bookingForm.get('driveBasis')?.value === 'perKm') {
+    alert('⚠ Per KM booking is allowed only with Driver');
+    return;
+  }
     this.showDriverSection = false;
     this.showTermsSection = true;
   }
@@ -243,17 +289,14 @@ loadDriverDetails() {
 
   // validation for the dattime
   async ngOnInit() {
-    this.vehicleId = +this.route.snapshot.paramMap.get('id')!;
-    this.loadVehicleDetails();
-    if (this.vehicleDetails) {
-    this.loadDriverDetails();  // Fetch drivers after vehicle details are ready
-  }
+     this.vehicleId = +this.route.snapshot.paramMap.get('id')!;
+    
     const now = new Date();
-    this.minDate = now; // aaj ke date se pehle pick nahi kar sakte
+    this.minDate = now; 
     const hours = now.getHours().toString().padStart(2, '0');
     const minutes = now.getMinutes().toString().padStart(2, '0');
     this.minTime = `${hours}:${minutes}`;
-
+    
     this.bookingForm = this.fb.group({
       pickupDate: [null, Validators.required],
       pickupTime: ['', Validators.required],
@@ -266,12 +309,27 @@ loadDriverDetails() {
     }, {
       validators: this.minimumBookingDurationValidator()
     });
-    this.loadVehicleAvailability();
-    await this.loadUnavailableSlots();
+ 
+
+// const now:Date = new Date();
+//   this.minDate = now;
+//   this.minTime = `${now.getHours().toString().padStart(2, '0')}:
+//   ${now.getMinutes().toString().padStart(2, '0')}`;
+
+  // ✅ 4. VEHICLE & AVAILABILITY
+  this.loadVehicleDetails();
+  this.loadVehicleAvailability();
+  await this.loadUnavailableSlots();
 
 
-    // when driveBasis or hoursToDrive/daysToDrive change then auto-update of he dropoff
-    // this.bookingForm.get('driveBasis')?.valueChanges.subscribe(() => this.updateDropoff());
+     this.bookingForm.get('driveBasis')?.valueChanges.subscribe(() => {
+    this.updateDropoff();
+    this.manageDropoffControlState();
+  });
+
+
+
+   
     this.bookingForm.get('driveBasis')?.valueChanges.subscribe(() => { this.updateDropoff(); this.manageDropoffControlState(); });
     this.bookingForm.get('hoursToDrive')?.valueChanges.subscribe(() => this.updateDropoff());
     this.bookingForm.get('daysToDrive')?.valueChanges.subscribe(() => this.updateDropoff());
@@ -290,8 +348,36 @@ loadDriverDetails() {
     this.bookingForm.valueChanges.subscribe(() => {
       this.bookingForm.updateValueAndValidity({ onlySelf: false, emitEvent: false });
     });
+     this.bookingForm.valueChanges.subscribe(() => {
+    if (this.bookingForm.valid) {
+      this.loadAvailableDrivers();
+    }
+  });
   }
 
+convertTimeTo24Hour(time: string): { hours: number; minutes: number } | null {
+  if (!time) return null;
+
+  // Case 1: already 24-hour format (e.g. 16:29)
+  if (!time.toLowerCase().includes('am') && !time.toLowerCase().includes('pm')) {
+    const [h, m] = time.split(':').map(Number);
+    if (isNaN(h) || isNaN(m)) return null;
+    return { hours: h, minutes: m };
+  }
+
+  // Case 2: 12-hour format (e.g. 6:29 AM)
+  const match = time.match(/(\d+):(\d+)\s?(AM|PM)/i);
+  if (!match) return null;
+
+  let hours = parseInt(match[1], 10);
+  const minutes = parseInt(match[2], 10);
+  const period = match[3].toUpperCase();
+
+  if (period === 'PM' && hours < 12) hours += 12;
+  if (period === 'AM' && hours === 12) hours = 0;
+
+  return { hours, minutes };
+}
 
 
   // autoupdate dropof 
@@ -326,13 +412,27 @@ loadDriverDetails() {
           dropoffTime: pickupTime
         }, { emitEvent: false });
       }
-    } else if (driveBasis === 'perKm') {
-      this.bookingForm.patchValue({
-        dropoffDate: null,
-        dropoffTime: ''
-      }, { emitEvent: false });
-    }
+    }  else if (driveBasis === 'perKm') {
+  const kms = this.bookingForm.get('kmsToDrive')?.value;
+
+  if (!kms || kms <= 0) return;
+
+  //  Average speed + traffic buffer
+  const AVERAGE_SPEED = 30; // km/hr (city driving)
+  const BUFFER_HOURS = 1;   // traffic + signals + break
+
+  const estimatedHours = (kms / AVERAGE_SPEED) + BUFFER_HOURS;
+  const estimatedMs = estimatedHours * 60 * 60 * 1000;
+
+  const dropoff = new Date(pickup.getTime() + estimatedMs);
+
+  this.bookingForm.patchValue({
+    dropoffDate: dropoff,
+    dropoffTime: `${String(dropoff.getHours()).padStart(2, '0')}:${String(dropoff.getMinutes()).padStart(2, '0')}`
+  }, { emitEvent: false });
+}
   }
+  
 
 
   minimumBookingDurationValidator(): ValidatorFn {
@@ -365,38 +465,38 @@ loadDriverDetails() {
   manageDropoffControlState() {
     const driveBasis = this.bookingForm.get('driveBasis')?.value;
 
-    if (driveBasis === 'perKm') {
-      //  Enable for perKm
-      this.bookingForm.get('dropoffDate')?.enable({ emitEvent: false });
-      this.bookingForm.get('dropoffTime')?.enable({ emitEvent: false });
-    } else {
-      //  Disable for perHour or perDay
-      this.bookingForm.get('dropoffDate')?.disable({ emitEvent: false });
-      this.bookingForm.get('dropoffTime')?.disable({ emitEvent: false });
-    }
+     if (driveBasis === 'perHour' || driveBasis === 'perDay' || driveBasis === 'perKm') {
+    this.bookingForm.get('dropoffDate')?.disable({ emitEvent: false });
+    this.bookingForm.get('dropoffTime')?.disable({ emitEvent: false });
+  } else {
+    // (future case: manual selection if ever needed)
+    this.bookingForm.get('dropoffDate')?.enable({ emitEvent: false });
+    this.bookingForm.get('dropoffTime')?.enable({ emitEvent: false });
+  }
   }
 
   //load vehicle ddetails
 
   loadVehicleDetails() {
-    this.service.getVehicleDetailsById(this.vehicleId).subscribe({
-      next: (res) => {
-        this.vehicleDetails = res;
-        // console.log("load vehcile detials datais:",this.vehicleDetails);
-        
-        if (res.imagePaths && res.imagePaths.length > 0) {
-          const baseUrl = 'http://localhost:7188/';
-          this.thumbnails = res.imagePaths.map((img: string) => baseUrl + img);
-          this.selectedImage = this.thumbnails[0];
-        } else {
-          this.thumbnails = [];
-          this.selectedImage = '../../../../assets/image/imageNotAvalible.png'; // Agar image na ho to blank
-        }
-         this.loadDriverDetails();
-      },
-      error: (err) => console.error('Error fetching vehicle:', err)
-    });
-  }
+  this.service.getVehicleDetailsById(this.vehicleId).subscribe({
+    next: (res) => {
+      this.vehicleDetails = res;
+
+      if (res.imagePaths && res.imagePaths.length > 0) {
+        const baseUrl = 'http://localhost:7188/';
+        this.thumbnails = res.imagePaths.map((img: string) => baseUrl + img);
+        this.selectedImage = this.thumbnails[0];
+      } else {
+        this.thumbnails = [];
+        this.selectedImage = '../../../../assets/image/imageNotAvalible.png';
+      }
+
+      // this.loadAvailableDrivers(); //  YAHI SAHI JAGAH HAI
+    },
+    error: (err) => console.error('Error fetching vehicle:', err)
+  });
+}
+
 
   Booking() {
     if (this.bookingForm.valid) {
@@ -460,6 +560,13 @@ loadDriverDetails() {
 
 
   goToPreviewPage() {
+     if (
+    this.bookingForm.get('driveBasis')?.value === 'perKm' &&
+    !this.selectedDriver
+  ) {
+    alert('⚠ Please select a driver for Per KM booking');
+    return;
+  }
     if (this.bookingForm.valid) {
       const amount = this.calculateAmountBreakup();
 
@@ -480,6 +587,7 @@ loadDriverDetails() {
   }
   // When driver is selected
 onDriverSelect(driver: any) {
+    this.selectedDriver = driver; 
   if (this.bookingForm.valid) {
     const amount = this.calculateAmountBreakup();
 
@@ -489,8 +597,7 @@ onDriverSelect(driver: any) {
       bookingFormValues: this.bookingForm.getRawValue(),
       ...amount
     };
-    // console.log("driver selected",bookingData);
-    // Navigating to the preview page with all the booking data
+  
     this.router.navigate(['/customer-dashboard/previewPage'], {
       state: { bookingData }
     });
@@ -536,6 +643,7 @@ onDriverSelect(driver: any) {
 
   openModal(): void {
     this.showModal = true;
+    // this.loadAvailableDrivers();
     const enArr = this.formcheckcondition.get('englishTerms') as FormArray;
     const hiArr = this.formcheckcondition.get('hindiTerms') as FormArray;
 

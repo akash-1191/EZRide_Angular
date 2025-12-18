@@ -1,0 +1,383 @@
+<div class="min-h-screen bg-gray-50 p-4 md:p-6 lg:p-8">
+    <!-- Header -->
+    <div class="mb-6 md:mb-8">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div>
+                <h1 class="text-2xl md:text-3xl font-bold text-gray-800">
+                    <i class="fas fa-calendar-alt mr-2 text-blue-600"></i>Driver Bookings
+                </h1>
+                <p class="text-gray-600 mt-2">Booking details for Driver ID: {{ driverId }}</p>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <button (click)="loadData()"
+                    class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm cursor-pointer">
+                    <i class="fas fa-sync-alt mr-2"></i>Refresh
+                </button>
+                <span class="px-3 py-1 bg-gray-200 text-gray-700 rounded-full text-sm">
+                    {{ filteredBookings.length }} Bookings
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Messages -->
+    <div *ngIf="successMessage" class="mb-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg">
+        <i class="fas fa-check-circle mr-2"></i>{{ successMessage }}
+    </div>
+
+    <div *ngIf="errorMessage" class="mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg">
+        <i class="fas fa-exclamation-circle mr-2"></i>{{ errorMessage }}
+    </div>
+
+    <!-- Filters Section -->
+    <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 mb-6 border border-gray-200">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <h2 class="text-lg font-semibold text-gray-800">
+                <i class="fas fa-filter mr-2 text-gray-600"></i>Filter by Status
+            </h2>
+            <div class="flex gap-3">
+                <button (click)="resetFilters()"
+                    class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors text-sm cursor-pointer">
+                    <i class="fas fa-times mr-2"></i>Clear Filter
+                </button>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-3 mt-4">
+            <!-- All Status -->
+            <button (click)="filterByStatus('all')" [class.bg-blue-600]="selectedStatus === 'all'"
+                [class.text-white]="selectedStatus === 'all'" [class.bg-gray-100]="selectedStatus !== 'all'"
+                [class.text-gray-700]="selectedStatus !== 'all'"
+                class="px-4 py-3 rounded-lg hover:bg-blue-50 transition-colors cursor-pointer text-center">
+                <i class="fas fa-list mr-2"></i>All
+                <span class="ml-2 text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
+                    {{ bookingData.length }}
+                </span>
+            </button>
+
+            <!-- Assigned -->
+            <button (click)="filterByStatus('Assigned')" [class.bg-blue-600]="selectedStatus === 'Assigned'"
+                [class.text-white]="selectedStatus === 'Assigned'" [class.bg-blue-50]="selectedStatus !== 'Assigned'"
+                [class.text-blue-700]="selectedStatus !== 'Assigned'"
+                class="px-4 py-3 rounded-lg hover:bg-blue-100 transition-colors cursor-pointer text-center">
+                <i class="fas fa-user-check mr-2"></i>Assigned
+                <span class="ml-2 text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
+                    {{ getStatusCount('Assigned') }}
+                </span>
+            </button>
+
+            <!-- InProgress -->
+            <button (click)="filterByStatus('InProgress')" [class.bg-yellow-600]="selectedStatus === 'InProgress'"
+                [class.text-white]="selectedStatus === 'InProgress'"
+                [class.bg-yellow-50]="selectedStatus !== 'InProgress'"
+                [class.text-yellow-700]="selectedStatus !== 'InProgress'"
+                class="px-4 py-3 rounded-lg hover:bg-yellow-100 transition-colors cursor-pointer text-center">
+                <i class="fas fa-spinner mr-2"></i>In Progress
+                <span class="ml-2 text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full">
+                    {{ getStatusCount('InProgress') }}
+                </span>
+            </button>
+
+            <!-- Completed -->
+            <button (click)="filterByStatus('Completed')" [class.bg-green-600]="selectedStatus === 'Completed'"
+                [class.text-white]="selectedStatus === 'Completed'" [class.bg-green-50]="selectedStatus !== 'Completed'"
+                [class.text-green-700]="selectedStatus !== 'Completed'"
+                class="px-4 py-3 rounded-lg hover:bg-green-100 transition-colors cursor-pointer text-center">
+                <i class="fas fa-check-circle mr-2"></i>Completed
+                <span class="ml-2 text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">
+                    {{ getStatusCount('Completed') }}
+                </span>
+            </button>
+
+            <!-- Cancelled -->
+            <button (click)="filterByStatus('Cancelled')" [class.bg-red-600]="selectedStatus === 'Cancelled'"
+                [class.text-white]="selectedStatus === 'Cancelled'" [class.bg-red-50]="selectedStatus !== 'Cancelled'"
+                [class.text-red-700]="selectedStatus !== 'Cancelled'"
+                class="px-4 py-3 rounded-lg hover:bg-red-100 transition-colors cursor-pointer text-center">
+                <i class="fas fa-times-circle mr-2"></i>Cancelled
+                <span class="ml-2 text-xs bg-red-100 text-red-800 px-2 py-1 rounded-full">
+                    {{ getStatusCount('Cancelled') }}
+                </span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="flex justify-center items-center py-12">
+        <div class="text-center">
+            <i class="fas fa-spinner fa-spin text-blue-500 text-4xl mb-4"></i>
+            <p class="text-gray-600">Loading booking data...</p>
+        </div>
+    </div>
+
+    <!-- No Data State -->
+    <div *ngIf="filteredBookings.length === 0 && !isLoading && !errorMessage"
+        class="text-center py-12 bg-white rounded-xl shadow-sm">
+        <i class="fas fa-calendar-times text-gray-400 text-5xl mb-4"></i>
+        <h3 class="text-xl font-semibold text-gray-700 mb-2">No Bookings Found</h3>
+        <p class="text-gray-500">No bookings match your filter criteria.</p>
+    </div>
+
+    <!-- Booking Cards Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" *ngIf="filteredBookings.length > 0 && !isLoading">
+        <div *ngFor="let booking of filteredBookings"
+            class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200 hover:shadow-xl transition-shadow duration-300">
+
+            <!-- Card Header with Status -->
+            <div class="p-4 border-b border-gray-200" [ngClass]="getStatusBgClass(booking.booking.status)">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h3 class="font-bold text-gray-800">
+                            Booking #{{ filteredBookings.indexOf(booking) + 1 }}
+                        </h3>
+                        <div class="flex items-center mt-1">
+                            <span class="px-2 py-1 rounded-full text-xs font-medium"
+                                [ngClass]="getStatusClass(booking.booking.status)">
+                                <i class="fas fa-circle mr-1 text-[8px]"></i>
+                                {{ booking.booking.status }}
+                            </span>
+                            <span class="ml-2 text-xs text-gray-500">
+                                Assigned: {{ formatDate(booking.booking.assignTime) }}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="text-right relative group">
+                        <div class="flex items-center justify-end gap-2">
+                            <div class="text-lg font-bold text-gray-800">
+                                ₹{{ booking.driver.perDayRate }}
+                            </div>
+                            <button (click)="openAmountModal(booking)"
+                                class="opacity-0 group-hover:opacity-100 text-blue-600 hover:text-blue-800 cursor-pointer transition-opacity">
+                                <i class="fas fa-plus-circle text-sm"></i>
+                            </button>
+                        </div>
+                        <div class="text-xs text-gray-500">set amount/day</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Vehicle Section with Image Gallery -->
+            <div class="p-4 border-b border-gray-200">
+                <div class="flex items-center gap-3">
+                    <!-- Vehicle Image Gallery -->
+                    <div class="shrink-0">
+                        <div class="w-16 h-16 rounded-lg overflow-hidden bg-gray-100 border border-gray-300 relative">
+                            <img *ngIf="booking.vehicle.vehicleImages && booking.vehicle.vehicleImages.length > 0"
+                                [src]="'http://localhost:7188/' + booking.vehicle.vehicleImages[0]" alt="Vehicle"
+                                class="w-full h-full object-cover">
+                            <div *ngIf="!booking.vehicle.vehicleImages || booking.vehicle.vehicleImages.length === 0"
+                                class="w-full h-full flex items-center justify-center">
+                                <i class="fas fa-car text-gray-400 text-xl"></i>
+                            </div>
+                            <div *ngIf="booking.vehicle.vehicleImages && booking.vehicle.vehicleImages.length > 1"
+                                class="absolute bottom-1 right-1 bg-black/70 text-white text-xs px-1 rounded">
+                                +{{ booking.vehicle.vehicleImages.length - 1 }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Vehicle Details -->
+                    <div class="flex-1">
+                        <div class="flex items-center justify-between">
+                            <h4 class="font-semibold text-gray-800">
+                                {{ booking.vehicle.bikeName || booking.vehicle.carName || 'No Name' }}
+                            </h4>
+                            <span class="px-2 py-1 text-xs font-medium rounded"
+                                [ngClass]="getVehicleTypeClass(booking.vehicle.vehicleType)">
+                                {{ booking.vehicle.vehicleType }}
+                            </span>
+                        </div>
+                        <p class="text-sm text-gray-600 mt-1">
+                            <i class="fas fa-id-card mr-2 text-gray-400"></i>
+                            {{ booking.vehicle.registrationNo }}
+                        </p>
+                        <div class="flex gap-4 mt-2 text-xs text-gray-500">
+                            <div>
+                                <i class="fas fa-clock mr-1"></i>
+                                ₹{{ booking.vehicle.pricing.pricePerHour }}/hr
+                            </div>
+                            <div>
+                                <i class="fas fa-calendar-day mr-1"></i>
+                                ₹{{ booking.vehicle.pricing.pricePerDay }}/day
+                            </div>
+                            <div>
+                                <i class="fas fa-road mr-1"></i>
+                                ₹{{ booking.vehicle.pricing.pricePerKm }}/km
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Driver & Customer Info -->
+            <div class="p-4">
+                <div class="grid grid-cols-2 gap-4">
+                    <!-- Driver -->
+                    <div>
+                        <div class="flex items-center mb-2">
+                            <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center mr-2">
+                                <i class="fas fa-user-tie text-blue-600 text-sm"></i>
+                            </div>
+                            <h4 class="font-medium text-gray-700 text-sm">Driver</h4>
+                        </div>
+                        <p class="font-semibold text-gray-800 text-sm">{{ booking.driver.driverFullName }}</p>
+                        <p class="text-xs text-gray-600 mt-1">
+                            <i class="fas fa-phone mr-1"></i>{{ booking.driver.driverPhone }}
+                        </p>
+                        <p class="text-xs text-gray-600 mt-1 truncate">
+                            <i class="fas fa-envelope mr-1"></i>{{ booking.driver.driverEmail }}
+                        </p>
+                    </div>
+
+                    <!-- Customer -->
+                    <div>
+                        <div class="flex items-center mb-2">
+                            <div class="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center mr-2">
+                                <i class="fas fa-user text-green-600 text-sm"></i>
+                            </div>
+                            <h4 class="font-medium text-gray-700 text-sm">Customer</h4>
+                        </div>
+                        <p class="font-semibold text-gray-800 text-sm">{{ booking.customer.customerFullName }}</p>
+                        <p class="text-xs text-gray-600 mt-1">
+                            <i class="fas fa-phone mr-1"></i>{{ booking.customer.customerPhone }}
+                        </p>
+                        <p class="text-xs text-gray-600 mt-1 truncate">
+                            <i class="fas fa-envelope mr-1"></i>{{ booking.customer.customerEmail }}
+                        </p>
+                        <p class="text-xs text-gray-600 mt-1">
+                            <i class="fas fa-city mr-1"></i>{{ booking.customer.customerCity }}
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Booking Timeline -->
+                <div class="mt-4 pt-4 border-t border-gray-200">
+                    <div class="flex items-center justify-between text-sm">
+                        <div class="text-center">
+                            <div class="font-medium text-gray-700">Start</div>
+                            <div class="text-gray-900 font-semibold">{{ formatTime(booking.booking.startTime) }}</div>
+                            <div class="text-xs text-gray-500">{{ formatDateOnly(booking.booking.startTime) }}</div>
+                        </div>
+
+                        <div class="flex-1 px-4">
+                            <div class="relative">
+                                <div class="h-1 bg-gray-200 rounded-full"></div>
+                                <div
+                                    class="absolute top-1/2 left-0 right-0 transform -translate-y-1/2 flex justify-between">
+                                    <div class="w-3 h-3 bg-blue-500 rounded-full"></div>
+                                    <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                                </div>
+                            </div>
+                            <div class="text-xs text-center text-gray-500 mt-1">
+                                {{ getDuration(booking.booking.startTime, booking.booking.endTime) }}
+                            </div>
+                        </div>
+
+                        <div class="text-center">
+                            <div class="font-medium text-gray-700">End</div>
+                            <div class="text-gray-900 font-semibold">{{ formatTime(booking.booking.endTime) }}</div>
+                            <div class="text-xs text-gray-500">{{ formatDateOnly(booking.booking.endTime) }}</div>
+                        </div>
+                    </div>
+                    <div class="text-sm text-gray-600 mt-1">
+  Total: ₹{{ calculateTotalAmount(booking) }}
+</div>
+
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="mt-4 pt-4 border-t border-gray-200">
+                    <div class="flex flex-col gap-2">
+                        <button (click)="openContactModal(booking)"
+                            class="w-full px-3 py-2 bg-green-50 text-green-700 hover:bg-green-100 rounded-lg text-sm font-medium cursor-pointer transition-colors">
+                            <i class="fas fa-phone mr-2"></i>Contact Customer
+                        </button>
+
+                        <button (click)="makePayment(booking)" [disabled]="booking.driverPayment"
+                            class="w-full px-3 py-2 rounded-lg text-sm font-medium" [ngClass]="booking.driverPayment 
+    ? 'bg-gray-400 cursor-not-allowed' 
+    : 'bg-blue-600 hover:bg-blue-700 text-white'">
+
+                            {{ booking.driverPayment ? 'Payment Completed' : 'Make Payment' }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact Modal -->
+    <div *ngIf="showContactModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
+        <div class="bg-white rounded-xl w-full max-w-sm shadow-2xl">
+            <div class="p-6 border-b border-gray-200">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-xl font-bold text-gray-800">
+                        <i class="fas fa-phone mr-2"></i>Call Options
+                    </h3>
+                    <button (click)="closeContactModal()"
+                        class="text-gray-500 hover:text-gray-700 transition-colors duration-200 cursor-pointer">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="p-6">
+                <!-- Driver -->
+                <div class="mb-6">
+                    <h4 class="font-semibold text-gray-800 mb-3 flex items-center">
+                        <i class="fas fa-user-tie mr-2 text-blue-600"></i>Driver
+                    </h4>
+                    <div class="space-y-3">
+                        <div class="p-3 bg-blue-50 rounded-lg">
+                            <p class="font-medium text-gray-800">{{ selectedContact?.driver?.driverFullName }}</p>
+                            <p class="text-sm text-gray-600 mt-1">{{ selectedContact?.driver?.driverPhone }}</p>
+                            <a [href]="'tel:' + selectedContact?.driver?.driverPhone"
+                                class="mt-2 inline-block px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm cursor-pointer">
+                                <i class="fas fa-phone mr-1"></i>Call Driver
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Customer -->
+                <div>
+                    <h4 class="font-semibold text-gray-800 mb-3 flex items-center">
+                        <i class="fas fa-user mr-2 text-green-600"></i>Customer
+                    </h4>
+                    <div class="space-y-3">
+                        <div class="p-3 bg-green-50 rounded-lg">
+                            <p class="font-medium text-gray-800">{{ selectedContact?.customer?.customerFullName }}</p>
+                            <p class="text-sm text-gray-600 mt-1">{{ selectedContact?.customer?.customerPhone }}</p>
+                            <a [href]="'tel:' + selectedContact?.customer?.customerPhone"
+                                class="mt-2 inline-block px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm cursor-pointer">
+                                <i class="fas fa-phone mr-1"></i>Call Customer
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Close Button -->
+                <div class="mt-6 pt-6 border-t border-gray-200">
+                    <button (click)="closeContactModal()"
+                        class="w-full px-4 py-2 border border-gray-300 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors text-sm cursor-pointer">
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add this in your component template -->
+<div *ngIf="showAmountModal" class="fixed inset-0 bg-black/30 bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white rounded-lg p-6 w-96">
+        <h3 class="text-lg font-bold mb-4">Set Security Deposit Amount</h3>
+        <input type="number" [(ngModel)]="selectedAmount" class="w-full border rounded-lg p-2 mb-4"
+            placeholder="Enter amount">
+        <div class="flex gap-2 justify-end">
+            <button (click)="closeModal()" class="px-4 py-2 border rounded-lg">Cancel</button>
+            <button (click)="updateAmount()" class="px-4 py-2 bg-blue-600 text-white rounded-lg">Update</button>
+        </div>
+    </div>
+</div>

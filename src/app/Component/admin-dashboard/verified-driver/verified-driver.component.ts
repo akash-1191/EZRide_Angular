@@ -1,4 +1,4 @@
-import { Component, HostListener } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { MyServiceService } from '../../../../../my-service.service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -9,7 +9,7 @@ import { CommonModule } from '@angular/common';
   templateUrl: './verified-driver.component.html',
   styleUrl: './verified-driver.component.css'
 })
-export class VerifiedDriverComponent {
+export class VerifiedDriverComponent implements OnInit {
 
 
 

@@ -153,7 +153,7 @@ allMandatoryUploaded = false;
     this.services.UserProfiledata(userId).subscribe({
       next: (res) => {
         this.profiledata = res.data;
-        console.log("response data",this.profiledata);
+        // console.log("response data",this.profiledata);
       },
       error: (err) => {
         console.error("Failed to fetch profile", err);
