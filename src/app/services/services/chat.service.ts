@@ -3,6 +3,10 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import * as signalR from '@microsoft/signalr';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { AuthService } from './auth.service';
+import { environment } from '../../../environments/environment';
+
+/* ================= INTERFACES ================= */
+
 export interface Message {
   messageId: number;
   conversationId: number;
@@ -31,44 +35,54 @@ export interface SignalREvent {
   payload?: any;
 }
 
+/* ================= SERVICE ================= */
+
 @Injectable({
   providedIn: 'root'
 })
 export class ChatService {
+
   private hubConnection: signalR.HubConnection | null = null;
   private messagesSubject = new BehaviorSubject<SignalREvent | null>(null);
   private connectionStatus = new BehaviorSubject<boolean>(false);
+
   private retryCount = 0;
   private maxRetries = 5;
 
   messages$ = this.messagesSubject.asObservable();
   connectionStatus$ = this.connectionStatus.asObservable();
 
-  private baseUrl = 'http://localhost:7188/api/Chat';
+  // ✅ SAME STRUCTURE AS YOUR OLD CODE (JUST ENV)
+  private baseUrl = `${environment.apiBaseUrl}/Chat`;
+private chathubUrl = `${environment.apiBaseUrl.replace('/api', '')}/chathub`;
+  constructor(
+    private http: HttpClient,
+    private authService: AuthService
+  ) {}
 
-  constructor(private http: HttpClient, private authService: AuthService) { }
+  /* ================= SIGNALR CONNECTION ================= */
 
-
-
-  // ================= SIGNALR CONNECTION =================
-  public async startConnection(token: string): Promise<boolean> {
+   public async startConnection(token: string): Promise<boolean> {
     try {
       if (this.hubConnection?.state === signalR.HubConnectionState.Connected) {
         return true;
       }
-      // Stop existing connection if any
+
       if (this.hubConnection) {
         await this.stopConnection();
       }
-      console.log('Starting SignalR connection...');
-      // Clean token (remove Bearer prefix if present for SignalR)
+
       const cleanToken = token?.replace('Bearer ', '') || '';
+
       this.hubConnection = new signalR.HubConnectionBuilder()
-        .withUrl(`${this.baseUrl.replace('/api/Chat', '')}/chathub`, {
-          accessTokenFactory: () => cleanToken,
-          skipNegotiation: true,
-          transport: signalR.HttpTransportType.WebSockets
-        })
+        .withUrl(
+          `${this.chathubUrl}`,
+          {
+            accessTokenFactory: () => cleanToken,
+            skipNegotiation: true,
+            transport: signalR.HttpTransportType.WebSockets
+          }
+        )
         .withAutomaticReconnect([0, 2000, 5000, 10000, 30000])
         .configureLogging(signalR.LogLevel.Warning)
         .build();
@@ -78,24 +92,21 @@ export class ChatService {
       await this.hubConnection.start();
       this.connectionStatus.next(true);
       this.retryCount = 0;
-      console.log('SignalR Connected!');
 
       this.messagesSubject.next({ type: 'connected', payload: null });
       return true;
 
     } catch (error) {
-      console.error(' SignalR Connection Error:', error);
       this.connectionStatus.next(false);
 
-      // Auto-retry logic
       if (this.retryCount < this.maxRetries) {
         this.retryCount++;
-        console.log(`Retrying connection (${this.retryCount}/${this.maxRetries})...`);
         setTimeout(() => this.startConnection(token), 3000);
       }
       return false;
     }
   }
+
 
   private setupEventListeners(): void {
     if (!this.hubConnection) return;
@@ -113,65 +124,42 @@ export class ChatService {
       });
     });
 
-    // Message delivered
     this.hubConnection.on('MessagesDelivered', (conversationId: number) => {
-      // console.log(' Messages delivered for conversation:', conversationId);
       this.messagesSubject.next({
         type: 'delivered',
         payload: { conversationId }
       });
     });
 
-    // Message read
     this.hubConnection.on('MessagesRead', (data: any) => {
-      // console.log(' Messages read:', data);
       this.messagesSubject.next({
         type: 'read',
         payload: data
       });
     });
 
-    // Additional events from Hub
-    // this.hubConnection.on('MessageSent', (data: any) => {
-    //   // console.log(' Message sent confirmation:', data);
-    //   this.messagesSubject.next({
-    //     type: 'message',
-    //     payload: data
-    //   });
-    // });
-
-    // Reconnection events
-    this.hubConnection.onreconnecting((error) => {
-      console.log(' SignalR Reconnecting...', error);
+    this.hubConnection.onreconnecting(() => {
       this.connectionStatus.next(false);
     });
 
-    this.hubConnection.onreconnected((connectionId) => {
-      console.log(' SignalR Reconnected:', connectionId);
+    this.hubConnection.onreconnected(() => {
       this.connectionStatus.next(true);
     });
 
-    this.hubConnection.onclose((error) => {
-      console.log(' SignalR Connection Closed', error);
+    this.hubConnection.onclose(() => {
       this.connectionStatus.next(false);
     });
   }
 
   public async stopConnection(): Promise<void> {
-    try {
-      if (this.hubConnection) {
-        await this.hubConnection.stop();
-        this.hubConnection = null;
-        this.connectionStatus.next(false);
-        console.log('SignalR connection stopped');
-      }
-    } catch (error) {
-      console.error('Error stopping connection:', error);
+    if (this.hubConnection) {
+      await this.hubConnection.stop();
+      this.hubConnection = null;
+      this.connectionStatus.next(false);
     }
   }
 
-  // ================= SIGNALR ACTIONS =================
-
+  /* ================= SIGNALR ACTIONS ================= */
 
   public async waitForConnection(timeoutMs: number = 5000): Promise<boolean> {
     const startTime = Date.now();
@@ -182,91 +170,50 @@ export class ChatService {
       }
       await new Promise(resolve => setTimeout(resolve, 100));
     }
-
-    console.error(' Connection timeout after', timeoutMs, 'ms');
     return false;
   }
 
-
   public async joinConversation(conversationId: number): Promise<void> {
-  // Ensure connection
-  if (!this.hubConnection || this.hubConnection.state !== signalR.HubConnectionState.Connected) {
-    const connected = await this.waitForConnection(3000);
-    if (!connected || !this.hubConnection) {
-      throw new Error('Hub not connected');
+    if (!this.hubConnection || this.hubConnection.state !== signalR.HubConnectionState.Connected) {
+      const connected = await this.waitForConnection(3000);
+      if (!connected || !this.hubConnection) {
+        throw new Error('Hub not connected');
+      }
     }
+    await this.hubConnection.invoke('JoinConversation', conversationId);
   }
 
-  // Join SignalR group
-  await this.hubConnection.invoke('JoinConversation', conversationId);
-}
-
   public async leaveConversation(conversationId: number): Promise<void> {
-    try {
-      if (this.hubConnection?.state === signalR.HubConnectionState.Connected) {
-        await this.hubConnection.invoke('LeaveConversation', conversationId);
-        console.log(`Left conversation: ${conversationId}`);
-      }
-    } catch (error) {
-      console.error('Error leaving conversation:', error);
+    if (this.hubConnection?.state === signalR.HubConnectionState.Connected) {
+      await this.hubConnection.invoke('LeaveConversation', conversationId);
     }
   }
 
   public async sendMessage(conversationId: number, text: string): Promise<void> {
-    try {
-      if (!this.hubConnection || this.hubConnection.state !== signalR.HubConnectionState.Connected) {
-        throw new Error('Hub not connected');
-      }
-
-      if (!text.trim()) {
-        throw new Error('Message cannot be empty');
-      }
-
-      await this.hubConnection.invoke('SendMessage', conversationId, text.trim());
-      console.log(`Message sent to conversation: ${conversationId}`);
-
-    } catch (error) {
-      console.error('Error sending message:', error);
-      throw error;
-    }
+    if (!text.trim()) throw new Error('Message cannot be empty');
+    await this.hubConnection!.invoke('SendMessage', conversationId, text.trim());
   }
 
   public async markAsRead(conversationId: number): Promise<void> {
-    try {
-      if (this.hubConnection?.state === signalR.HubConnectionState.Connected) {
-        await this.hubConnection.invoke('MarkMessagesRead', conversationId);
-      }
-    } catch (error) {
-      console.error('Error marking as read:', error);
+    if (this.hubConnection?.state === signalR.HubConnectionState.Connected) {
+      await this.hubConnection.invoke('MarkMessagesRead', conversationId);
     }
   }
 
-  // ================= HTTP API CALLS =================
+  /* ================= HTTP API CALLS ================= */
+
   getConversations(): Observable<Conversation[]> {
     return this.http.get<Conversation[]>(
       `${this.baseUrl}/conversations-with-users`,
-      {
-        headers: new HttpHeaders({
-          Authorization: this.authService.getToken() || '',
-          'Content-Type': 'application/json'
-        })
-      }
+      { headers: this.getAuthHeaders() }
     );
   }
 
   createConversation(participantId: number, type: string = 'AdminOwner'): Observable<any> {
     return this.http.post(
       `${this.baseUrl}/conversation`,
-      {
-        participantId,
-        type
-      },
-      {
-        headers: new HttpHeaders({
-          Authorization: this.authService.getToken() || '',
-          'Content-Type': 'application/json'
-        })
-      }
+      { participantId, type },
+      { headers: this.getAuthHeaders() }
     );
   }
 
@@ -274,10 +221,7 @@ export class ChatService {
     return this.http.get<Message[]>(
       `${this.baseUrl}/${conversationId}/messages`,
       {
-        headers: new HttpHeaders({
-          Authorization: this.authService.getToken() || '',
-          'Content-Type': 'application/json'
-        }),
+        headers: this.getAuthHeaders(),
         params: { take: take.toString() }
       }
     );
@@ -287,53 +231,39 @@ export class ChatService {
     return this.http.post(
       `${this.baseUrl}/${conversationId}/mark-read`,
       {},
-      {
-        headers: new HttpHeaders({
-          Authorization: this.authService.getToken() || '',
-          'Content-Type': 'application/json'
-        })
-      }
+      { headers: this.getAuthHeaders() }
     );
   }
 
   getUnreadCount(): Observable<{ unreadCount: number }> {
     return this.http.get<{ unreadCount: number }>(
       `${this.baseUrl}/unread-count`,
-      {
-        headers: new HttpHeaders({
-          Authorization: this.authService.getToken() || '',
-          'Content-Type': 'application/json'
-        })
-      }
+      { headers: this.getAuthHeaders() }
     );
   }
 
   getUsersByRole(role: string): Observable<any[]> {
-    const headers = new HttpHeaders({
-      'Authorization': this.authService.getToken() || '',
-      'Content-Type': 'application/json'
-    });
-
     return this.http.get<any[]>(
-      `http://localhost:7188/api/Admin/users/${role}`,
-      { headers: headers }
+      `${environment.apiBaseUrl}/Admin/users/${role}`,
+      { headers: this.getAuthHeaders() }
     );
   }
 
+  /* ================= HELPERS ================= */
 
   private getAuthHeaders(): HttpHeaders {
     let token = sessionStorage.getItem('token');
     if (token && !token.startsWith('Bearer ')) {
       token = 'Bearer ' + token;
     }
-
     return new HttpHeaders({
-      'Authorization': token || '',
+      Authorization: token || '',
       'Content-Type': 'application/json'
     });
   }
 
-  // ================= UTILITIES =================
+  /* ================= UTILITIES ================= */
+
   isConnected(): boolean {
     return this.hubConnection?.state === signalR.HubConnectionState.Connected;
   }
@@ -342,18 +272,14 @@ export class ChatService {
     return this.hubConnection?.state || 'Disconnected';
   }
 
-  // Get user ID from token (for local use)
   getCurrentUserId(): number {
     const userId = sessionStorage.getItem('UserId');
-    return userId ? parseInt(userId, 10) : 0;
+    return userId ? Number(userId) : 0;
   }
 
-  // Format date for display
   formatMessageTime(timestamp: Date): string {
     const date = new Date(timestamp);
-    const now = new Date();
-    const diffMs = now.getTime() - date.getTime();
-    const diffMins = Math.floor(diffMs / 60000);
+    const diffMins = Math.floor((Date.now() - date.getTime()) / 60000);
 
     if (diffMins < 1) return 'Just now';
     if (diffMins < 60) return `${diffMins}m ago`;
@@ -361,8 +287,4 @@ export class ChatService {
 
     return date.toLocaleDateString();
   }
-
-
-
-
 }

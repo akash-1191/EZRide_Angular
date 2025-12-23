@@ -68,7 +68,7 @@ selectedDriver: any = null;
 
 
   changeImage(image: string): void {
-    this.selectedImage = 'http://localhost:7188/' + image;
+    this.selectedImage = 'https://aspcoreezride.onrender.com' + image;
   }
   // validation formmodal
   constructor(private fb: FormBuilder, private route: ActivatedRoute, private service: MyServiceService, private router: Router) {
@@ -483,7 +483,7 @@ convertTimeTo24Hour(time: string): { hours: number; minutes: number } | null {
       this.vehicleDetails = res;
 
       if (res.imagePaths && res.imagePaths.length > 0) {
-        const baseUrl = 'http://localhost:7188/';
+        const baseUrl = 'https://aspcoreezride.onrender.com';
         this.thumbnails = res.imagePaths.map((img: string) => baseUrl + img);
         this.selectedImage = this.thumbnails[0];
       } else {

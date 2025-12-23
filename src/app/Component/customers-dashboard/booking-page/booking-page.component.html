@@ -13,14 +13,14 @@
             <div class="lg:col-span-1 mt-10">
                 <!-- FRAME container -->
                 <div class="relative w-full h-64 sm:h-72 md:h-80 lg:h-72 rounded-xl overflow-hidden">
-                    <img [src]="selectedImage ? selectedImage : (vehicleDetails?.imagePaths?.length ? 'http://localhost:7188/' + vehicleDetails.imagePaths[0] : '')"
+                    <img [src]="selectedImage ? selectedImage : (vehicleDetails?.imagePaths?.length ? 'https://aspcoreezride.onrender.com/' + vehicleDetails.imagePaths[0] : '')"
                         class="absolute inset-0 w-full h-full object-cover 
              transition-transform duration-500 ease-in-out hover:scale-110" />
                 </div>
 
                 <!-- Thumbnails -->
                 <div class="flex flex-wrap gap-4 mt-4">
-                    <img *ngFor="let img of vehicleDetails?.imagePaths" [src]=" `http://localhost:7188/`+img"
+                    <img *ngFor="let img of vehicleDetails?.imagePaths" [src]=" `https://aspcoreezride.onrender.com/`+img"
                         (click)="changeImage(img)" class="w-20 h-14 sm:w-24 sm:h-16 object-cover rounded-lg shadow-md cursor-pointer 
              hover:scale-105 transition-transform duration-300" />
                 </div>
@@ -344,7 +344,7 @@
                             <!-- Left -->
                             <div class="flex items-center gap-3">
                                 <img [src]="driver.profileImage 
-              ? 'http://localhost:7188' + driver.profileImage 
+              ? 'https://aspcoreezride.onrender.com' + driver.profileImage 
               : 'assets/user.png'" class="w-12 h-12 rounded-full object-cover">
 
                                 <div>

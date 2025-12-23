@@ -123,7 +123,7 @@
                 <div class="slider-wrapper flex transition-transform duration-700 ease-in-out"
                     [style.transform]="'translateX(-' + currentImageIndex * 100 + '%)'">
                     <img *ngFor="let img of images" class="slider-image w-full flex-shrink-0 object-cover h-80"
-                        [src]="'http://localhost:7188/' + img" alt="Vehicle Image" />
+                        [src]="'https://aspcoreezride.onrender.com/' + img" alt="Vehicle Image" />
                 </div>
 
                 <button (click)="prevImage()"
@@ -277,12 +277,12 @@
                                     <ng-container *ngIf="isPdf(doc.ageProofPath); else showImage">
                                         <div class="text-center">
                                             <i class="fa fa-file-pdf text-red-600 text-5xl mb-2"></i>
-                                            <a [href]="'http://localhost:7188/' + doc.ageProofPath" target="_blank"
+                                            <a [href]="'https://aspcoreezride.onrender.com/' + doc.ageProofPath" target="_blank"
                                                 class="text-blue-600 underline">View PDF</a>
                                         </div>
                                     </ng-container>
                                     <ng-template #showImage>
-                                        <img [src]="'http://localhost:7188/' + doc.ageProofPath" alt="Age Proof"
+                                        <img [src]="'https://aspcoreezride.onrender.com/' + doc.ageProofPath" alt="Age Proof"
                                             class="max-h-36 rounded-md cursor-pointer"
                                             (click)="openImageModal(doc.ageProofPath)" />
                                     </ng-template>
@@ -301,12 +301,12 @@
                                     <ng-container *ngIf="isPdf(doc.addressProofPath); else showImage2">
                                         <div class="text-center">
                                             <i class="fa fa-file-pdf text-red-600 text-5xl mb-2"></i>
-                                            <a [href]="'http://localhost:7188/' + doc.addressProofPath" target="_blank"
+                                            <a [href]="'https://aspcoreezride.onrender.com/' + doc.addressProofPath" target="_blank"
                                                 class="text-blue-600 underline">View PDF</a>
                                         </div>
                                     </ng-container>
                                     <ng-template #showImage2>
-                                        <img [src]="'http://localhost:7188/' + doc.addressProofPath" alt="Address Proof"
+                                        <img [src]="'https://aspcoreezride.onrender.com/' + doc.addressProofPath" alt="Address Proof"
                                             class="max-h-36 rounded-md cursor-pointer"
                                             (click)="openImageModal(doc.addressProofPath)" />
                                     </ng-template>
@@ -327,12 +327,12 @@
                                     <ng-container *ngIf="isPdf(doc.dlImagePath); else showImage3">
                                         <div class="text-center">
                                             <i class="fa fa-file-pdf text-red-600 text-5xl mb-2"></i>
-                                            <a [href]="'http://localhost:7188/' + doc.dlImagePath" target="_blank"
+                                            <a [href]="'https://aspcoreezride.onrender.com/' + doc.dlImagePath" target="_blank"
                                                 class="text-blue-600 underline">View PDF</a>
                                         </div>
                                     </ng-container>
                                     <ng-template #showImage3>
-                                        <img [src]="'http://localhost:7188/' + doc.dlImagePath" alt="DL"
+                                        <img [src]="'https://aspcoreezride.onrender.com/' + doc.dlImagePath" alt="DL"
                                             class="max-h-36 rounded-md cursor-pointer"
                                             (click)="openImageModal(doc.dlImagePath)" />
                                     </ng-template>
@@ -349,7 +349,7 @@
                 <div *ngIf="modalImage"
                     class="fixed inset-0 bg-black/50 bg-opacity-70 flex items-center justify-center z-50"
                     (click)="closeImageModal()">
-                    <img [src]="'http://localhost:7188/' + modalImage"
+                    <img [src]="'https://aspcoreezride.onrender.com/' + modalImage"
                         class="max-h-[90vh] max-w-[90vw] rounded-lg border-4 border-white shadow-lg" />
                 </div>
             </section>

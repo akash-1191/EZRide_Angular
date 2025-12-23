@@ -2,7 +2,9 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { observableToBeFn } from 'rxjs/internal/testing/TestScheduler';
+import { environment } from './src/environments/environment';
 // import { DateAvailabilityDTO } from './date-availability.model';
+
 export interface AvailabilitySlot {
   startDateTime: string;
   endDateTime: string;
@@ -14,1162 +16,908 @@ export interface AvailabilitySlot {
 
 export class MyServiceService {
 
+  private baseUrl = environment.apiBaseUrl
+
   constructor(private http: HttpClient) { }
 
-  private LoginApi = "http://localhost:7188/api/Login";
-  private SignUpApiurl = "http://localhost:7188/api/Signup";
 
-  // signup api
+
+
+  private getAuthHeaders(isJson: boolean = false): HttpHeaders {
+    const token = sessionStorage.getItem('token');
+
+    let headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+
+    if (isJson) {
+      headers = headers.set('Content-Type', 'application/json');
+    }
+
+    return headers;
+  }
+
+
+  // =======================
+  // Auth APIs
+  // =======================
   postdat(obj: any): Observable<any> {
-    return this.http.post<any>(this.SignUpApiurl, obj)
+    return this.http.post<any>(`${this.baseUrl}/Signup`, obj);
+  }
+  LoginpostData(obj: any): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/Login`, obj);
   }
 
-  // loginApi
-  LoginpostData(obj1: any): Observable<any> {
-    return this.http.post<any>(this.LoginApi, obj1);
-  }
 
-  // ProfileApi
+
+  // =======================
+  // Profile APIs
+  // =======================
   UserProfiledata(userId: number): Observable<any> {
-    const token = sessionStorage.getItem('token');
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`
-    });
-
-    const url = `http://localhost:7188/api/Profile/${userId}`;
-    return this.http.get<any>(url, { headers });
+    return this.http.get<any>(
+      `${this.baseUrl}/Profile/${userId}`,
+      { headers: this.getAuthHeaders() }
+    );
   }
 
-  // updateprofiledata
   UpdateUserData(updateData: any): Observable<any> {
-    const token = sessionStorage.getItem('token');
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    });
-    const UpdateProfileApiUrl = `http://localhost:7188/api/update-profile`;
-    return this.http.put<any>(UpdateProfileApiUrl, updateData, { headers });
+    return this.http.put<any>(
+      `${this.baseUrl}/update-profile`,
+      updateData,
+      { headers: this.getAuthHeaders(true) }
+    );
   }
 
-  // UpdateProfile Image of the user
   updateUserImage(formData: FormData): Observable<any> {
-    const token = sessionStorage.getItem('token');
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`
-    });
-    const UadateProfileImage = `http://localhost:7188/api/update-profile-image`
-    return this.http.put<any>(UadateProfileImage, formData, { headers });
+    return this.http.put<any>(
+      `${this.baseUrl}/update-profile-image`,
+      formData,
+      { headers: this.getAuthHeaders() }
+    );
   }
 
-
-  // Add Vehicle
+  // =======================
+  // Vehicle APIs
+  // =======================
   addVehicle(vehicleData: any): Observable<any> {
-    const token = sessionStorage.getItem('token');
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    });
-
-    const url = `http://localhost:7188/api/addVehicle`;
-    return this.http.post<any>(url, vehicleData, { headers });
+    return this.http.post<any>(
+      `${this.baseUrl}/addVehicle`,
+      vehicleData,
+      { headers: this.getAuthHeaders(true) }
+    );
   }
 
-  // Get All Vehicles (for Admin)
   getAllVehicles(): Observable<any> {
-    const token = sessionStorage.getItem('token');
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    });
-    const url = `http://localhost:7188/api/getAllVehicles`;
-    return this.http.get<any>(url, { headers });
+    return this.http.get<any>(
+      `${this.baseUrl}/getAllVehicles`,
+      { headers: this.getAuthHeaders(true) }
+    );
   }
 
-  // Update Vehicle Data
   updateVehicle(vehicleData: any): Observable<any> {
-    const token = sessionStorage.getItem('token');
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    });
-    const updateApiUrl = `http://localhost:7188/api/updateVehicle`;
-    return this.http.put<any>(updateApiUrl, vehicleData, { headers });
+    return this.http.put<any>(
+      `${this.baseUrl}/updateVehicle`,
+      vehicleData,
+      { headers: this.getAuthHeaders(true) }
+    );
   }
 
-  //Delete data vehicle
   deleteVehicle(vehicleId: number): Observable<any> {
-    const token = sessionStorage.getItem('token');
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`
-    });
-
-    const url = `http://localhost:7188/api/deleteVehicle/${vehicleId}`;
-    return this.http.delete<any>(url, { headers });
+    return this.http.delete<any>(
+      `${this.baseUrl}/deleteVehicle/${vehicleId}`,
+      { headers: this.getAuthHeaders() }
+    );
   }
 
-
-  // Add Image for Vehicle
+  // =======================
+  // Vehicle Images
+  // =======================
   uploadVehicleImage(vehicleId: number, imageFile: File): Observable<any> {
     const formData = new FormData();
     formData.append('VehicleId', vehicleId.toString());
     formData.append('ImageFile', imageFile);
 
-    const token = sessionStorage.getItem('token');
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`
-    });
-
-    const url = `http://localhost:7188/api/uploadVehicleImage`;
-    return this.http.post<any>(url, formData, { headers });
+    return this.http.post<any>(
+      `${this.baseUrl}/uploadVehicleImage`,
+      formData,
+      { headers: this.getAuthHeaders() }
+    );
   }
 
-
-  // Get All Images by Vehicle ID
   getVehicleImages(vehicleId: number): Observable<any> {
-    const token = sessionStorage.getItem('token');
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`
-    });
-
-    const url = `http://localhost:7188/api/getImagesByVehicle/${vehicleId}`;
-    return this.http.get<any>(url, { headers });
+    return this.http.get<any>(
+      `${this.baseUrl}/getImagesByVehicle/${vehicleId}`,
+      { headers: this.getAuthHeaders() }
+    );
   }
-
-  // Update Vehicle Image
-  // updateVehicleImage(vehicleImageId: number, formData: FormData): Observable<any> {
-  //   const token = sessionStorage.getItem('token');
-  //   const headers = new HttpHeaders({
-  //     'Authorization': `Bearer ${token}`
-  //   });
-
-  //   const url = `http://localhost:7188/api/updateVehicleImage/${vehicleImageId}`;
-  //   return this.http.put<any>(url, formData, { headers });
-  // }
-
 
   // Delete Vehicle Image
   deleteVehicleImage(vehicleImageId: number): Observable<any> {
-    const token = sessionStorage.getItem('token');
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`
-    });
-
-    const url = `http://localhost:7188/api/deleteVehicleImage/${vehicleImageId}`;
-    return this.http.delete<any>(url, { headers });
+    return this.http.delete<any>(
+      `${this.baseUrl}/deleteVehicleImage/${vehicleImageId}`,
+      { headers: this.getAuthHeaders() }
+    );
   }
 
-
-  //insert and updaete price of the perticular vehicle
+  // Insert or Update Pricing
   insertOrUpdatePricing(data: any): Observable<any> {
-    const token = sessionStorage.getItem('token');
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`
-    });
-    const apiurl = `http://localhost:7188/api/set-Or-price`;
-    return this.http.post(apiurl, data, { headers });
+    return this.http.post<any>(
+      `${this.baseUrl}/set-Or-price`,
+      data,
+      { headers: this.getAuthHeaders() }
+    );
   }
 
-
-  //get all prive according to the vehicle id 
+  // Get Pricing by Vehicle ID
   getPricingByVehicleId(vehicleId: number): Observable<any> {
-    const token = sessionStorage.getItem('token');
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`
-    });
-
-    const url = `http://localhost:7188/api/get-by-vehicle/${vehicleId}`;
-    return this.http.get(url, { headers });
+    return this.http.get<any>(
+      `${this.baseUrl}/get-by-vehicle/${vehicleId}`,
+      { headers: this.getAuthHeaders() }
+    );
   }
 
-
-  //get aal data of the 3 table vehhicle price and vehicleimage
+  // Get all vehicles with price & images
   getAllVehiclesdetails(): Observable<any[]> {
-    const url = 'http://localhost:7188/api/GetAllVehicle';
-    return this.http.get<any[]>(url);
+    return this.http.get<any[]>(
+      `${this.baseUrl}/GetAllVehicle`
+    );
   }
 
-  //get aal data of the 3 table vehhicle price and vehicleimage
+  // Owner Vehicle Availability
   getAllVehiclesFTheOwnerVehicle(vehicleId: number): Observable<any> {
-    const url = `http://localhost:7188/api/VehicleAvailability/availabilityOwnerVehicle/${vehicleId}`;
-    return this.http.get<any>(url);
+    return this.http.get<any>(
+      `${this.baseUrl}/VehicleAvailability/availabilityOwnerVehicle/${vehicleId}`
+    );
   }
-
 
   // Get Vehicle Details by ID
   getVehicleDetailsById(vehicleId: number): Observable<any> {
-    const token = sessionStorage.getItem('token');
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`
-    });
-
-    const url = `http://localhost:7188/api/GetAllVehicleById/${vehicleId}`;
-    return this.http.get<any>(url, { headers });
+    return this.http.get<any>(
+      `${this.baseUrl}/GetAllVehicleById/${vehicleId}`,
+      { headers: this.getAuthHeaders() }
+    );
   }
 
-  //booking details insert in the booking table 
+  // Confirm Booking
   confirmBooking(data: any): Observable<any> {
-    const token = sessionStorage.getItem('token');
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`
-    });
-    const apiUrl = `http://localhost:7188/api/Booking/addbooking`;
-    return this.http.post<any>(apiUrl, data, { headers });
+    return this.http.post<any>(
+      `${this.baseUrl}/Booking/addbooking`,
+      data,
+      { headers: this.getAuthHeaders() }
+    );
   }
 
-
-  // get all data of the vehicle table by user id
+  // Get All Bookings (User)
   getAllBookings(): Observable<any> {
-    const token = sessionStorage.getItem('token');
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`
-    });
-    const apiUrl = `http://localhost:7188/api/Booking/my-bookings`;
-    return this.http.get<any>(apiUrl, { headers });
+    return this.http.get<any>(
+      `${this.baseUrl}/Booking/my-bookings`,
+      { headers: this.getAuthHeaders() }
+    );
   }
 
-
-  //cancel booking 
+  // Cancel Booking
   cancelBooking(bookingId: number, userId: number): Observable<any> {
-    const token = sessionStorage.getItem('token');
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    });
-
-    const apiUrl = `http://localhost:7188/api/Booking/cancelbooking/${bookingId}?userId=${userId}`;
-    return this.http.put<any>(apiUrl, {}, { headers });
+    return this.http.put<any>(
+      `${this.baseUrl}/Booking/cancelbooking/${bookingId}?userId=${userId}`,
+      {},
+      { headers: this.getAuthHeaders(true) }
+    );
   }
 
-
-
-  //do payment api with rozerpage
+  // Create Razorpay Order
   createOrder(data: any): Observable<any> {
-    const token = sessionStorage.getItem('token');
-    const headers = new HttpHeaders({
-      Authorization: `Bearer ${token}`
-    });
-    const url = 'http://localhost:7188/api/Payment/CreateOrder';
-    return this.http.post<any>(url, data, { headers });
+    return this.http.post<any>(
+      `${this.baseUrl}/Payment/CreateOrder`,
+      data,
+      { headers: this.getAuthHeaders() }
+    );
   }
 
-  //do payment api with rozerpage verify and done payments store data in tha payment table
+  // Verify & Save Payment
   verifyAndSavePayment(payment: any): Observable<any> {
-    const token = sessionStorage.getItem('token');
-    const headers = new HttpHeaders({
-      Authorization: `Bearer ${token}`
-    });
-    const url = 'http://localhost:7188/api/Payment/VerifyPayment';
-    return this.http.post<any>(url, payment, { headers });
+    return this.http.post<any>(
+      `${this.baseUrl}/Payment/VerifyPayment`,
+      payment,
+      { headers: this.getAuthHeaders() }
+    );
   }
 
-  //  Booking Filter API
+  // Booking Filter
   getFilteredBookings(filter: any): Observable<any> {
-    const token = sessionStorage.getItem('token');
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    });
-
-    const url = 'http://localhost:7188/api/Booking/my-bookings/filter';
-    return this.http.post<any>(url, filter, { headers });
+    return this.http.post<any>(
+      `${this.baseUrl}/Booking/my-bookings/filter`,
+      filter,
+      { headers: this.getAuthHeaders(true) }
+    );
   }
 
-
-
-  //add securityamount in the security tabel
+  // Add Security Deposit
   addSecurityDeposit(depositData: any): Observable<any> {
-    const token = sessionStorage.getItem('token');
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    });
-    const apiUrl = `http://localhost:7188/api/addSecurityDepositPayment`;
-    return this.http.post<any>(apiUrl, depositData, { headers });
+    return this.http.post<any>(
+      `${this.baseUrl}/addSecurityDepositPayment`,
+      depositData,
+      { headers: this.getAuthHeaders(true) }
+    );
   }
 
-  //find the data according to the userid of the securit deposite amount table
+  // Get Security Deposit by User
   getSecurityDepositsByUser(userId: number): Observable<any> {
-    const token = sessionStorage.getItem('token');
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`
-    });
-    const url = `http://localhost:7188/api/SecurityDeposit/${userId}`;
-    return this.http.get<any>(url, { headers });
+    return this.http.get<any>(
+      `${this.baseUrl}/SecurityDeposit/${userId}`,
+      { headers: this.getAuthHeaders() }
+    );
   }
 
-
-
-  // upload Documnet api 
+  // Upload Customer Documents
   uploadDocuments(formData: FormData): Observable<any> {
-    const token = sessionStorage.getItem('token');
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`
-    });
-    const uploadDoc = `http://localhost:7188/api/uploadCustomerDocument`;
-    return this.http.post(uploadDoc, formData, { headers });
+    return this.http.post<any>(
+      `${this.baseUrl}/uploadCustomerDocument`,
+      formData,
+      { headers: this.getAuthHeaders() }
+    );
   }
 
-  // check using this api perticular user uploas yopr document or not 
+  // Check Documents Uploaded
   checkDocumentsUploaded(userId: number): Observable<{ exists: boolean }> {
-    const token = sessionStorage.getItem('token');
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`
-    });
-    const url = `http://localhost:7188/api/checkDocumentsUploaded/${userId}`;
-    return this.http.get<{ exists: boolean }>(url, { headers });
+    return this.http.get<{ exists: boolean }>(
+      `${this.baseUrl}/checkDocumentsUploaded/${userId}`,
+      { headers: this.getAuthHeaders() }
+    );
   }
 
-  //get all documnet of the Pertucular user
+  // Get Customer Documents
   getCustomerDocument(userId: number): Observable<any> {
-    const token = sessionStorage.getItem('token');
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`
-    });
-    const url = `http://localhost:7188/api/getCustomerDocument/${userId}`;
-    return this.http.get(url, { headers });
+    return this.http.get<any>(
+      `${this.baseUrl}/getCustomerDocument/${userId}`,
+      { headers: this.getAuthHeaders() }
+    );
   }
 
+  // Update Document Field to NULL
   updateUserDocumentFieldToNull(userId: number, fieldName: string): Observable<any> {
-    const token = sessionStorage.getItem('token');
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`
-    });
-
-    const url = `http://localhost:7188/api/update-document-field-null/${userId}/${fieldName}`;
-    return this.http.put<any>(url, {}, { headers });
+    return this.http.put<any>(
+      `${this.baseUrl}/update-document-field-null/${userId}/${fieldName}`,
+      {},
+      { headers: this.getAuthHeaders() }
+    );
   }
 
-  // get payment status 
-  paymentStatusDetails(UserId: any): Observable<any> {
-    const token = sessionStorage.getItem('token');
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`
-    });
-    const url = `http://localhost:7188/api/user-PaymentDetails/${UserId}`;
-    return this.http.get(url, { headers });
+  // Get payment status
+  paymentStatusDetails(userId: any): Observable<any> {
+    return this.http.get<any>(
+      `${this.baseUrl}/user-PaymentDetails/${userId}`,
+      { headers: this.getAuthHeaders() }
+    );
   }
 
+  // Check vehicle availability by date
+  getAvailability(
+    vehicleId: number,
+    startDateTime: string,
+    endDateTime: string
+  ): Observable<AvailabilitySlot[]> {
 
-  //  Check vehicle availability by date
-  getAvailability(vehicleId: number, startDateTime: string, endDateTime: string): Observable<AvailabilitySlot[]> {
     const params = new HttpParams()
       .set('vehicleId', vehicleId.toString())
       .set('startDateTime', startDateTime)
       .set('endDateTime', endDateTime);
 
-    const url = 'http://localhost:7188/api/Booking/availability';
-
-    return this.http.get<AvailabilitySlot[]>(url, { params });
+    return this.http.get<AvailabilitySlot[]>(
+      `${this.baseUrl}/Booking/availability`,
+      { params }
+    );
   }
 
-  // getAvailability(vehicleId: number, startDateTime: string, endDateTime: string): Observable<AvailabilitySlot[]> {
-  //   const params = new HttpParams()
-  //     .set('vehicleId', vehicleId.toString())
-  //     .set('startDateTime', startDateTime)
-  //     .set('endDateTime', endDateTime);
-
-  //   return this.http.get<AvailabilitySlot[]>('/api/Booking/availability', { params });
-  // }
-
-  //recipt download
+  // Download receipt PDF
   downloadReceipt(userId: number, bookingId: number) {
-    const token = sessionStorage.getItem('token');
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`
-    });
-
-    const baseUrl = 'http://localhost:7188/api/PaymentReceipt';
-    return this.http.get(`${baseUrl}/download/${userId}/${bookingId}`, {
-      headers,
-      responseType: 'blob',
-    });
+    return this.http.get(
+      `${this.baseUrl}/PaymentReceipt/download/${userId}/${bookingId}`,
+      {
+        headers: this.getAuthHeaders(),
+        responseType: 'blob'
+      }
+    );
   }
 
-
-  // send pdf in the email id 
+  // Send receipt PDF to email
   sendReceiptEmail(userId: number, bookingId: number, email: string) {
-    const token = sessionStorage.getItem('token');
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    });
-    const baseUrl = 'http://localhost:7188/api/PaymentReceipt';
-    return this.http.post(`${baseUrl}/send-email?userId=${userId}&bookingId=${bookingId}`, JSON.stringify(email), { headers, responseType: 'text' as 'json' });
+    return this.http.post(
+      `${this.baseUrl}/PaymentReceipt/send-email?userId=${userId}&bookingId=${bookingId}`,
+      JSON.stringify(email),
+      {
+        headers: this.getAuthHeaders(true),
+        responseType: 'text' as 'json'
+      }
+    );
   }
 
-
-
-  //add feed back message to the user 
+  // Add feedback
   addFeedback(feedback: any): Observable<any> {
-    const token = sessionStorage.getItem('token');
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    });
-    const url = `http://localhost:7188/api/Feedback/addFeedbackmsg`;
-    return this.http.post<any>(url, feedback, { headers });
+    return this.http.post<any>(
+      `${this.baseUrl}/Feedback/addFeedbackmsg`,
+      feedback,
+      { headers: this.getAuthHeaders(true) }
+    );
   }
 
-
-  //get total count of the booking peerticular user
-
+  // Total bookings count by user
   TotalBookingsCount(userId: any): Observable<any> {
-    const token = sessionStorage.getItem('token');
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    });
-    const TotalBookingsCount = `http://localhost:7188/api/BookingSummary/total-bookings/${userId}`;
-    return this.http.get<any>(TotalBookingsCount, { headers });
+    return this.http.get<any>(
+      `${this.baseUrl}/BookingSummary/total-bookings/${userId}`,
+      { headers: this.getAuthHeaders(true) }
+    );
   }
 
-
-  //total booking vehicle by  user by type
+  // Total booked vehicle count by type
   TatolVehicleBookingCount(userId: any): Observable<any> {
-    const token = sessionStorage.getItem('token');
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    });
-
-    const TatalVehicleBookingCount = `http://localhost:7188/api/BookingSummary/booked-vehicle-type-count/${userId}`;
-    return this.http.get<any>(TatalVehicleBookingCount, { headers });
+    return this.http.get<any>(
+      `${this.baseUrl}/BookingSummary/booked-vehicle-type-count/${userId}`,
+      { headers: this.getAuthHeaders(true) }
+    );
   }
 
-  //total vehicla avalible count in the website 
+  // Total available vehicle count
   TatolAvalibleVehicleCount(): Observable<any> {
-    const token = sessionStorage.getItem('token');
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    });
-
-    const TatolAvalibleVehicleCount = `http://localhost:7188/api/BookingSummary/available-vehicle-count`;
-    return this.http.get<any>(TatolAvalibleVehicleCount, { headers });
+    return this.http.get<any>(
+      `${this.baseUrl}/BookingSummary/available-vehicle-count`,
+      { headers: this.getAuthHeaders(true) }
+    );
   }
 
-
-  //pendinga amount to ahow the user
+  // Pending payment amount
   pandingAmount(userId: number): Observable<number> {
-    const token = sessionStorage.getItem('token');
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    });
-    const pandingAmount = `http://localhost:7188/api/BookingSummary/pending-payment-count/${userId}`;
-    return this.http.get<number>(pandingAmount, { headers })
+    return this.http.get<number>(
+      `${this.baseUrl}/BookingSummary/pending-payment-count/${userId}`,
+      { headers: this.getAuthHeaders(true) }
+    );
   }
 
-  //last refended amount
+  // Last refunded amount
   LastRefendedamount(userId: number): Observable<any> {
-    const token = sessionStorage.getItem('token');
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    });
-    const refaundurl = `http://localhost:7188/api/BookingSummary/latest-refund/${userId}`;
-    return this.http.get<any>(refaundurl, { headers });
+    return this.http.get<any>(
+      `${this.baseUrl}/BookingSummary/latest-refund/${userId}`,
+      { headers: this.getAuthHeaders(true) }
+    );
   }
 
-  //add contack form data
+  // Contact form submit
   Contackmessage(obj: any): Observable<any> {
-    const url = 'http://localhost:7188/api/Contact/add';
-    return this.http.post<any>(url, obj);
+    return this.http.post<any>(
+      `${this.baseUrl}/Contact/add`,
+      obj
+    );
   }
 
-  //get contect message o the contact table 
+  // Load all contact messages
   contactMessageLoad(): Observable<any> {
-    const LoadContectMessage = `http://localhost:7188/api/Contact/allContactDetails`;
-    return this.http.get<any>(LoadContectMessage);
+    return this.http.get<any>(
+      `${this.baseUrl}/Contact/allContactDetails`
+    );
   }
-
-
-  // send message in the watsapp to the user number this message send to use third party
-
-  // private apiUrl = 'https://api.ultramsg.com/instance124193/messages/chat';
-  // private token = 'z5lhl4h70gppj4k8';
-
-  // sendMessage(phone: string, message: string): Observable<any> {
-  //   const body = new HttpParams()
-  //     .set('token', this.token)
-  //     .set('to', phone)
-  //     .set('body', message);
-
-  //   const headers = new HttpHeaders({
-  //     'Content-Type': 'application/x-www-form-urlencoded'
-  //   });
-
-  //   return this.http.post(this.apiUrl, body.toString(), { headers });
-  // }
-
-
-
-  // send message in the watsapp to the user number own create api
+  // Send WhatsApp message
   sendMessage(phone: string, message: string): Observable<any> {
-    const body = {
-      phone: phone,
-      message: message
-    };
+    const body = { phone, message };
 
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json'
-    });
-
-    const apiUrl = 'http://localhost:7188/api/WhatsApp/sendWhatsAppMessage';
-    return this.http.post(apiUrl, body, { headers });
+    return this.http.post<any>(
+      `${this.baseUrl}/WhatsApp/sendWhatsAppMessage`,
+      body,
+      { headers: new HttpHeaders({ 'Content-Type': 'application/json' }) }
+    );
   }
 
-
-
-  //admin get all use that is book or not vehiclde 
+  // Admin – all users booking info
   getAllDataOftheUser(): Observable<any> {
-    const token = sessionStorage.getItem('token');
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    });
-    const userdataurl = `http://localhost:7188/api/user-booking-info`;
-    return this.http.get<any>(userdataurl, { headers });
+    return this.http.get<any>(
+      `${this.baseUrl}/user-booking-info`,
+      { headers: this.getAuthHeaders(true) }
+    );
   }
 
-  //admin get all use that is security or not vehiclde 
+  // Admin – security refund data
   getAllSecurityrefaund(): Observable<any> {
-    const token = sessionStorage.getItem('token');
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    });
-    const userdataurl = `http://localhost:7188/api/ReturnSecurityAmount`;
-    return this.http.get<any>(userdataurl, { headers });
+    return this.http.get<any>(
+      `${this.baseUrl}/ReturnSecurityAmount`,
+      { headers: this.getAuthHeaders(true) }
+    );
   }
 
-  /// all charges
-
+  // Admin – all damage charges
   getAlldamagecharges(): Observable<any> {
-    const token = sessionStorage.getItem('token');
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    });
-    const userdataurl = `http://localhost:7188/api/ShowDamageChargi`;
-    return this.http.get<any>(userdataurl, { headers });
+    return this.http.get<any>(
+      `${this.baseUrl}/ShowDamageChargi`,
+      { headers: this.getAuthHeaders(true) }
+    );
   }
-  //cancel resion display  to the user by the admin
+
+  // Cancel reasons list
   getallCancelResion(): Observable<any> {
-    const token = sessionStorage.getItem('token');
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`
-    });
-    const userdataurl = `http://localhost:7188/api/CancelledBookings`;
-    return this.http.get<any>(userdataurl, { headers });
+    return this.http.get<any>(
+      `${this.baseUrl}/CancelledBookings`,
+      { headers: this.getAuthHeaders() }
+    );
   }
 
-  //current ride to be  display to the user by the admin
+  // Current ride list
   getCurrentRide(): Observable<any> {
-    const token = sessionStorage.getItem('token');
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`
-    });
-    const userdataurl = `http://localhost:7188/api/bookings/inprogressStatus`;
-    return this.http.get<any>(userdataurl, { headers });
+    return this.http.get<any>(
+      `${this.baseUrl}/bookings/inprogressStatus`,
+      { headers: this.getAuthHeaders() }
+    );
   }
 
-  //admin put the mesage for the cancel reasion
+  // Update cancel reason (Admin)
   updateCancelReason(bookingId: number, cancelReason: string): Observable<any> {
-    const token = sessionStorage.getItem('token');
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    });
-    const url = `http://localhost:7188/api/cancel-reason`;
     const body = {
       BookingId: bookingId,
       Cancelreasion: cancelReason
     };
-    return this.http.put<any>(url, body, { headers });
+
+    return this.http.put<any>(
+      `${this.baseUrl}/cancel-reason`,
+      body,
+      { headers: this.getAuthHeaders(true) }
+    );
   }
 
-  //admin hanover the vehiicle to the customer
+  // Set booking to in-progress
   setInProgress(bookingId: number): Observable<any> {
-    const token = sessionStorage.getItem('token');
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    });
-
-    const body = { bookingId };
-
-    return this.http.put<any>('http://localhost:7188/api/status/inprogress', body, { headers });
+    return this.http.put<any>(
+      `${this.baseUrl}/status/inprogress`,
+      { bookingId },
+      { headers: this.getAuthHeaders(true) }
+    );
   }
 
-
-  //send otp click button
+  // Send OTP
   sendOtp(bookingId: number, AdminEmail: string): Observable<any> {
-    const token = sessionStorage.getItem('token');
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    });
     const body = {
-      bookingId: bookingId,
+      bookingId,
       adminEmail: AdminEmail
     };
-    return this.http.post<any>('http://localhost:7188/api/StatusChangewithOTP/send-otp', body, { headers });
+
+    return this.http.post<any>(
+      `${this.baseUrl}/StatusChangewithOTP/send-otp`,
+      body,
+      { headers: this.getAuthHeaders(true) }
+    );
   }
 
-
+  // Verify OTP
   verifyOtp(bookingId: number, otp: string): Observable<any> {
-    const token = sessionStorage.getItem('token');
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    });
-    const verifyOtp = 'http://localhost:7188/api/StatusChangewithOTP/verify-otp';
-    return this.http.post<any>(verifyOtp, { bookingId, otp }, { headers });
+    return this.http.post<any>(
+      `${this.baseUrl}/StatusChangewithOTP/verify-otp`,
+      { bookingId, otp },
+      { headers: this.getAuthHeaders(true) }
+    );
   }
 
-
-  //add fuiel data is 
+  // Create fuel log
   createFuelLog(fuelLog: any): Observable<any> {
-    const token = sessionStorage.getItem('token');
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    });
-    const url = `http://localhost:7188/api/Fuelogpostdata`;
-    return this.http.post<any>(url, fuelLog, { headers });
+    return this.http.post<any>(
+      `${this.baseUrl}/Fuelogpostdata`,
+      fuelLog,
+      { headers: this.getAuthHeaders(true) }
+    );
   }
 
-
-  //add damage data is 
+  // Create damage details
   createdamagedetails(damagedata: any): Observable<any> {
-    const token = sessionStorage.getItem('token');
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    });
-    const url = `http://localhost:7188/api/DamageReportPostData`;
-    return this.http.post<any>(url, damagedata, { headers });
+    return this.http.post<any>(
+      `${this.baseUrl}/DamageReportPostData`,
+      damagedata,
+      { headers: this.getAuthHeaders(true) }
+    );
   }
 
-  //complet bookg by admin
-
+  // Set booking to completed
   setBookingToCompleted(bookingId: number): Observable<any> {
-    const token = sessionStorage.getItem('token');
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    });
-
-    const body = { bookingId };
-    const url = 'http://localhost:7188/api/status/completed';
-
-    return this.http.put(url, body, { headers });
+    return this.http.put<any>(
+      `${this.baseUrl}/status/completed`,
+      { bookingId },
+      { headers: this.getAuthHeaders(true) }
+    );
   }
-
-  //dopayment security deposit return
-  // createSecurityDepositOrder(amount: number): Observable<any> {
-  //   return this.http.post('http://localhost:7188/api/create-security-deposit-order', amount);
-  // }
+  // Create security deposit order
   createSecurityDepositOrder(amount: number): Observable<any> {
-    return this.http.post('http://localhost:7188/api/create-security-deposit-order', { amount });
+    return this.http.post<any>(
+      `${this.baseUrl}/create-security-deposit-order`,
+      { amount }
+    );
   }
-//save security amount data
+
+  // Save security deposit
   saveSecurityDeposit(data: { bookingId: number; amount: number }) {
-  return this.http.post(
-    'http://localhost:7188/api/save-security-deposit',
-    data
-  );
-}
+    return this.http.post<any>(
+      `${this.baseUrl}/save-security-deposit`,
+      data
+    );
+  }
 
-  //after payment change the status of th esecurity deposit table 
-
+  // Refund security deposit (change status)
   refundSecurityDeposit(bookingId: number): Observable<any> {
-    const url = `http://localhost:7188/api/refund-security-deposit-changestatus/${bookingId}`;
-    return this.http.put(url, null); // null because we don’t send a body
+    return this.http.put<any>(
+      `${this.baseUrl}/refund-security-deposit-changestatus/${bookingId}`,
+      null
+    );
   }
 
+  // Get all feedback (Admin)
   getallfeedbackmessage(): Observable<any> {
-    const token = sessionStorage.getItem('token');
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`
-    });
-    const userdataurl = `http://localhost:7188/api/AdminShowFeedBackApi`;
-    return this.http.get<any>(userdataurl, { headers });
+    return this.http.get<any>(
+      `${this.baseUrl}/AdminShowFeedBackApi`,
+      { headers: this.getAuthHeaders() }
+    );
   }
 
+  // ================= OWNER VEHICLE =================
 
-
-  // Get All Vehicles (for vehicle owner)
+  // Get all vehicles (Owner)
   getAllVehiclesbyowner(): Observable<any> {
-    const token = sessionStorage.getItem('token');
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    });
-    const url = `http://localhost:7188/api/Vehicle_Owner_/get-owner-vehicles`;
-    return this.http.get<any>(url, { headers });
+    return this.http.get<any>(
+      `${this.baseUrl}/Vehicle_Owner_/get-owner-vehicles`,
+      { headers: this.getAuthHeaders(true) }
+    );
   }
 
-  // Update Vehicle Data by owner
+  // Update vehicle (Owner)
   updateVehiclebyowner(vehicleData: any): Observable<any> {
-    const token = sessionStorage.getItem('token');
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    });
-    const updateApiUrl = `http://localhost:7188/api/Vehicle_Owner_/update-owner-vehicle`;
-    return this.http.put<any>(updateApiUrl, vehicleData, { headers });
+    return this.http.put<any>(
+      `${this.baseUrl}/Vehicle_Owner_/update-owner-vehicle`,
+      vehicleData,
+      { headers: this.getAuthHeaders(true) }
+    );
   }
 
-
-  //Delete data vehicle by owner
+  // Delete vehicle (Owner)
   deleteVehicleByOwner(vehicleId: number): Observable<any> {
-    const token = sessionStorage.getItem('token');
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`
-    });
-
-    const url = `http://localhost:7188/api/Vehicle_Owner_/delete-owner-vehicle/${vehicleId}`;
-    return this.http.delete<any>(url, { headers });
+    return this.http.delete<any>(
+      `${this.baseUrl}/Vehicle_Owner_/delete-owner-vehicle/${vehicleId}`,
+      { headers: this.getAuthHeaders() }
+    );
   }
 
+  // ================= OWNER DOCUMENT =================
 
-
-  private baseApiUrl = "http://localhost:7188/api/OwnerDocument";
-
+  private ownerDocumentUrl = `${this.baseUrl}/OwnerDocument`;
 
   // Add document
   addDocument(formData: FormData): Observable<any> {
-    const token = sessionStorage.getItem('token');
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`
-    });
-    return this.http.post<any>(`${this.baseApiUrl}/add`, formData, { headers });
+    return this.http.post<any>(
+      `${this.ownerDocumentUrl}/add`,
+      formData,
+      { headers: this.getAuthHeaders() }
+    );
   }
 
-  // Get all documents
+  // Get documents
   getDocuments(): Observable<any> {
-    const token = sessionStorage.getItem('token');
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`
-    });
-    return this.http.get<any>(`${this.baseApiUrl}/get`, { headers });
+    return this.http.get<any>(
+      `${this.ownerDocumentUrl}/get`,
+      { headers: this.getAuthHeaders() }
+    );
   }
 
   // Update document
   updateDocument(formData: FormData): Observable<any> {
-    const token = sessionStorage.getItem('token');
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`
-    });
-    return this.http.put<any>(`${this.baseApiUrl}/update`, formData, { headers });
+    return this.http.put<any>(
+      `${this.ownerDocumentUrl}/update`,
+      formData,
+      { headers: this.getAuthHeaders() }
+    );
   }
 
   // Delete document
   deleteDocument(id: number): Observable<any> {
-    const token = sessionStorage.getItem('token');
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`
-    });
-    return this.http.delete<any>(`${this.baseApiUrl}/delete/${id}`, { headers });
+    return this.http.delete<any>(
+      `${this.ownerDocumentUrl}/delete/${id}`,
+      { headers: this.getAuthHeaders() }
+    );
   }
 
+  // ================= ADMIN – OWNER APPROVAL =================
 
-
-  //  1) GET all  owners
+  // Get pending owners
   getallownervehicle(): Observable<any> {
-    const token = sessionStorage.getItem('token');
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`
-    });
-
-    const url = 'http://localhost:7188/api/AdminOwners/GetPendingOwners';
-    return this.http.get<any>(url, { headers });
+    return this.http.get<any>(
+      `${this.baseUrl}/AdminOwners/GetPendingOwners`,
+      { headers: this.getAuthHeaders() }
+    );
   }
 
-  //  APPROVE owner
+  // Approve owner
   approveOwner(ownerId: number): Observable<any> {
-    const token = sessionStorage.getItem('token');
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`
-    });
-
-    const url = `http://localhost:7188/api/AdminOwners/approve/${ownerId}`;
-    return this.http.put<any>(url, {}, { headers });
+    return this.http.put<any>(
+      `${this.baseUrl}/AdminOwners/approve/${ownerId}`,
+      {},
+      { headers: this.getAuthHeaders() }
+    );
   }
 
-  //  REJECT owner with Reason
+  // Reject owner
   rejectOwner(ownerId: number, reason: string): Observable<any> {
-    const token = sessionStorage.getItem('token');
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    });
-    const body = { reason: reason };
-    const url = `http://localhost:7188/api/AdminOwners/reject/${ownerId}`;
-    return this.http.put<any>(url, body, { headers });
+    return this.http.put<any>(
+      `${this.baseUrl}/AdminOwners/reject/${ownerId}`,
+      { reason },
+      { headers: this.getAuthHeaders(true) }
+    );
   }
 
-
-
-  //  1) GET all  Aproved owners
+  // Get active owners
   getallActiveownervehicle(): Observable<any> {
-    const token = sessionStorage.getItem('token');
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`
-    });
-
-    const url = 'http://localhost:7188/api/AdminOwners/getAllActiveOwners';
-    return this.http.get<any>(url, { headers });
+    return this.http.get<any>(
+      `${this.baseUrl}/AdminOwners/getAllActiveOwners`,
+      { headers: this.getAuthHeaders() }
+    );
   }
 
-
-  //get uploaded vehicle of the owner for admin
+  // Get owner vehicles (Admin)
   getAllOwnerVehicles(ownerId: number): Observable<any> {
-    const token = sessionStorage.getItem('token');
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    });
-    const url = `http://localhost:7188/api/AdminOwners/getOwnerVehicles/${ownerId}`;
-    return this.http.get<any>(url, { headers });
+    return this.http.get<any>(
+      `${this.baseUrl}/AdminOwners/getOwnerVehicles/${ownerId}`,
+      { headers: this.getAuthHeaders(true) }
+    );
   }
 
-
-  //add or update the security amount 
+  // Add or update security deposit (Admin)
   addOrUpdateDeposit(vehicleId: number, amount: number): Observable<any> {
-    const token = sessionStorage.getItem('token');
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    });
-
-    const url = 'http://localhost:7188/api/AdminOwners/addOrUpdateSecurityDeposit';
-    const body = { vehicleId, amount };
-    return this.http.post<any>(url, body, { headers });
+    return this.http.post<any>(
+      `${this.baseUrl}/AdminOwners/addOrUpdateSecurityDeposit`,
+      { vehicleId, amount },
+      { headers: this.getAuthHeaders(true) }
+    );
   }
 
-
-  // Add Vehicle Availability (Owner)
+  // Add availability days (Owner)
   addAvailabilityDays(data: any): Observable<any> {
-    const token = sessionStorage.getItem('token');
-
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    });
-
-    const url = 'http://localhost:7188/api/Vehicle_Owner_/addAvalibilityDays';
-
-    return this.http.post<any>(url, data, { headers, responseType: 'text' as 'json' });
+    return this.http.post<any>(
+      `${this.baseUrl}/Vehicle_Owner_/addAvalibilityDays`,
+      data,
+      { headers: this.getAuthHeaders(true), responseType: 'text' as 'json' }
+    );
   }
 
-
-  //admin give the aproval of owners vehicles
+  // Approve owner vehicle (Admin)
   approveOwnerVehicle(vehicleId: number): Observable<any> {
-    const token = sessionStorage.getItem('token');
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`
-    });
-
-    const url = `http://localhost:7188/api/AdminOwners/approve`;
-    const body = {
-      vehicleId: vehicleId
-    }
-    return this.http.put<any>(url, body, { headers });
+    return this.http.put<any>(
+      `${this.baseUrl}/AdminOwners/approve`,
+      { vehicleId },
+      { headers: this.getAuthHeaders() }
+    );
   }
 
-  //admin give the aproval of owners vehicles
-  //admin reject owner vehicle
+  // Reject owner vehicle (Admin)
   RejectOwnerVehicle(vehicleId: number, reason: string): Observable<any> {
-    const token = sessionStorage.getItem('token');
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`
-    });
-    const body = {
-      vehicleId: vehicleId,
-      rejectReason: reason
-    };
-    return this.http.put<any>(`http://localhost:7188/api/AdminOwners/rejectVehicle`, body, { headers });
+    return this.http.put<any>(
+      `${this.baseUrl}/AdminOwners/rejectVehicle`,
+      { vehicleId, rejectReason: reason },
+      { headers: this.getAuthHeaders() }
+    );
   }
 
+  // Set price vehicle (admin → owner payment)
+  updateAvailabilityPrice(
+    availabilityId: number,
+    vehicleAmountPerDay: number
+  ): Observable<string> {
 
-  //set to price vehicle to pay the vehicle owner
-  updateAvailabilityPrice(availabilityId: number, vehicleAmountPerDay: number): Observable<string> {
-    const token = sessionStorage.getItem('token');
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`
-    });
     const body = { availabilityId, vehicleAmountPerDay };
-    const url = `http://localhost:7188/api/AdminOwners/updatePrice`;
-    return this.http.put(url, body, { headers, responseType: 'text' });
+
+    return this.http.put(
+      `${this.baseUrl}/AdminOwners/updatePrice`,
+      body,
+      { headers: this.getAuthHeaders(), responseType: 'text' }
+    );
   }
 
-
+  // Get all owner payment details (Admin)
   getAllOwnerPaymentDetails(): Observable<any> {
-    const token = sessionStorage.getItem('token');
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    });
-    const url = 'http://localhost:7188/api/AdminOwners/get-owner-payment-data';
-    return this.http.get<any>(url, { headers });
+    return this.http.get<any>(
+      `${this.baseUrl}/AdminOwners/get-owner-payment-data`,
+      { headers: this.getAuthHeaders(true) }
+    );
   }
 
-
-
-  //admin payment to the vehicle owner
+  // Admin payment → create order
   createOwnerPaymentOrder(amount: number): Observable<any> {
-    const token = sessionStorage.getItem('token');
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    });
-    const url = 'http://localhost:7188/api/OwnerPayment/CreateOrder';
-    const body = {
-      amount: amount
-    };
-    return this.http.post<any>(url, body, { headers });
+    return this.http.post<any>(
+      `${this.baseUrl}/OwnerPayment/CreateOrder`,
+      { amount },
+      { headers: this.getAuthHeaders(true) }
+    );
   }
 
+  // Verify owner payment
   verifyOwnerPayment(data: any): Observable<any> {
-    const token = sessionStorage.getItem('token');
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    });
-    const url = 'http://localhost:7188/api/OwnerPayment/VerifyPayment';
-    return this.http.post<any>(url, data, { headers });
+    return this.http.post<any>(
+      `${this.baseUrl}/OwnerPayment/VerifyPayment`,
+      data,
+      { headers: this.getAuthHeaders(true) }
+    );
   }
 
+  // Get owner payments
   getOwnerPayments(ownerId: number): Observable<any> {
-    const token = sessionStorage.getItem('token');
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    });
-    const url = `http://localhost:7188/api/OwnerPayment/GetOwnerPayments/${ownerId}`;
-    return this.http.get<any>(url, { headers });
+    return this.http.get<any>(
+      `${this.baseUrl}/OwnerPayment/GetOwnerPayments/${ownerId}`,
+      { headers: this.getAuthHeaders(true) }
+    );
   }
 
+  // Same API (kept as-is)
   getOwnerPaymentsDetails(ownerId: number): Observable<any> {
-    const token = sessionStorage.getItem('token');
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    });
-    const url = `http://localhost:7188/api/OwnerPayment/GetOwnerPayments/${ownerId}`;
-    return this.http.get<any>(url, { headers });
+    return this.http.get<any>(
+      `${this.baseUrl}/OwnerPayment/GetOwnerPayments/${ownerId}`,
+      { headers: this.getAuthHeaders(true) }
+    );
   }
 
-
+  // Vehicle re-rent
   VehicleReRent(vehicleId: number): Observable<any> {
-    const token = sessionStorage.getItem('token');
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    });
-    const url = `http://localhost:7188/api/VehicleReRent/Re-Rent/${vehicleId}`;
-    return this.http.post<any>(url, {}, { headers });
+    return this.http.post<any>(
+      `${this.baseUrl}/VehicleReRent/Re-Rent/${vehicleId}`,
+      {},
+      { headers: this.getAuthHeaders(true) }
+    );
   }
 
-
-
+  // Owner dashboard summary
   getSummaryOfTheOwnerDashboard(): Observable<any> {
-    const token = sessionStorage.getItem('token');
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    });
-    const url = 'http://localhost:7188/api/OwnerDashboard/summary';
-    return this.http.get<any>(url, { headers });
+    return this.http.get<any>(
+      `${this.baseUrl}/OwnerDashboard/summary`,
+      { headers: this.getAuthHeaders(true) }
+    );
   }
 
+  // ================= DRIVER =================
 
-
-
-
-  // Add Driver Exprince api 
+  // Add / Update driver experience
   AddUpdateDriverExprience(data: any): Observable<any> {
-    const token = sessionStorage.getItem('token');
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`
-    });
-    const uploadDoc = `http://localhost:7188/api/addUpdateDriverExprience`;
-    return this.http.post(uploadDoc, data, { headers });
+    return this.http.post<any>(
+      `${this.baseUrl}/addUpdateDriverExprience`,
+      data,
+      { headers: this.getAuthHeaders() }
+    );
   }
 
-
-
-
-
-  // add driver document 
+  // Add driver document
   addDriverDocument(formData: FormData): Observable<any> {
-    const token = sessionStorage.getItem('token');
-    const headers = new HttpHeaders({
-      Authorization: `Bearer ${token}`
-    });
-    const url = 'http://localhost:7188/api/DriverDocuments/addDriverDocument';
-    return this.http.post(url, formData, { headers });
+    return this.http.post<any>(
+      `${this.baseUrl}/DriverDocuments/addDriverDocument`,
+      formData,
+      { headers: this.getAuthHeaders() }
+    );
   }
 
+  // Delete driver document
   deleteDriverDocument(documentId: number): Observable<any> {
-    const token = sessionStorage.getItem('token');
-    const headers = new HttpHeaders({
-      Authorization: `Bearer ${token}`
-    });
-    const url = `http://localhost:7188/api/DriverDocuments/deleteDriverDocument/${documentId}`;
-    return this.http.delete(url, { headers });
+    return this.http.delete<any>(
+      `${this.baseUrl}/DriverDocuments/deleteDriverDocument/${documentId}`,
+      { headers: this.getAuthHeaders() }
+    );
   }
 
+  // Get driver documents
   getDriverDocuments(driverId: number): Observable<any> {
-    const token = sessionStorage.getItem('token');
-    const headers = new HttpHeaders({
-      Authorization: `Bearer ${token}`
-    });
-    const url = `http://localhost:7188/api/DriverDocuments/getDriverDocuments/${driverId}`
-    return this.http.get(url, { headers });
+    return this.http.get<any>(
+      `${this.baseUrl}/DriverDocuments/getDriverDocuments/${driverId}`,
+      { headers: this.getAuthHeaders() }
+    );
   }
 
-
-  // get Driver Exprince api 
+  // Get driver experience
   getDriverExprience(): Observable<any> {
-    const token = sessionStorage.getItem('token');
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`
-    });
-    const uploadDoc = `http://localhost:7188/api/getDriverExprience`;
-    return this.http.get(uploadDoc, { headers });
+    return this.http.get<any>(
+      `${this.baseUrl}/getDriverExprience`,
+      { headers: this.getAuthHeaders() }
+    );
   }
 
-  // get Driver Exprince api 
+  // Get all driver details (Admin)
   GetAllDriverDetials(): Observable<any> {
-    const token = sessionStorage.getItem('token');
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`
-    });
-    const uploadDoc = 'http://localhost:7188/driversdata';
-    return this.http.get(uploadDoc, { headers });
+    return this.http.get<any>(
+      `${this.baseUrl}/driversdata`,
+      { headers: this.getAuthHeaders() }
+    );
   }
 
-  // add driver appprove
+  // Approve driver
   approveDriver(userId: number): Observable<any> {
-    const token = sessionStorage.getItem('token');
-    const headers = new HttpHeaders({
-      Authorization: `Bearer ${token}`
-    });
-    const url = `http://localhost:7188/api/AdminDriver/approve-driver/${userId}`;
-    return this.http.post(url, {}, { headers });
+    return this.http.post<any>(
+      `${this.baseUrl}/AdminDriver/approve-driver/${userId}`,
+      {},
+      { headers: this.getAuthHeaders() }
+    );
   }
 
-
-
+  // Reject driver
   rejectDriver(userId: number, rejectionReason: string): Observable<any> {
-    const token = sessionStorage.getItem('token');
-    const headers = new HttpHeaders({
-      Authorization: `Bearer ${token}`
-    });
-    const url = `http://localhost:7188/api/AdminDriver/reject-driver`;
-    const body = {
-      userId: userId,
-      rejectionReason: rejectionReason
-    };
-    return this.http.post(url, body, { headers });
+    return this.http.post<any>(
+      `${this.baseUrl}/AdminDriver/reject-driver`,
+      { userId, rejectionReason },
+      { headers: this.getAuthHeaders() }
+    );
   }
 
+  // Available drivers
+  getAvailableDrivers(
+    startTime: string,
+    endTime: string,
+    vehicleType: string
+  ): Observable<any[]> {
 
-  // add driver appprove
-  // getdriverdata(): Observable<any> {
-  //   const url = 'http://localhost:7188/api/getAllDriversWithReviews';
-  //   return this.http.get(url);
-  // }
-
-  getAvailableDrivers(startTime: string, endTime: string, vehicleType: string) {
-  return this.http.get<any[]>(
-    `http://localhost:7188/api/available-drivers`,
-    {
-      params: {
-        startTime,
-        endTime,
-        vehicleType
+    return this.http.get<any[]>(
+      `${this.baseUrl}/available-drivers`,
+      {
+        params: { startTime, endTime, vehicleType }
       }
-    }
-  );
-}
+    );
+  }
 
-
-
-  // create booking driver 
+  // Create driver booking
   createDriverBooking(driverBookingData: any): Observable<any> {
-    const url = 'http://localhost:7188/api/create-driver-booking';
-    return this.http.post(url, driverBookingData);
+    return this.http.post<any>(
+      `${this.baseUrl}/create-driver-booking`,
+      driverBookingData
+    );
   }
 
-  // Method to check driver availability
-  checkDriverAvailability(vehicleId: number, bookingId?: number): Observable<any> {
-    const url = `http://localhost:7188/api/check-driver-availability/${vehicleId}/${bookingId || ''}`;
-    return this.http.get(url);
+  // Check driver availability
+  checkDriverAvailability(
+    vehicleId: number,
+    bookingId?: number
+  ): Observable<any> {
+
+    return this.http.get<any>(
+      `${this.baseUrl}/check-driver-availability/${vehicleId}/${bookingId || ''}`
+    );
   }
 
-
-  //admin get all driver details 
+  // Admin – driver trip details
   AdminGetAallDriverdetails(): Observable<any> {
-    const token = sessionStorage.getItem('token');
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    });
-    const userdataurl = 'http://localhost:7188/api/AdminDriver/DrivertripsDetails';
-    return this.http.get<any>(userdataurl, { headers });
+    return this.http.get<any>(
+      `${this.baseUrl}/AdminDriver/DrivertripsDetails`,
+      { headers: this.getAuthHeaders(true) }
+    );
   }
 
   AdminGetAallDriverdetailsbyid(driverId: number): Observable<any> {
-    const token = sessionStorage.getItem('token');
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    });
-    const userdataurl = `http://localhost:7188/api/AdminDriver/DrivertripsDetails/${driverId}`;
-    return this.http.get<any>(userdataurl, { headers });
+    return this.http.get<any>(
+      `${this.baseUrl}/AdminDriver/DrivertripsDetails/${driverId}`,
+      { headers: this.getAuthHeaders(true) }
+    );
   }
 
-
-
-  //drive get all customer booking 
+  // Driver – all bookings
   driverGetAallbooking(): Observable<any> {
-    const token = sessionStorage.getItem('token');
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    });
-    const userdataurl = 'http://localhost:7188/api/DriverDashboard/DriverTripsDetails';
-    return this.http.get<any>(userdataurl, { headers });
+    return this.http.get<any>(
+      `${this.baseUrl}/DriverDashboard/DriverTripsDetails`,
+      { headers: this.getAuthHeaders(true) }
+    );
   }
 
-  //drive update status is bust
+  // Driver update status → busy
   driverUpdateStatusBusy(driverBookingId: number): Observable<any> {
-    const token = sessionStorage.getItem('token');
-    const headers = new HttpHeaders({
-      Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    });
-    const url = `http://localhost:7188/api/DriverDashboard/UpdateDriverTripStatus?driverBookingId=${driverBookingId}`;
-
-    return this.http.post<any>(url, {}, { headers });
+    return this.http.post<any>(
+      `${this.baseUrl}/DriverDashboard/UpdateDriverTripStatus`,
+      {},
+      {
+        headers: this.getAuthHeaders(true),
+        params: { driverBookingId }
+      }
+    );
   }
 
+  // Driver update status → completed
   driverUpdateStatuscompleted(driverBookingId: number): Observable<any> {
-    const token = sessionStorage.getItem('token');
-    const headers = new HttpHeaders({
-      Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    });
-    const url = `http://localhost:7188/api/DriverDashboard/UpdateDriverTripStatusComplete?driverBookingId=${driverBookingId}`;
-
-    return this.http.post<any>(url, {}, { headers });
+    return this.http.post<any>(
+      `${this.baseUrl}/DriverDashboard/UpdateDriverTripStatusComplete`,
+      {},
+      {
+        headers: this.getAuthHeaders(true),
+        params: { driverBookingId }
+      }
+    );
   }
-
 
 
   // //drive update status is bust
@@ -1183,85 +931,70 @@ export class MyServiceService {
   //   return this.http.get<any>(userdataurl, { headers });
   // }
 
-
+  // Update driver per day rate (Admin)
   updatePerDayRate(driverId: number, perDayRate: number): Observable<any> {
-    const token = sessionStorage.getItem('token');
-    const headers = new HttpHeaders({
-      Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    });
-    const payload = {
-      driverId: driverId,
-      perDayRate: perDayRate
-    };
-    const url = 'http://localhost:7188/api/AdminDriver/UpdatePerDayRate';
-    return this.http.put(url, payload, { headers });
+    const payload = { driverId, perDayRate };
+
+    return this.http.put<any>(
+      `${this.baseUrl}/AdminDriver/UpdatePerDayRate`,
+      payload,
+      { headers: this.getAuthHeaders(true) }
+    );
   }
 
+  // ================= DRIVER PAYMENT =================
 
-
-  // paymane to the driver 
-
+  // Create driver payment order
   createDriverPaymentOrder(amount: number): Observable<any> {
-    const token = sessionStorage.getItem('token');
-    const headers = new HttpHeaders({
-      Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    });
-    const url = 'http://localhost:7188/api/DriverPayments/CreateOrder';
-    return this.http.post<any>(url, { Amount: amount }, { headers });
+    return this.http.post<any>(
+      `${this.baseUrl}/DriverPayments/CreateOrder`,
+      { Amount: amount },
+      { headers: this.getAuthHeaders(true) }
+    );
   }
 
-  // Verify Razorpay Payment
+  // Verify driver payment
   verifyDriverPayment(paymentData: any): Observable<any> {
-    const token = sessionStorage.getItem('token');
-    const headers = new HttpHeaders({
-      Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    });
-    const url = `http://localhost:7188/api/DriverPayments/VerifyPayment`;
-    return this.http.post<any>(url, paymentData, { headers });
+    return this.http.post<any>(
+      `${this.baseUrl}/DriverPayments/VerifyPayment`,
+      paymentData,
+      { headers: this.getAuthHeaders(true) }
+    );
   }
 
-
+  // Admin – all paid drivers report
   getpaymenttabledriver(): Observable<any> {
-    const token = sessionStorage.getItem('token');
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    });
-    const userdataurl = 'http://localhost:7188/api/AdminDriver/AllPaidDriversPaymentReport';
-    return this.http.get<any>(userdataurl, { headers });
+    return this.http.get<any>(
+      `${this.baseUrl}/AdminDriver/AllPaidDriversPaymentReport`,
+      { headers: this.getAuthHeaders(true) }
+    );
   }
 
-
-
+  // Driver – paid payments list
   getpaymenttablebydriver(): Observable<any> {
-    const token = sessionStorage.getItem('token');
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    });
-    const userdataurl = 'http://localhost:7188/api/DriverDashboard/driver/paid-payments';
-    return this.http.get<any>(userdataurl, { headers });
+    return this.http.get<any>(
+      `${this.baseUrl}/DriverDashboard/driver/paid-payments`,
+      { headers: this.getAuthHeaders(true) }
+    );
   }
 
+  // ================= PASSWORD RESET =================
 
- forgotPassword(email: string): Observable<string> {
-  return this.http.post(
-    'http://localhost:7188/api/Resetpassword/forgot-password',
-    { email },
-    { responseType: 'text' }  
-  );
+  // Forgot password
+  forgotPassword(email: string): Observable<string> {
+    return this.http.post(
+      `${this.baseUrl}/Resetpassword/forgot-password`,
+      { email },
+      { responseType: 'text' }
+    );
+  }
+
+  // Reset password
+  resetPassword(data: any): Observable<string> {
+    return this.http.post(
+      `${this.baseUrl}/Resetpassword/reset-password`,
+      data,
+      { responseType: 'text' }
+    );
+  }
 }
-
-resetPassword(data: any): Observable<string> {
-  return this.http.post(
-    'http://localhost:7188/api/Resetpassword/reset-password',
-    data,
-    { responseType: 'text' }   
-  );
-}
-}
-
-

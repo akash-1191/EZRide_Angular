@@ -128,7 +128,7 @@
                 <div class="slider-wrapper flex transition-transform duration-700 ease-in-out"
                     [style.transform]="'translateX(-' + currentImageIndex * 100 + '%)'">
                     <img *ngFor="let img of images" class="slider-image w-full flex-shrink-0 object-cover h-80"
-                        [src]="'http://localhost:7188/' + img" alt="Vehicle Image" />
+                        [src]="'https://aspcoreezride.onrender.com/' + img" alt="Vehicle Image" />
                 </div>
 
                 <button (click)="prevImage()"

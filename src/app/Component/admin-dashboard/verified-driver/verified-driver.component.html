@@ -39,7 +39,7 @@
 
                     <!-- DRIVER -->
                     <td class="px-4 py-3 flex items-center gap-3">
-                        <img [src]="'http://localhost:7188' + d.image" class="w-10 h-10 rounded-full object-cover">
+                        <img [src]="'https://aspcoreezride.onrender.com' + d.image" class="w-10 h-10 rounded-full object-cover">
                         <span class="font-medium">{{ d.fullName }}</span>
                     </td>
 
@@ -109,7 +109,7 @@
 
                     <!-- DRIVER -->
                     <td class="px-4 py-3 flex items-center gap-3">
-                        <img [src]="'http://localhost:7188' + d.image" class="w-10 h-10 rounded-full object-cover">
+                        <img [src]="'https://aspcoreezride.onrender.com' + d.image" class="w-10 h-10 rounded-full object-cover">
                         <span class="font-medium">{{ d.fullName }}</span>
                     </td>
 
@@ -166,7 +166,7 @@
         <!-- ================= PROFILE SECTION ================= -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
             <div class="flex justify-center">
-                <img [src]="'http://localhost:7188' + selectedDriver.image"
+                <img [src]="'https://aspcoreezride.onrender.com' + selectedDriver.image"
                     class="w-36 h-36 rounded-full object-cover shadow">
             </div>
 
@@ -207,7 +207,7 @@
                     </p>
 
                     <!-- IMAGE -->
-                    <img *ngIf="!doc.documentPath.endsWith('.pdf')" [src]="'http://localhost:7188/' + doc.documentPath"
+                    <img *ngIf="!doc.documentPath.endsWith('.pdf')" [src]="'https://aspcoreezride.onrender.com/' + doc.documentPath"
                         (click)="openImagePreview(doc.documentPath)"
                         class="w-full h-40 object-cover rounded cursor-pointer hover:opacity-80">
 

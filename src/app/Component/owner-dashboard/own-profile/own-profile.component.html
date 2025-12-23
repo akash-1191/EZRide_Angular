@@ -21,7 +21,7 @@
                 <!-- Header -->
                 <div class="flex flex-col md:flex-row items-start space-x-6 md:space-x-12">
                     <div class="relative group mb-4 md:mb-0">
-                       <img [src]="'http://localhost:7188' + profiledata.image"
+                       <img [src]="'https://aspcoreezride.onrender.com' + profiledata.image"
                             alt="Profile Picture"
                             (error)="onImageError($event)"
                             class="md:w-52 md:h-52 w-44 h-44 md:rounded-sm rounded-full md: ml-12 border-4 border-gray-600 transition-all duration-300 ease-in-out group-hover:blur-[1px]" />
@@ -204,12 +204,12 @@
       <div class="w-full h-56 bg-gray-200 rounded-lg flex justify-center items-center overflow-hidden">
         <!-- IMAGE -->
         <img *ngIf="doc.documentPath.endsWith('.jpg') || doc.documentPath.endsWith('.jpeg') || doc.documentPath.endsWith('.png')"
-          [src]="'http://localhost:7188' + doc.documentPath"
+          [src]="'https://aspcoreezride.onrender.com' + doc.documentPath"
           class="w-full h-full object-cover rounded-lg cursor-pointer">
         <!-- PDF -->
         <div *ngIf="doc.documentPath.endsWith('.pdf')" class="text-center">
           <img src="https://cdn-icons-png.flaticon.com/512/337/337946.png" class="w-16 mx-auto mb-2 cursor-pointer" />
-          <a (click)="openPdf('http://localhost:7188' + doc.documentPath)"
+          <a (click)="openPdf('https://aspcoreezride.onrender.com' + doc.documentPath)"
             class="text-blue-700 underline cursor-pointer text-sm">View PDF</a>
         </div>
       </div>

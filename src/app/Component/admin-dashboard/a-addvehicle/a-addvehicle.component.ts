@@ -143,6 +143,6 @@ export class AAddvehicleComponent implements OnInit {
     }
   }
   redirectManagevihiclepage() {
-    this.router.navigate(['/admin-dashboard/manageVehicle']);
+    this.router.navigate(['/admin-dashboard']);
   }
 }

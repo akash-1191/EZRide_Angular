@@ -116,7 +116,7 @@
                 <div
                     class="overflow-hidden rounded-t-lg group w-full h-64 shadow-md hover:shadow-xl transition-shadow duration-300">
                     <img class="w-full h-full object-cover transform transition-transform duration-500 group-hover:scale-110"
-                        [src]="'http://localhost:7188/' + selectedBooking.vehicleImage" alt="Vehicle Image">
+                        [src]="'https://aspcoreezride.onrender.com' + selectedBooking.vehicleImage" alt="Vehicle Image">
                 </div>
 
                 <!-- Booking Details -->
@@ -177,7 +177,7 @@
                                 <img *ngIf="selectedBooking?.driverProfileImage && 
                   selectedBooking.driverProfileImage !== 'default-image.jpg' && 
                   selectedBooking.driverProfileImage !== 'N/A'"
-                                    [src]="'http://localhost:7188/' + selectedBooking.driverProfileImage"
+                                    [src]="'https://aspcoreezride.onrender.com' + selectedBooking.driverProfileImage"
                                     class="w-16 h-16 rounded-full mr-4" alt="Driver">
                                 <div>
                                     <p class="text-gray-800">

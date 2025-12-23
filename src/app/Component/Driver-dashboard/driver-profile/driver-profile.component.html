@@ -38,7 +38,7 @@
                         <div class="relative group">
                             <div
                                 class="w-48 h-48 md:w-56 md:h-56 mx-auto lg:mx-0 rounded-xl overflow-hidden border-4 border-white shadow-lg">
-                                <img [src]="'http://localhost:7188' + profiledata.image" alt="Profile Picture"
+                                <img [src]="'https://aspcoreezride.onrender.com' + profiledata.image" alt="Profile Picture"
                                     (error)="onImageError($event)"
                                     class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110 cursor-pointer">
                             </div>
@@ -353,7 +353,7 @@
                         <div class="h-48 rounded-lg overflow-hidden bg-gray-100">
                             <!-- Image Preview -->
                             <img *ngIf="doc.documentPath.endsWith('.jpg') || doc.documentPath.endsWith('.jpeg') || doc.documentPath.endsWith('.png')"
-                                [src]="'http://localhost:7188/' + doc.documentPath"
+                                [src]="'https://aspcoreezride.onrender.com/' + doc.documentPath"
                                 class="w-full h-full object-contain cursor-pointer hover:scale-105 transition-transform duration-300">
 
                             <!-- PDF Preview -->
@@ -361,7 +361,7 @@
                                 class="w-full h-full flex flex-col items-center justify-center p-4">
                                 <i class="fas fa-file-pdf text-red-500 text-5xl mb-4 cursor-pointer"></i>
                                 <p class="text-gray-600 text-sm mb-2">PDF Document</p>
-                                <a (click)="openPdf('http://localhost:7188' + doc.documentPath)"
+                                <a (click)="openPdf('https://aspcoreezride.onrender.com' + doc.documentPath)"
                                     class="text-blue-600 hover:text-blue-700 font-medium cursor-pointer">
                                     <i class="fas fa-external-link-alt mr-2"></i>View Document
                                 </a>

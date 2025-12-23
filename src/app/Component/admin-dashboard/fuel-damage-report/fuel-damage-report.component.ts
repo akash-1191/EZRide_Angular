@@ -29,7 +29,7 @@ export class FuelDamageReportComponent {
   isFuelModalOpen: boolean = false;
   bookingId: any;
 
-baseUrl: string = 'http://localhost:7188';
+baseUrl: string = 'https://aspcoreezride.onrender.com/';
   constructor(private services: MyServiceService) { }
 
 

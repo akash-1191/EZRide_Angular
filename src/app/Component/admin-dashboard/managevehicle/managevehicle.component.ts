@@ -273,7 +273,7 @@ export class ManagevehicleComponent implements OnInit {
       this.service.getVehicleImages(vehicle.vehicleId).subscribe(
         (images: any[]) => {
           if (images.length > 0) {
-            this.vehicleImages[vehicle.vehicleId] = 'http://localhost:7188/' + images[0].imagePath;
+            this.vehicleImages[vehicle.vehicleId] = 'https://aspcoreezride.onrender.com' + images[0].imagePath;
 
           }
         },
@@ -311,7 +311,7 @@ export class ManagevehicleComponent implements OnInit {
 
   //refress modal 
   refreshModalImages(vehicleId: number): void {
-    const baseUrl = "http://localhost:7188/";
+    const baseUrl = "https://aspcoreezride.onrender.com";
 
     this.service.getVehicleImages(vehicleId).subscribe(
       (response) => {
@@ -375,7 +375,7 @@ export class ManagevehicleComponent implements OnInit {
   // upload image in the perticulr vehicleid 
 
   openImageModal(vehicleId: number) {
-    const baseUrl = "http://localhost:7188/";
+    const baseUrl = "https://aspcoreezride.onrender.com";
 
     this.selectedVehicle = vehicleId;
 

@@ -11,7 +11,7 @@ constructor(
 
   getToken(): string | null {
   let token = sessionStorage.getItem('token');
-  console.log(' Retrieved token:', token);
+  // console.log(' Retrieved token:', token);
 
   if (token && !token.startsWith('Bearer ')) {
     token = 'Bearer ' + token;
