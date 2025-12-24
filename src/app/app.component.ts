@@ -10,4 +10,11 @@ import { RouterOutlet } from '@angular/router';
 export class AppComponent {
   title = 'EZRide';
   
+  isLoading = true;
+
+  ngOnInit(): void {
+    setTimeout(() => {
+      this.isLoading = false;
+    }, 5000); 
+  }
 }
