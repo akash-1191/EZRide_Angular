@@ -1,3 +1,5 @@
+staticPublishPath: dist/ezride
+
 routes:
   - type: rewrite
     source: /*
