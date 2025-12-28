@@ -1,6 +1,7 @@
-staticPublishPath: dist/ezride
+staticPublishPath: dist/ezride/browser
 
 routes:
   - type: rewrite
-    source: /*
+    source: /.*
     destination: /index.html
+  

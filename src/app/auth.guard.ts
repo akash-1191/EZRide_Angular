@@ -12,15 +12,14 @@ export const authGuard: CanActivateFn = (route: ActivatedRouteSnapshot, state) =
   // Expected role from route data
   const expectedRole = route.data['expectedRole'];
 
-  if (!token) {
-    router.navigate(['/login']);
-    return false;
-  }
+ if (!token) {
+  router.navigate(['/login'], { replaceUrl: true });
+  return false;
+}
 
-  if (expectedRole && expectedRole !== role) {
-    router.navigate(['/login']);
-    return false;
-  }
-
+if (expectedRole && expectedRole !== role) {
+  router.navigate(['/login'], { replaceUrl: true });
+  return false;
+}
   return true;
 };
