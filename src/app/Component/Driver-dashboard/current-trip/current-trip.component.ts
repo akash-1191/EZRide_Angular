@@ -61,7 +61,7 @@ export class CurrentTripComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error loading driver trips:', error);
-        this.errorMessage = 'Failed to load driver trips. Please try again.';
+        this.errorMessage = 'No Trips Found.';
         this.isLoading = false;
         this.trips = [];
         this.filteredTrips = [];
