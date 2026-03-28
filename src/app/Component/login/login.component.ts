@@ -76,18 +76,30 @@ export class LoginComponent implements OnInit {
 
       },
       (error: HttpErrorResponse) => {
-        // Handle different error responses
-        if (error.status === 401 || error.status === 400) {
-          this.roleError = error.error.message;
-          this.isLoading = false;
-        } else if (error.status === 500) {
-          this.roleError = error.error.message || "An error occurred. Please try again.";
-          this.isLoading = false;
-        } else {
-          this.roleError = "⚠ Server is not running! Please try again later.";
-          this.isLoading = false;
-        }
-      }
+
+
+
+  if (error.error) {
+    
+    // Case 1: Backend ne object return kiya
+    if (typeof error.error === 'object') {
+      this.roleError =
+        error.error.message ||
+        error.error.title ||
+        JSON.stringify(error.error);
+    }
+
+    // Case 2: Backend ne string return kiya
+    else if (typeof error.error === 'string') {
+      this.roleError = error.error;
+    }
+
+  } else {
+    this.roleError = "Unknown server error";
+  }
+
+  this.isLoading = false;
+}
     );
   }
 
