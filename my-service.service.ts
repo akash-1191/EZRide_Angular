@@ -42,7 +42,7 @@ export class MyServiceService {
   // Auth APIs
   // =======================
   postdat(obj: any): Observable<any> {
-    return this.http.post<any>(`${this.baseUrl}/Signup`, obj);
+    return this.http.post<any>(`${this.baseUrl}/signup`, obj);
   }
   LoginpostData(obj: any): Observable<any> {
     return this.http.post<any>(`${this.baseUrl}/login`, obj);
