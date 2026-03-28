@@ -45,7 +45,7 @@ export class MyServiceService {
     return this.http.post<any>(`${this.baseUrl}/Signup`, obj);
   }
   LoginpostData(obj: any): Observable<any> {
-    return this.http.post<any>(`${this.baseUrl}/Login`, obj);
+    return this.http.post<any>(`${this.baseUrl}/login`, obj);
   }
 
 
